@@ -1,0 +1,218 @@
+@import '@fontsource-variable/bricolage-grotesque';
+@import '@fontsource-variable/hanken-grotesk';
+
+/* ============ Tokens ============ */
+
+:root {
+	/* Fonds */
+	--bg: #fbfaf7;
+	--bg-alt: #f2eee5;
+	--bg-photo: #ece7dd;
+	--surface: #fff;
+
+	/* Textes */
+	--ink: #211c17;
+	--text: #554e42;
+	--text-nav: #3d372e;
+	--muted: #7a7162;
+	--muted-strong: #8a8070;
+	--muted-soft: #a99f8d;
+	--muted-softer: #b1a795;
+
+	/* Bordures, de la plus discrète à la plus marquée */
+	--line: #ece6da;
+	--line-warm: #e7e0d3;
+	--line-alt: #eae3d6;
+	--line-chip: #e2daca;
+	--line-strong: #d8d1c3;
+	--line-stronger: #c9c0ae;
+
+	/* Accent */
+	--accent: #e47b02;
+	--accent-hover: #f38a15;
+	--accent-link-hover: #b85e04;
+	--on-accent: #211410;
+
+	/* Sur fond sombre */
+	--on-ink: #f7f3ec;
+	--on-ink-title: #fbf8f2;
+	--on-ink-text: #b8b0a2;
+	--on-ink-muted: #8f877a;
+
+	/* Typographie */
+	--font-title: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', sans-serif;
+	--font-body: 'Hanken Grotesk Variable', 'Hanken Grotesk', sans-serif;
+
+	/* Formes */
+	--radius-sm: 4px;
+	--radius-md: 6px;
+	--radius-lg: 8px;
+
+	/* Gabarit */
+	--container: 1240px;
+	--gutter: 40px;
+	--section-space: 104px;
+
+	--shadow-dropdown: 0 12px 34px -18px rgb(33 28 23 / 0.28);
+}
+
+@media (max-width: 640px) {
+	:root {
+		--gutter: 28px;
+		--section-space: 76px;
+	}
+}
+
+/* ============ Reset ============ */
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	font-family: var(--font-body);
+	color: var(--ink);
+	background: var(--bg);
+	overflow-x: hidden;
+	-webkit-font-smoothing: antialiased;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+a:hover {
+	color: var(--accent-link-hover);
+}
+
+img {
+	display: block;
+	max-width: 100%;
+}
+
+::selection {
+	background: var(--accent);
+	color: #fff;
+}
+
+:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 3px;
+}
+
+/* ============ Gabarit ============ */
+
+.container {
+	max-width: var(--container);
+	margin-inline: auto;
+	padding-inline: var(--gutter);
+}
+
+.section {
+	padding-top: var(--section-space);
+}
+
+/* ============ Éléments partagés ============ */
+
+.eyebrow {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	font-size: 13px;
+	font-weight: 600;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: var(--muted-strong);
+}
+
+.eyebrow::before {
+	content: '';
+	width: 26px;
+	height: 1px;
+	background: var(--accent);
+}
+
+.title-lg {
+	font-family: var(--font-title);
+	font-weight: 600;
+	font-size: clamp(30px, 4vw, 46px);
+	line-height: 1.05;
+	letter-spacing: -0.015em;
+	margin: 0;
+	text-wrap: balance;
+}
+
+/* Boutons — la puce ronde orange est portée par .btn-dot */
+
+.btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 9px;
+	padding: 15px 28px;
+	border-radius: var(--radius-sm);
+	font-size: 16px;
+	font-weight: 600;
+	white-space: nowrap;
+	transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.btn--dark {
+	background: var(--ink);
+	color: var(--on-ink);
+}
+
+.btn--dark:hover {
+	background: #000;
+	color: var(--on-ink);
+}
+
+.btn--outline {
+	gap: 10px;
+	padding: 15px 26px;
+	border: 1px solid var(--line-strong);
+	color: var(--ink);
+}
+
+.btn--outline:hover {
+	border-color: var(--ink);
+	color: var(--ink);
+}
+
+.btn--accent {
+	gap: 10px;
+	padding: 17px 30px;
+	background: var(--accent);
+	color: var(--on-accent);
+	font-size: 17px;
+	font-weight: 700;
+}
+
+.btn--accent:hover {
+	background: var(--accent-hover);
+	color: var(--on-accent);
+}
+
+.btn-dot {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--accent);
+	flex: none;
+}
+
+.arrow {
+	color: var(--accent);
+}
+
+.arrow-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 16px;
+	font-weight: 600;
+	white-space: nowrap;
+}

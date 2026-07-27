@@ -1,0 +1,56 @@
+---
+// En-tête de section : eyebrow + titre, avec un lien optionnel aligné à droite.
+// Repris par Expertises, Réalisations, Zone d'intervention, Méthode et Guides.
+interface Props {
+	eyebrow: string;
+	title: string;
+	linkLabel?: string;
+	linkHref?: string;
+}
+
+const { eyebrow, title, linkLabel, linkHref } = Astro.props;
+---
+
+<div class="head">
+	<div class="head__text">
+		<p class="eyebrow">{eyebrow}</p>
+		<h2 class="title-lg">{title}</h2>
+	</div>
+	{
+		linkLabel && linkHref && (
+			<a class="arrow-link head__link" href={linkHref}>
+				{linkLabel} <span class="arrow">→</span>
+			</a>
+		)
+	}
+</div>
+
+<style>
+	.head {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 32px;
+		margin-bottom: 44px;
+	}
+
+	.head__text {
+		max-width: 640px;
+	}
+
+	.eyebrow {
+		margin: 0 0 18px;
+	}
+
+	.head__link {
+		padding-bottom: 6px;
+	}
+
+	@media (max-width: 640px) {
+		.head {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 20px;
+		}
+	}
+</style>

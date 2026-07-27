@@ -1,17 +1,200 @@
 ---
+import { createClient } from '../prismicio';
+import Base from '../layouts/Base.astro';
+import SliceZone from '../components/SliceZone.astro';
+import Reassurance from '../components/Reassurance.astro';
+import Expertises from '../components/Expertises.astro';
+import Realisations from '../components/Realisations.astro';
+import ZoneIntervention from '../components/ZoneIntervention.astro';
+import Methode from '../components/Methode.astro';
+import Guides from '../components/Guides.astro';
+import CtaFinal from '../components/CtaFinal.astro';
 
+// Le Hero vient de Prismic. Le build échoue si le document `homepage` n'est
+// pas publié — c'est voulu : mieux vaut un build rouge qu'une home amputée.
+const client = createClient();
+const home = await client.getSingle('homepage');
+
+// Les sections ci-dessous sont encore en dur, en attendant leurs slices.
+// Chaque objet correspond à un futur slice : la forme des props ne changera
+// pas, seule leur provenance.
+
+const reassurance = [
+	{ title: 'Depuis 2018', text: 'Entreprise établie en Gironde' },
+	{ title: 'Garantie décennale', text: "Couverture sur l'ensemble des travaux" },
+	{ title: 'Assurances pro.', text: 'Responsabilité civile & dommages' },
+	{ title: 'Interlocuteur unique', text: 'Un seul contact du devis à la livraison' },
+];
+
+const expertises = {
+	eyebrow: 'Nos expertises',
+	title: 'Un savoir-faire complet, du gros œuvre aux finitions.',
+	featured: {
+		id: 'exp-globale',
+		index: '01 — Activité principale',
+		title: "Rénovation globale de maison & d'appartement",
+		text: "Réhabilitation complète, réagencement, mise aux normes, isolation et finitions. Nous pilotons l'ensemble des corps de métier et tenons le budget comme le calendrier.",
+		linkLabel: 'Découvrir la rénovation globale',
+		href: '#devis',
+		image: { placeholder: 'Rénovation globale — chantier' },
+	},
+	items: [
+		{
+			id: 'exp-extension',
+			index: '02',
+			title: 'Extension & surélévation',
+			text: 'Gagner de la surface sans déménager.',
+			href: '#devis',
+			image: { placeholder: 'Extension' },
+		},
+		{
+			id: 'exp-piscine',
+			index: '03',
+			title: 'Piscine & aménagement extérieur',
+			text: 'Terrasses, piscines et abords soignés.',
+			href: '#devis',
+			image: { placeholder: 'Piscine & extérieur' },
+		},
+		{
+			id: 'exp-cuisine',
+			index: '04',
+			title: 'Cuisine & salle de bain',
+			text: 'Pièces d\'eau et cuisines clés en main.',
+			href: '#devis',
+			image: { placeholder: 'Cuisine & SdB' },
+		},
+		{
+			id: 'exp-amenagement',
+			index: '05',
+			title: 'Aménagement intérieur sur-mesure',
+			text: 'Rangements, dressings, menuiseries dessinés pour vous.',
+			href: '#devis',
+			image: { placeholder: 'Aménagement intérieur' },
+		},
+	],
+};
+
+const realisations = {
+	eyebrow: 'Réalisations récentes',
+	title: 'Des chantiers réels, près de chez vous.',
+	linkLabel: 'Toutes les réalisations',
+	linkHref: '#',
+	items: [
+		{
+			city: 'Mérignac',
+			title: 'Maison des années 70 rénovée',
+			meta: 'Rénovation globale · 165 m²',
+			href: '#',
+			image: { placeholder: 'Réalisation' },
+		},
+		{
+			city: 'Cap Ferret',
+			title: 'Villa avec extension bois',
+			meta: 'Extension & surélévation · 48 m²',
+			href: '#',
+			image: { placeholder: 'Réalisation' },
+		},
+		{
+			city: 'Pessac',
+			title: 'Appartement haussmannien',
+			meta: 'Rénovation globale · 92 m²',
+			href: '#',
+			image: { placeholder: 'Réalisation' },
+		},
+		{
+			city: 'Andernos',
+			title: 'Maison de plain-pied & piscine',
+			meta: 'Piscine & extérieur · 210 m²',
+			href: '#',
+			image: { placeholder: 'Réalisation' },
+		},
+	],
+};
+
+const zone = {
+	eyebrow: "Zone d'intervention",
+	title: '100 km autour de Bordeaux.',
+	text: "Une présence forte sur Bordeaux Métropole et le Bassin d'Arcachon. Nous nous déplaçons pour évaluer votre projet sur site.",
+	cities: ['Bordeaux', 'Mérignac', 'Pessac', 'Andernos', 'Cap Ferret', 'Arcachon'],
+};
+
+const methode = {
+	eyebrow: 'Notre méthode',
+	title: 'Quatre étapes, zéro mauvaise surprise.',
+	steps: [
+		{
+			index: '01',
+			title: 'Premier contact',
+			text: 'Nous échangeons sur votre projet, vos contraintes et votre enveloppe budgétaire.',
+		},
+		{
+			index: '02',
+			title: 'Étude & chiffrage',
+			text: "Visite sur site, plans et devis détaillé, poste par poste, sans zone d'ombre.",
+		},
+		{
+			index: '03',
+			title: 'Réalisation',
+			text: 'Nous coordonnons les corps de métier et vous tenons informé à chaque phase.',
+		},
+		{
+			index: '04',
+			title: 'Livraison',
+			text: 'Réception des travaux, levée des réserves et garanties activées.',
+		},
+	],
+};
+
+const guides = {
+	eyebrow: 'Guides',
+	title: 'Comprendre avant de se lancer.',
+	linkLabel: 'Tous les guides',
+	linkHref: '#',
+	linkItemLabel: 'Lire le guide',
+	items: [
+		{
+			category: 'Budget',
+			title: 'Combien coûte une rénovation globale en 2026 ?',
+			excerpt: "Les postes de dépense, les fourchettes au m² et les leviers pour maîtriser l'enveloppe.",
+			href: '#',
+		},
+		{
+			category: 'Démarches',
+			title: "Extension : quelles autorisations d'urbanisme ?",
+			excerpt:
+				"Déclaration préalable, permis de construire, seuils de surface : ce qu'il faut anticiper.",
+			href: '#',
+		},
+		{
+			category: 'Rénovation énergétique',
+			title: 'Isolation : par quoi commencer chez soi ?',
+			excerpt: 'Priorités, aides mobilisables et gains de confort attendus selon votre logement.',
+			href: '#',
+		},
+	],
+};
+
+const ctaFinal = {
+	title: 'Un projet en tête ? Parlons-en.',
+	text: 'Décrivez votre projet en quelques minutes. Nous revenons vers vous pour organiser une visite et vous remettre un chiffrage détaillé.',
+	cta: { label: 'Demander un devis gratuit', href: '#' },
+	note: 'Réponse sous 48 h ouvrées · sans engagement',
+};
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Base
+	title={home.data.meta_title || 'Acre Rénovation — Entreprise générale de rénovation en Gironde'}
+	description={
+		home.data.meta_description ||
+		"Rénovation globale de maisons et d'appartements sur Bordeaux Métropole et le Bassin d'Arcachon. Un seul interlocuteur du devis à la livraison, depuis 2018."
+	}
+>
+	<SliceZone slices={home.data.slices} />
+	<Reassurance items={reassurance} />
+	<Expertises id="renovation-globale" {...expertises} />
+	<Realisations id="realisations" {...realisations} />
+	<ZoneIntervention {...zone} />
+	<Methode id="entreprise" {...methode} />
+	<Guides id="guides" {...guides} />
+	<CtaFinal id="devis" {...ctaFinal} />
+</Base>

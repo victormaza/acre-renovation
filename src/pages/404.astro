@@ -1,0 +1,51 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Page introuvable — Acre Rénovation" noindex>
+	<section class="container notfound">
+		<p class="eyebrow">Erreur 404</p>
+		<h1 class="notfound__title">Cette page n'existe pas</h1>
+		<p class="notfound__text">
+			Le lien que vous avez suivi est peut-être obsolète, ou l'adresse comporte une erreur.
+		</p>
+		<div class="notfound__actions">
+			<a class="btn btn--dark" href="/"><span class="btn-dot"></span>Retour à l'accueil</a>
+			<a class="btn btn--outline" href="/#devis">Demander un devis <span class="arrow">→</span></a>
+		</div>
+	</section>
+</Base>
+
+<style>
+	.notfound {
+		padding-block: clamp(80px, 12vw, 160px);
+		max-width: 720px;
+	}
+
+	.eyebrow {
+		margin: 0 0 22px;
+	}
+
+	.notfound__title {
+		font-family: var(--font-title);
+		font-weight: 600;
+		font-size: clamp(34px, 5vw, 56px);
+		line-height: 1.05;
+		letter-spacing: -0.02em;
+		margin: 0 0 20px;
+		text-wrap: balance;
+	}
+
+	.notfound__text {
+		font-size: 18px;
+		line-height: 1.6;
+		color: var(--text);
+		margin: 0 0 34px;
+	}
+
+	.notfound__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 14px;
+	}
+</style>

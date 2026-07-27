@@ -1,0 +1,58 @@
+---
+interface Props {
+	items: { title: string; text: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+<section class="container reassurance">
+	<ul class="reassurance__grid">
+		{
+			items.map((item) => (
+				<li class="reassurance__item">
+					<p class="reassurance__title">{item.title}</p>
+					<p class="reassurance__text">{item.text}</p>
+				</li>
+			))
+		}
+	</ul>
+</section>
+
+<style>
+	.reassurance {
+		padding-top: 40px;
+	}
+
+	/* Les séparateurs 1px sont obtenus par le gap laissant voir le fond. */
+	.reassurance__grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+		gap: 1px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		background: var(--line);
+		border: 1px solid var(--line);
+		border-radius: var(--radius-md);
+		overflow: hidden;
+	}
+
+	.reassurance__item {
+		background: var(--bg);
+		padding: 26px 28px;
+	}
+
+	.reassurance__title {
+		font-family: var(--font-title);
+		font-weight: 600;
+		font-size: 20px;
+		margin: 0 0 4px;
+	}
+
+	.reassurance__text {
+		font-size: 14px;
+		color: var(--muted);
+		margin: 0;
+	}
+</style>

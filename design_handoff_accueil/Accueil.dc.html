@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  a { color: inherit; text-decoration: none; }
+  a:hover { color: #b85e04; }
+  image-slot { --is-placeholder-bg: #ece7dd; --is-placeholder-fg: #b7ad9c; }
+  ::selection { background: #e47b02; color: #fff; }
+</style>
+</helmet>
+<div style="font-family: 'Hanken Grotesk', sans-serif; color: #211c17; background: #fbfaf7; -webkit-font-smoothing: antialiased; overflow-x: hidden;">
+
+  <!-- ============ HEADER ============ -->
+  <header style="position: sticky; top: 0; z-index: 50; background: rgba(251,250,247,0.92); backdrop-filter: saturate(1.2) blur(8px); border-bottom: 1px solid #ece6da;">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 0 40px; height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 32px;">
+      <a href="#" style="display: flex; align-items: baseline; gap: 2px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: 0.12em; color: #211c17;">ACRE<span style="color: #e47b02;">.</span></a>
+
+      <nav style="display: flex; align-items: center; gap: 30px; font-size: 15px; font-weight: 500;">
+        <a href="#renovation-globale" style="color: #3d372e; padding: 6px 0;">Rénovation globale</a>
+        <div style="position: relative; padding: 6px 0;" onMouseEnter="{{ openExpertises }}" onMouseLeave="{{ closeExpertises }}">
+          <button style="background: none; border: none; font: inherit; color: #3d372e; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 0;">Nos expertises
+            <span style="display: inline-block; transform: {{ caretTransform }}; transition: transform .18s ease; font-size: 10px; color: #a99f8d;">▼</span>
+          </button>
+          <sc-if value="{{ expertisesOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position: absolute; top: 100%; left: -18px; padding-top: 12px;">
+              <div style="background: #fff; border: 1px solid #ece6da; border-radius: 6px; box-shadow: 0 12px 34px -18px rgba(33,28,23,0.28); min-width: 288px; padding: 8px; overflow: hidden;">
+                <a href="#exp-extension" style="display: block; padding: 12px 16px; border-radius: 4px; font-weight: 500;" style-hover="background: #f5f1e9;">Extension &amp; surélévation</a>
+                <a href="#exp-piscine" style="display: block; padding: 12px 16px; border-radius: 4px; font-weight: 500;" style-hover="background: #f5f1e9;">Piscine &amp; aménagement extérieur</a>
+                <a href="#exp-cuisine" style="display: block; padding: 12px 16px; border-radius: 4px; font-weight: 500;" style-hover="background: #f5f1e9;">Cuisine &amp; salle de bain</a>
+                <a href="#exp-amenagement" style="display: block; padding: 12px 16px; border-radius: 4px; font-weight: 500;" style-hover="background: #f5f1e9;">Aménagement intérieur sur-mesure</a>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+        <a href="#realisations" style="color: #3d372e; padding: 6px 0;">Réalisations</a>
+        <a href="#guides" style="color: #3d372e; padding: 6px 0;">Guides</a>
+        <a href="#entreprise" style="color: #3d372e; padding: 6px 0;">Entreprise</a>
+      </nav>
+
+      <a href="#devis" style="display: inline-flex; align-items: center; gap: 9px; background: #211c17; color: #f7f3ec; padding: 12px 22px; border-radius: 4px; font-size: 15px; font-weight: 600; white-space: nowrap;" style-hover="background: #000;">
+        <span style="width: 7px; height: 7px; border-radius: 50%; background: #e47b02;"></span>Demander un devis
+      </a>
+    </div>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section style="position: relative;">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 64px 40px 0;">
+      <div style="max-width: 900px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 22px; font-size: 13px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #8a8070;">
+          <span style="width: 26px; height: 1px; background: #e47b02;"></span>Entreprise générale de rénovation · Gironde
+        </div>
+        <h1 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: clamp(40px, 6vw, 72px); line-height: 1.02; letter-spacing: -0.02em; margin: 0 0 26px; text-wrap: balance; color: #211c17;">Votre rénovation globale, menée de A à Z par un seul interlocuteur.</h1>
+        <p style="font-size: 19px; line-height: 1.6; color: #554e42; max-width: 620px; margin: 0 0 34px;">Budget maîtrisé, corps de métier coordonnés, exécution soignée. Nous transformons maisons et appartements sur Bordeaux Métropole et le Bassin d'Arcachon depuis 2018.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 14px;">
+          <a href="#devis" style="display: inline-flex; align-items: center; gap: 9px; background: #211c17; color: #f7f3ec; padding: 15px 28px; border-radius: 4px; font-size: 16px; font-weight: 600;" style-hover="background: #000;"><span style="width: 7px; height: 7px; border-radius: 50%; background: #e47b02;"></span>Demander un devis</a>
+          <a href="#realisations" style="display: inline-flex; align-items: center; gap: 10px; color: #211c17; padding: 15px 26px; border-radius: 4px; font-size: 16px; font-weight: 600; border: 1px solid #d8d1c3;" style-hover="border-color: #211c17;">Voir les réalisations <span style="color: #e47b02;">→</span></a>
+        </div>
+      </div>
+    </div>
+    <div style="max-width: 1240px; margin: 56px auto 0; padding: 0 40px;">
+      <div style="position: relative; width: 100%; aspect-ratio: 16 / 8; border-radius: 6px; overflow: hidden; background: #ece7dd;">
+        <image-slot id="hero-photo" shape="rect" placeholder="Photo de chantier abouti — pleine largeur"></image-slot>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RÉASSURANCE ============ -->
+  <section style="max-width: 1240px; margin: 0 auto; padding: 40px 40px 0;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1px; background: #ece6da; border: 1px solid #ece6da; border-radius: 6px; overflow: hidden;">
+      <div style="background: #fbfaf7; padding: 26px 28px;"><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 20px; margin-bottom: 4px;">Depuis 2018</div><div style="font-size: 14px; color: #7a7162;">Entreprise établie en Gironde</div></div>
+      <div style="background: #fbfaf7; padding: 26px 28px;"><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 20px; margin-bottom: 4px;">Garantie décennale</div><div style="font-size: 14px; color: #7a7162;">Couverture sur l'ensemble des travaux</div></div>
+      <div style="background: #fbfaf7; padding: 26px 28px;"><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 20px; margin-bottom: 4px;">Assurances pro.</div><div style="font-size: 14px; color: #7a7162;">Responsabilité civile &amp; dommages</div></div>
+      <div style="background: #fbfaf7; padding: 26px 28px;"><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 20px; margin-bottom: 4px;">Interlocuteur unique</div><div style="font-size: 14px; color: #7a7162;">Un seul contact du devis à la livraison</div></div>
+    </div>
+  </section>
+
+  <!-- ============ EXPERTISES ============ -->
+  <section id="renovation-globale" style="max-width: 1240px; margin: 0 auto; padding: 104px 40px 0;">
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; margin-bottom: 44px;">
+      <div style="max-width: 640px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px; font-size: 13px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #8a8070;"><span style="width: 26px; height: 1px; background: #e47b02;"></span>Nos expertises</div>
+        <h2 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: clamp(30px, 4vw, 46px); line-height: 1.05; letter-spacing: -0.015em; margin: 0; text-wrap: balance;">Un savoir-faire complet, du gros œuvre aux finitions.</h2>
+      </div>
+    </div>
+
+    <!-- Featured : rénovation globale -->
+    <a href="#devis" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 0; border: 1px solid #e7e0d3; border-radius: 6px; overflow: hidden; margin-bottom: 20px; background: #fff;">
+      <div style="position: relative; aspect-ratio: 4 / 3; background: #ece7dd;"><image-slot id="exp-globale-photo" shape="rect" placeholder="Rénovation globale — chantier"></image-slot></div>
+      <div style="padding: 48px 46px; display: flex; flex-direction: column;">
+        <div style="font-family: 'Bricolage Grotesque', sans-serif; color: #e47b02; font-weight: 600; font-size: 15px; margin-bottom: 22px;">01 — Activité principale</div>
+        <h3 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 32px; line-height: 1.08; margin: 0 0 16px; letter-spacing: -0.01em;">Rénovation globale de maison &amp; d'appartement</h3>
+        <p style="font-size: 16px; line-height: 1.62; color: #554e42; margin: 0 0 28px; max-width: 440px;">Réhabilitation complète, réagencement, mise aux normes, isolation et finitions. Nous pilotons l'ensemble des corps de métier et tenons le budget comme le calendrier.</p>
+        <span style="margin-top: auto; display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 16px;">Découvrir la rénovation globale <span style="color: #e47b02;">→</span></span>
+      </div>
+    </a>
+
+    <!-- Other four -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
+      <a id="exp-extension" href="#devis" style="border: 1px solid #e7e0d3; border-radius: 6px; overflow: hidden; background: #fff; display: flex; flex-direction: column;" style-hover="border-color: #c9c0ae;">
+        <div style="position: relative; aspect-ratio: 4 / 3; background: #ece7dd;"><image-slot id="exp-extension-photo" shape="rect" placeholder="Extension"></image-slot></div>
+        <div style="padding: 24px 24px 26px;"><div style="font-family: 'Bricolage Grotesque', sans-serif; color: #b1a795; font-weight: 600; font-size: 13px; margin-bottom: 12px;">02</div><h3 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 19px; line-height: 1.15; margin: 0 0 8px;">Extension &amp; surélévation</h3><p style="font-size: 14px; line-height: 1.55; color: #7a7162; margin: 0;">Gagner de la surface sans déménager.</p></div>
+      </a>
+      <a id="exp-piscine" href="#devis" style="border: 1px solid #e7e0d3; border-radius: 6px; overflow: hidden; background: #fff; display: flex; flex-direction: column;" style-hover="border-color: #c9c0ae;">
+        <div style="position: relative; aspect-ratio: 4 / 3; background: #ece7dd;"><image-slot id="exp-piscine-photo" shape="rect" placeholder="Piscine &amp; extérieur"></image-slot></div>
+        <div style="padding: 24px 24px 26px;"><div style="font-family: 'Bricolage Grotesque', sans-serif; color: #b1a795; font-weight: 600; font-size: 13px; margin-bottom: 12px;">03</div><h3 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 19px; line-height: 1.15; margin: 0 0 8px;">Piscine &amp; aménagement extérieur</h3><p style="font-size: 14px; line-height: 1.55; color: #7a7162; margin: 0;">Terrasses, piscines et abords soignés.</p></div>
+      </a>
+      <a id="exp-cuisine" href="#devis" style="border: 1px solid #e7e0d3; border-radius: 6px; overflow: hidden; background: #fff; display: flex; flex-direction: column;" style-hover="border-color: #c9c0ae;">
+        <div style="position: relative; aspect-ratio: 4 / 3; background: #ece7dd;"><image-slot id="exp-cuisine-photo" shape="rect" placeholder="Cuisine &amp; SdB"></image-slot></div>
+        <div style="padding: 24px 24px 26px;"><div style="font-family: 'Bricolage Grotesque', sans-serif; color: #b1a795; font-weight: 600; font-size: 13px; margin-bottom: 12px;">04</div><h3 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 19px; line-height: 1.15; margin: 0 0 8px;">Cuisine &amp; salle de bain</h3><p style="font-size: 14px; line-height: 1.55; color: #7a7162; margin: 0;">Pièces d'eau et cuisines clés en main.</p></div>
+      </a>
+      <a id="exp-amenagement" href="#devis" style="border: 1px solid #e7e0d3; border-radius: 6px; overflow: hidden; background: #fff; display: flex; flex-direction: column;" style-hover="border-color: #c9c0ae;">
+        <div style="position: relative; aspect-ratio: 4 / 3; background: #ece7dd;"><image-slot id="exp-amenagement-photo" shape="rect" placeholder="Aménagement intérieur"></image-slot></div>
+        <div style="padding: 24px 24px 26px;"><div style="font-family: 'Bricolage Grotesque', sans-serif; color: #b1a795; font-weight: 600; font-size: 13px; margin-bottom: 12px;">05</div><h3 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 19px; line-height: 1.15; margin: 0 0 8px;">Aménagement intérieur sur-mesure</h3><p style="font-size: 14px; line-height: 1.55; color: #7a7162; margin: 0;">Rangements, dressings, menuiseries dessinés pour vous.</p></div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ RÉALISATIONS ============ -->
+  <section id="realisations" style="max-width: 1240px; margin: 0 auto; padding: 104px 40px 0;">
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; margin-bottom: 44px;">
+      <div style="max-width: 640px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px; font-size: 13px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #8a8070;"><span style="width: 26px; height: 1px; background: #e47b02;"></span>Réalisations récentes</div>
+        <h2 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: clamp(30px, 4vw, 46px); line-height: 1.05; letter-spacing: -0.015em; margin: 0; text-wrap: balance;">Des chantiers réels, près de chez vous.</h2>
+      </div>
+      <a href="#" style="display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 16px; white-space: nowrap; padding-bottom: 6px;">Toutes les réalisations <span style="color: #e47b02;">→</span></a>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
+      <a href="#" style="display: block;">
+        <div style="position: relative; aspect-ratio: 3 / 4; background: #ece7dd; border-radius: 6px; overflow: hidden; margin-bottom: 16px;"><image-slot id="real-1" shape="rect" placeholder="Réalisation"></image-slot><span style="position: absolute; top: 14px; left: 14px; background: rgba(251,250,247,0.94); color: #211c17; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; padding: 6px 11px; border-radius: 3px;">Mérignac</span></div>
+        <h3 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 18px; margin: 0 0 4px; line-height: 1.2;">Maison des années 70 rénovée</h3>
+        <div style="font-size: 14px; color: #7a7162;">Rénovation globale · 165 m²</div>
+      </a>
+      <a href="#" style="display: block;">
+        <div style="position: relative; aspect-ratio: 3 / 4; background: #ece7dd; border-radius: 6px; overflow: hidden; margin-bottom: 16px;"><image-slot id="real-2" shape="rect" placeholder="Réalisation"></image-slot><span style="position: absolute; top: 14px; left: 14px; background: rgba(251,250,247,0.94); color: #211c17; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; padding: 6px 11px; border-radius: 3px;">Cap Ferret</span></div>
+        <h3 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 18px; margin: 0 0 4px; line-height: 1.2;">Villa avec extension bois</h3>
+        <div style="font-size: 14px; color: #7a7162;">Extension &amp; surélévation · 48 m²</div>
+      </a>
+      <a href="#" style="display: block;">
+        <div style="position: relative; aspect-ratio: 3 / 4; background: #ece7dd; border-radius: 6px; overflow: hidden; margin-bottom: 16px;"><image-slot id="real-3" shape="rect" placeholder="Réalisation"></image-slot><span style="position: absolute; top: 14px; left: 14px; background: rgba(251,250,247,0.94); color: #211c17; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; padding: 6px 11px; border-radius: 3px;">Pessac</span></div>
+        <h3 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 18px; margin: 0 0 4px; line-height: 1.2;">Appartement haussmannien</h3>
+        <div style="font-size: 14px; color: #7a7162;">Rénovation globale · 92 m²</div>
+      </a>
+      <a href="#" style="display: block;">
+        <div style="position: relative; aspect-ratio: 3 / 4; background: #ece7dd; border-radius: 6px; overflow: hidden; margin-bottom: 16px;"><image-slot id="real-4" shape="rect" placeholder="Réalisation"></image-slot><span style="position: absolute; top: 14px; left: 14px; background: rgba(251,250,247,0.94); color: #211c17; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; padding: 6px 11px; border-radius: 3px;">Andernos</span></div>
+        <h3 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 18px; margin: 0 0 4px; line-height: 1.2;">Maison de plain-pied &amp; piscine</h3>
+        <div style="font-size: 14px; color: #7a7162;">Piscine &amp; extérieur · 210 m²</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ ZONE D'INTERVENTION ============ -->
+  <section style="margin-top: 104px; background: #f2eee5; border-top: 1px solid #eae3d6; border-bottom: 1px solid #eae3d6;">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 84px 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 56px; align-items: center;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px; font-size: 13px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #8a8070;"><span style="width: 26px; height: 1px; background: #e47b02;"></span>Zone d'intervention</div>
+        <h2 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: clamp(28px, 3.6vw, 42px); line-height: 1.06; letter-spacing: -0.015em; margin: 0 0 20px; text-wrap: balance;">100 km autour de Bordeaux.</h2>
+        <p style="font-size: 17px; line-height: 1.62; color: #554e42; margin: 0 0 30px; max-width: 460px;">Une présence forte sur Bordeaux Métropole et le Bassin d'Arcachon. Nous nous déplaçons pour évaluer votre projet sur site.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+          <span style="font-size: 14px; font-weight: 500; background: #fbfaf7; border: 1px solid #e2daca; padding: 9px 15px; border-radius: 4px;">Bordeaux</span>
+          <span style="font-size: 14px; font-weight: 500; background: #fbfaf7; border: 1px solid #e2daca; padding: 9px 15px; border-radius: 4px;">Mérignac</span>
+          <span style="font-size: 14px; font-weight: 500; background: #fbfaf7; border: 1px solid #e2daca; padding: 9px 15px; border-radius: 4px;">Pessac</span>
+          <span style="font-size: 14px; font-weight: 500; background: #fbfaf7; border: 1px solid #e2daca; padding: 9px 15px; border-radius: 4px;">Andernos</span>
+          <span style="font-size: 14px; font-weight: 500; background: #fbfaf7; border: 1px solid #e2daca; padding: 9px 15px; border-radius: 4px;">Cap Ferret</span>
+          <span style="font-size: 14px; font-weight: 500; background: #fbfaf7; border: 1px solid #e2daca; padding: 9px 15px; border-radius: 4px;">Arcachon</span>
+        </div>
+      </div>
+      <div style="position: relative; aspect-ratio: 5 / 4; background: #fbfaf7; border: 1px solid #e6ddcc; border-radius: 6px; overflow: hidden;">
+        <svg viewBox="0 0 500 400" style="position: absolute; inset: 0; width: 100%; height: 100%;">
+          <defs><radialGradient id="rg" cx="46%" cy="52%" r="55%"><stop offset="0%" stop-color="#f6f2e9"/><stop offset="100%" stop-color="#fbfaf7"/></radialGradient></defs>
+          <rect width="500" height="400" fill="url(#rg)"/>
+          <path d="M120 30 C 155 90, 130 150, 150 200 C 168 245, 140 300, 165 370" fill="none" stroke="#d9cfba" stroke-width="2" stroke-dasharray="2 6" stroke-linecap="round"/>
+          <text x="112" y="24" font-family="Hanken Grotesk" font-size="11" fill="#b1a795" text-anchor="middle">Océan</text>
+          <circle cx="232" cy="208" r="118" fill="none" stroke="#e0d6c3" stroke-width="1.5"/>
+          <circle cx="232" cy="208" r="70" fill="none" stroke="#eadfcb" stroke-width="1.5"/>
+          <text x="352" y="150" font-family="Hanken Grotesk" font-size="11" fill="#b1a795">rayon 100 km</text>
+          <!-- Bordeaux -->
+          <circle cx="232" cy="208" r="7" fill="#e47b02"/><circle cx="232" cy="208" r="13" fill="none" stroke="#e47b02" stroke-opacity="0.35" stroke-width="2"/>
+          <text x="248" y="205" font-family="Bricolage Grotesque" font-size="15" font-weight="600" fill="#211c17">Bordeaux</text>
+          <circle cx="196" cy="190" r="4" fill="#8a8070"/><text x="150" y="182" font-family="Hanken Grotesk" font-size="12" fill="#554e42" text-anchor="end">Mérignac</text>
+          <circle cx="214" cy="244" r="4" fill="#8a8070"/><text x="222" y="262" font-family="Hanken Grotesk" font-size="12" fill="#554e42">Pessac</text>
+          <circle cx="126" cy="230" r="4" fill="#8a8070"/><text x="118" y="248" font-family="Hanken Grotesk" font-size="12" fill="#554e42" text-anchor="end">Andernos</text>
+          <circle cx="104" cy="272" r="4" fill="#8a8070"/><text x="96" y="290" font-family="Hanken Grotesk" font-size="12" fill="#554e42" text-anchor="end">Cap Ferret</text>
+          <circle cx="150" cy="300" r="4" fill="#8a8070"/><text x="158" y="316" font-family="Hanken Grotesk" font-size="12" fill="#554e42">Arcachon</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MÉTHODE ============ -->
+  <section id="entreprise" style="max-width: 1240px; margin: 0 auto; padding: 104px 40px 0;">
+    <div style="max-width: 640px; margin-bottom: 48px;">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px; font-size: 13px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #8a8070;"><span style="width: 26px; height: 1px; background: #e47b02;"></span>Notre méthode</div>
+      <h2 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: clamp(30px, 4vw, 46px); line-height: 1.05; letter-spacing: -0.015em; margin: 0; text-wrap: balance;">Quatre étapes, zéro mauvaise surprise.</h2>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0;">
+      <div style="padding: 32px 28px 34px; border-top: 1px solid #e7e0d3;"><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 15px; color: #e47b02; margin-bottom: 40px;">01</div><h3 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 21px; margin: 0 0 10px;">Premier contact</h3><p style="font-size: 14.5px; line-height: 1.55; color: #7a7162; margin: 0;">Nous échangeons sur votre projet, vos contraintes et votre enveloppe budgétaire.</p></div>
+      <div style="padding: 32px 28px 34px; border-top: 1px solid #e7e0d3;"><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 15px; color: #e47b02; margin-bottom: 40px;">02</div><h3 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 21px; margin: 0 0 10px;">Étude &amp; chiffrage</h3><p style="font-size: 14.5px; line-height: 1.55; color: #7a7162; margin: 0;">Visite sur site, plans et devis détaillé, poste par poste, sans zone d'ombre.</p></div>
+      <div style="padding: 32px 28px 34px; border-top: 1px solid #e7e0d3;"><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 15px; color: #e47b02; margin-bottom: 40px;">03</div><h3 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 21px; margin: 0 0 10px;">Réalisation</h3><p style="font-size: 14.5px; line-height: 1.55; color: #7a7162; margin: 0;">Nous coordonnons les corps de métier et vous tenons informé à chaque phase.</p></div>
+      <div style="padding: 32px 28px 34px; border-top: 1px solid #e7e0d3;"><div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 15px; color: #e47b02; margin-bottom: 40px;">04</div><h3 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 21px; margin: 0 0 10px;">Livraison</h3><p style="font-size: 14.5px; line-height: 1.55; color: #7a7162; margin: 0;">Réception des travaux, levée des réserves et garanties activées.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ GUIDES ============ -->
+  <section id="guides" style="max-width: 1240px; margin: 0 auto; padding: 104px 40px 0;">
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; margin-bottom: 44px;">
+      <div style="max-width: 640px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px; font-size: 13px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #8a8070;"><span style="width: 26px; height: 1px; background: #e47b02;"></span>Guides</div>
+        <h2 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: clamp(30px, 4vw, 46px); line-height: 1.05; letter-spacing: -0.015em; margin: 0; text-wrap: balance;">Comprendre avant de se lancer.</h2>
+      </div>
+      <a href="#" style="display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 16px; white-space: nowrap; padding-bottom: 6px;">Tous les guides <span style="color: #e47b02;">→</span></a>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;">
+      <a href="#" style="display: block; border-top: 2px solid #211c17; padding-top: 22px;">
+        <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #a99f8d; margin-bottom: 14px;">Budget</div>
+        <h3 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 22px; line-height: 1.18; margin: 0 0 12px; text-wrap: pretty;">Combien coûte une rénovation globale en 2026 ?</h3>
+        <p style="font-size: 14.5px; line-height: 1.55; color: #7a7162; margin: 0 0 16px;">Les postes de dépense, les fourchettes au m² et les leviers pour maîtriser l'enveloppe.</p>
+        <span style="font-size: 14.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">Lire le guide <span style="color: #e47b02;">→</span></span>
+      </a>
+      <a href="#" style="display: block; border-top: 2px solid #211c17; padding-top: 22px;">
+        <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #a99f8d; margin-bottom: 14px;">Démarches</div>
+        <h3 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 22px; line-height: 1.18; margin: 0 0 12px; text-wrap: pretty;">Extension : quelles autorisations d'urbanisme ?</h3>
+        <p style="font-size: 14.5px; line-height: 1.55; color: #7a7162; margin: 0 0 16px;">Déclaration préalable, permis de construire, seuils de surface : ce qu'il faut anticiper.</p>
+        <span style="font-size: 14.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">Lire le guide <span style="color: #e47b02;">→</span></span>
+      </a>
+      <a href="#" style="display: block; border-top: 2px solid #211c17; padding-top: 22px;">
+        <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #a99f8d; margin-bottom: 14px;">Rénovation énergétique</div>
+        <h3 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 22px; line-height: 1.18; margin: 0 0 12px; text-wrap: pretty;">Isolation : par quoi commencer chez soi ?</h3>
+        <p style="font-size: 14.5px; line-height: 1.55; color: #7a7162; margin: 0 0 16px;">Priorités, aides mobilisables et gains de confort attendus selon votre logement.</p>
+        <span style="font-size: 14.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">Lire le guide <span style="color: #e47b02;">→</span></span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ CTA FINAL ============ -->
+  <section id="devis" style="max-width: 1240px; margin: 104px auto 0; padding: 0 40px;">
+    <div style="background: #211c17; border-radius: 8px; padding: clamp(48px, 6vw, 84px) clamp(28px, 5vw, 64px); display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; align-items: center;">
+      <div>
+        <h2 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: clamp(30px, 3.8vw, 48px); line-height: 1.04; letter-spacing: -0.02em; margin: 0 0 18px; color: #fbf8f2; text-wrap: balance;">Un projet en tête ? Parlons-en.</h2>
+        <p style="font-size: 18px; line-height: 1.6; color: #b8b0a2; margin: 0; max-width: 460px;">Décrivez votre projet en quelques minutes. Nous revenons vers vous pour organiser une visite et vous remettre un chiffrage détaillé.</p>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 14px; align-items: flex-start;">
+        <a href="#" style="display: inline-flex; align-items: center; gap: 10px; background: #e47b02; color: #211410; padding: 17px 30px; border-radius: 4px; font-size: 17px; font-weight: 700;" style-hover="background: #f38a15;">Demander un devis gratuit <span>→</span></a>
+        <span style="font-size: 14px; color: #8f877a;">Réponse sous 48 h ouvrées · sans engagement</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer style="margin-top: 96px; border-top: 1px solid #ece6da; background: #fbfaf7;">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 64px 40px 40px;">
+      <div style="display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.3fr; gap: 48px; padding-bottom: 52px; border-bottom: 1px solid #ece6da; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));">
+        <div>
+          <div style="display: flex; align-items: baseline; gap: 2px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: 0.12em; margin-bottom: 18px;">ACRE<span style="color: #e47b02;">.</span></div>
+          <p style="font-size: 15px; line-height: 1.6; color: #7a7162; margin: 0 0 20px; max-width: 300px;">Entreprise générale de rénovation en Gironde. Interlocuteur unique, gestion de A à Z, depuis 2018.</p>
+          <div style="font-size: 13.5px; color: #a99f8d;">Garantie décennale · Assurances professionnelles</div>
+        </div>
+        <div>
+          <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #a99f8d; margin-bottom: 18px;">Expertises</div>
+          <div style="display: flex; flex-direction: column; gap: 11px; font-size: 15px; color: #554e42;">
+            <a href="#renovation-globale">Rénovation globale</a>
+            <a href="#exp-extension">Extension &amp; surélévation</a>
+            <a href="#exp-piscine">Piscine &amp; extérieur</a>
+            <a href="#exp-cuisine">Cuisine &amp; salle de bain</a>
+            <a href="#exp-amenagement">Aménagement sur-mesure</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #a99f8d; margin-bottom: 18px;">Entreprise</div>
+          <div style="display: flex; flex-direction: column; gap: 11px; font-size: 15px; color: #554e42;">
+            <a href="#realisations">Réalisations</a>
+            <a href="#guides">Guides</a>
+            <a href="#entreprise">Notre méthode</a>
+            <a href="#devis">Demander un devis</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #a99f8d; margin-bottom: 18px;">Nos zones d'intervention</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 14.5px; color: #554e42; max-width: 320px;">
+            <a href="#">Bordeaux</a><a href="#">Mérignac</a><a href="#">Pessac</a><a href="#">Talence</a><a href="#">Bègles</a><a href="#">Le Bouscat</a><a href="#">Andernos-les-Bains</a><a href="#">Cap Ferret</a><a href="#">Arcachon</a><a href="#">Gujan-Mestras</a><a href="#">Arès</a><a href="#">Libourne</a>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 20px; padding-top: 26px; font-size: 13.5px; color: #a99f8d; flex-wrap: wrap;">
+        <span>© 2026 Acre Rénovation — Tous droits réservés</span>
+        <div style="display: flex; gap: 22px;"><a href="#">Mentions légales</a><a href="#">Politique de confidentialité</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ MOBILE STICKY CTA ============ -->
+  <div style="position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: rgba(251,250,247,0.95); backdrop-filter: blur(8px); border-top: 1px solid #ece6da; display: {{ stickyDisplay }};">
+    <a href="#devis" style="display: flex; align-items: center; justify-content: center; gap: 9px; background: #211c17; color: #f7f3ec; padding: 15px; border-radius: 4px; font-size: 16px; font-weight: 600;"><span style="width: 7px; height: 7px; border-radius: 50%; background: #e47b02;"></span>Demander un devis</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = { expertisesOpen: false, isMobile: false };
+  componentDidMount() {
+    this._mq = window.matchMedia('(max-width: 860px)');
+    this._sync = () => this.setState({ isMobile: this._mq.matches });
+    this._sync();
+    this._mq.addEventListener('change', this._sync);
+  }
+  componentWillUnmount() { this._mq && this._mq.removeEventListener('change', this._sync); }
+  renderVals() {
+    return {
+      expertisesOpen: this.state.expertisesOpen,
+      openExpertises: () => this.setState({ expertisesOpen: true }),
+      closeExpertises: () => this.setState({ expertisesOpen: false }),
+      caretTransform: this.state.expertisesOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+      stickyDisplay: this.state.isMobile ? 'block' : 'none',
+    };
+  }
+}
+</script>
+</body>
+</html>

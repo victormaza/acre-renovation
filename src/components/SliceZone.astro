@@ -1,0 +1,24 @@
+---
+// Rendu d'une slice zone Prismic. Remplace le <SliceZone> des intégrations
+// officielles, qui n'existe pas pour Astro.
+// Une slice dont le type n'est pas dans la table est ignorée : un slice ajouté
+// côté Prismic avant d'être codé ne casse pas le build.
+import Hero from '../slices/hero/index.astro';
+
+const components: Record<string, any> = {
+	hero: Hero,
+};
+
+interface Props {
+	slices: { slice_type: string; id?: string }[];
+}
+
+const { slices } = Astro.props;
+---
+
+{
+	slices.map((slice) => {
+		const Component = components[slice.slice_type];
+		return Component ? <Component slice={slice} /> : null;
+	})
+}

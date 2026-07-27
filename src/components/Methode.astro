@@ -1,0 +1,83 @@
+---
+import SectionHead from './SectionHead.astro';
+
+interface Props {
+	id?: string;
+	eyebrow: string;
+	title: string;
+	steps: { index: string; title: string; text: string }[];
+}
+
+const { id, eyebrow, title, steps } = Astro.props;
+---
+
+<section class="container section" id={id}>
+	<div class="head">
+		<SectionHead eyebrow={eyebrow} title={title} />
+	</div>
+
+	<ol class="steps">
+		{
+			steps.map((step) => (
+				<li class="step">
+					<p class="step__index">{step.index}</p>
+					<h3 class="step__title">{step.title}</h3>
+					<p class="step__text">{step.text}</p>
+				</li>
+			))
+		}
+	</ol>
+</section>
+
+<style>
+	/* L'en-tête de cette section est plus resserré que le gabarit commun. */
+	.head {
+		max-width: 640px;
+		margin-bottom: 48px;
+	}
+
+	.head :global(.head) {
+		margin-bottom: 0;
+	}
+
+	.steps {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.step {
+		padding: 32px 28px 34px;
+		border-top: 1px solid var(--line-warm);
+	}
+
+	.step__index {
+		font-family: var(--font-title);
+		font-weight: 700;
+		font-size: 15px;
+		color: var(--accent);
+		margin: 0 0 40px;
+	}
+
+	.step__title {
+		font-family: var(--font-title);
+		font-weight: 600;
+		font-size: 21px;
+		margin: 0 0 10px;
+	}
+
+	.step__text {
+		font-size: 14.5px;
+		line-height: 1.55;
+		color: var(--muted);
+		margin: 0;
+	}
+
+	@media (max-width: 640px) {
+		.step {
+			padding-inline: 0;
+		}
+	}
+</style>

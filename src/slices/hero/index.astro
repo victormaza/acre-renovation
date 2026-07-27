@@ -1,0 +1,56 @@
+---
+// Adaptateur : traduit les champs Prismic en props de Hero.astro.
+// Tout le markup reste dans le composant ; ce fichier ne fait que du mapping.
+//
+// Le type est décrit à la main d'après model.json. Slice Machine générerait
+// normalement `prismicio-types.d.ts`, mais il ne supporte pas Astro.
+import { asText, asLink } from '@prismicio/client';
+import type { ImageFieldImage, KeyTextField, RichTextField } from '@prismicio/client';
+import Hero from '../../components/Hero.astro';
+
+/** Lien répétable avec texte et variante — `allowText` + `repeat` + `variants`. */
+interface ButtonLink {
+	text?: string | null;
+	variant?: string | null;
+}
+
+export interface HeroSlice {
+	slice_type: 'hero';
+	primary: {
+		eyebrow: KeyTextField;
+		title: RichTextField;
+		text: RichTextField;
+		buttons: ButtonLink[];
+		image: ImageFieldImage;
+	};
+}
+
+const { primary } = Astro.props.slice as HeroSlice;
+
+// Le design attend un bouton plein puis un bouton contour. On se fie à la
+// variante choisie dans Prismic, avec l'ordre de saisie comme repli.
+const buttons = primary.buttons ?? [];
+const filled = buttons.find((b) => b.variant === 'Filled') ?? buttons[0];
+const outline = buttons.find((b) => b.variant === 'Outline') ?? buttons[1];
+
+const toCta = (button?: ButtonLink) => ({
+	label: button?.text ?? '',
+	href: (button && asLink(button as Parameters<typeof asLink>[0])) || '#',
+});
+
+interface Props {
+	slice: HeroSlice;
+}
+---
+
+<Hero
+	eyebrow={primary.eyebrow ?? ''}
+	title={asText(primary.title)}
+	text={asText(primary.text)}
+	primaryCta={toCta(filled)}
+	secondaryCta={toCta(outline)}
+	image={{
+		field: primary.image,
+		sizes: '(min-width: 1320px) 1240px, calc(100vw - 80px)',
+	}}
+/>
