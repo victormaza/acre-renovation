@@ -1,0 +1,4 @@
+# Redirections 301 de l'ancien site vers le nouveau.
+# Format : /ancienne-url  /nouvelle-url  301
+# Une règle par ligne, la première qui correspond gagne.
+# Rempli à partir du mapping issu du crawl avant la bascule DNS.

@@ -1,0 +1,87 @@
+---
+// Emplacement photo, seul point du site qui sait d'où vient une image.
+//
+// `field` reçoit un champ Image de Prismic : le srcset responsive et la
+// conversion WebP/AVIF sont délégués au CDN via les paramètres imgix. À défaut,
+// `src` permet une image statique, et sans rien on affiche le placeholder du
+// prototype. Il n'existe pas d'intégration Prismic officielle pour Astro, d'où
+// ces quelques lignes plutôt qu'un <PrismicImage>.
+import { asImageWidthSrcSet, isFilled } from '@prismicio/client';
+import type { ImageFieldImage } from '@prismicio/client';
+
+interface Props {
+	field?: ImageFieldImage | null;
+	widths?: number[];
+	sizes?: string;
+	src?: string;
+	alt?: string;
+	placeholder?: string;
+	ratio: string;
+	radius?: string;
+	loading?: 'eager' | 'lazy';
+}
+
+const {
+	field,
+	widths = [640, 960, 1280, 1600, 2000],
+	sizes = '100vw',
+	src,
+	alt = '',
+	placeholder = 'Photo',
+	ratio,
+	radius = '0',
+	loading = 'lazy',
+} = Astro.props;
+
+const prismicImage =
+	field && isFilled.image(field)
+		? asImageWidthSrcSet(field, { widths, auto: ['format', 'compress'] })
+		: null;
+---
+
+<div class="photo" style={`aspect-ratio: ${ratio}; border-radius: ${radius};`}>
+	{
+		prismicImage ? (
+			<img
+				src={prismicImage.src}
+				srcset={prismicImage.srcset}
+				sizes={sizes}
+				alt={field?.alt ?? ''}
+				loading={loading}
+				decoding="async"
+			/>
+		) : src ? (
+			<img src={src} alt={alt} loading={loading} decoding="async" />
+		) : (
+			<span class="photo__placeholder">{placeholder}</span>
+		)
+	}
+</div>
+
+<style>
+	.photo {
+		position: relative;
+		width: 100%;
+		overflow: hidden;
+		background: var(--bg-photo);
+	}
+
+	.photo img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.photo__placeholder {
+		position: absolute;
+		inset: 0;
+		display: grid;
+		place-items: center;
+		padding: 16px;
+		text-align: center;
+		font-size: 13px;
+		font-weight: 500;
+		letter-spacing: 0.04em;
+		color: var(--muted-softer);
+	}
+</style>

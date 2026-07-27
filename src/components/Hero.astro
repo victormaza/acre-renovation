@@ -1,0 +1,78 @@
+---
+import Photo from './Photo.astro';
+import type { CtaInput, PhotoInput } from '../types';
+
+interface Props {
+	eyebrow: string;
+	title: string;
+	text: string;
+	primaryCta: CtaInput;
+	secondaryCta: CtaInput;
+	image: PhotoInput;
+}
+
+const { eyebrow, title, text, primaryCta, secondaryCta, image } = Astro.props;
+---
+
+<section class="hero">
+	<div class="container">
+		<div class="hero__text">
+			<p class="eyebrow">{eyebrow}</p>
+			<h1 class="hero__title">{title}</h1>
+			<p class="hero__lead">{text}</p>
+			<div class="hero__actions">
+				<a class="btn btn--dark" href={primaryCta.href}>
+					<span class="btn-dot"></span>{primaryCta.label}
+				</a>
+				<a class="btn btn--outline" href={secondaryCta.href}>
+					{secondaryCta.label} <span class="arrow">→</span>
+				</a>
+			</div>
+		</div>
+	</div>
+	<div class="container hero__media">
+		<Photo {...image} ratio="16 / 8" radius="var(--radius-md)" loading="eager" />
+	</div>
+</section>
+
+<style>
+	.hero {
+		padding-top: 64px;
+	}
+
+	.hero__text {
+		max-width: 900px;
+	}
+
+	.eyebrow {
+		margin: 0 0 22px;
+	}
+
+	.hero__title {
+		font-family: var(--font-title);
+		font-weight: 600;
+		font-size: clamp(40px, 6vw, 72px);
+		line-height: 1.02;
+		letter-spacing: -0.02em;
+		margin: 0 0 26px;
+		text-wrap: balance;
+	}
+
+	.hero__lead {
+		font-size: 19px;
+		line-height: 1.6;
+		color: var(--text);
+		max-width: 620px;
+		margin: 0 0 34px;
+	}
+
+	.hero__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 14px;
+	}
+
+	.hero__media {
+		margin-top: 56px;
+	}
+</style>

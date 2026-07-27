@@ -1,0 +1,64 @@
+{
+  "id": "hero",
+  "type": "SharedSlice",
+  "name": "Hero",
+  "description": "Bandeau d'ouverture : surtitre, titre, accroche, boutons et grande photo.",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "description": "Hero",
+      "docURL": "",
+      "version": "initial",
+      "imageUrl": "",
+      "primary": {
+        "eyebrow": {
+          "type": "Text",
+          "config": {
+            "label": "Surtitre",
+            "placeholder": "Entreprise générale de rénovation · Gironde"
+          }
+        },
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Titre",
+            "single": "heading1",
+            "placeholder": "Votre rénovation globale, menée de A à Z…"
+          }
+        },
+        "text": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Accroche",
+            "single": "paragraph",
+            "placeholder": "Deux ou trois phrases sous le titre"
+          }
+        },
+        "buttons": {
+          "type": "Link",
+          "config": {
+            "label": "Boutons",
+            "select": null,
+            "allowText": true,
+            "allowTargetBlank": false,
+            "repeat": true,
+            "variants": ["Filled", "Outline"]
+          }
+        },
+        "image": {
+          "type": "Image",
+          "config": {
+            "label": "Photo pleine largeur",
+            "constraint": {
+              "width": 2000,
+              "height": 1000
+            },
+            "thumbnails": []
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

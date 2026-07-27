@@ -1,0 +1,175 @@
+---
+import Photo from './Photo.astro';
+import SectionHead from './SectionHead.astro';
+
+interface Expertise {
+	id: string;
+	index: string;
+	title: string;
+	text: string;
+	href: string;
+	image: { src?: string; alt?: string; placeholder?: string };
+}
+
+interface Props {
+	id?: string;
+	eyebrow: string;
+	title: string;
+	featured: Expertise & { linkLabel: string };
+	items: Expertise[];
+}
+
+const { id, eyebrow, title, featured, items } = Astro.props;
+---
+
+<section class="container section" id={id}>
+	<SectionHead eyebrow={eyebrow} title={title} />
+
+	<a class="featured" id={featured.id} href={featured.href}>
+		<Photo {...featured.image} ratio="4 / 3" />
+		<div class="featured__body">
+			<p class="featured__index">{featured.index}</p>
+			<h3 class="featured__title">{featured.title}</h3>
+			<p class="featured__text">{featured.text}</p>
+			<span class="arrow-link featured__link">
+				{featured.linkLabel} <span class="arrow">→</span>
+			</span>
+		</div>
+	</a>
+
+	<ul class="cards">
+		{
+			items.map((item) => (
+				<li>
+					<a class="card" id={item.id} href={item.href}>
+						<Photo {...item.image} ratio="4 / 3" />
+						<div class="card__body">
+							<p class="card__index">{item.index}</p>
+							<h3 class="card__title">{item.title}</h3>
+							<p class="card__text">{item.text}</p>
+						</div>
+					</a>
+				</li>
+			))
+		}
+	</ul>
+</section>
+
+<style>
+	/* ---- Carte mise en avant ---- */
+
+	.featured {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+		border: 1px solid var(--line-warm);
+		border-radius: var(--radius-md);
+		overflow: hidden;
+		margin-bottom: 20px;
+		background: var(--surface);
+		transition: border-color 0.18s ease;
+	}
+
+	.featured:hover {
+		border-color: var(--line-stronger);
+		color: inherit;
+	}
+
+	.featured__body {
+		padding: 48px 46px;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.featured__index {
+		font-family: var(--font-title);
+		color: var(--accent);
+		font-weight: 600;
+		font-size: 15px;
+		margin: 0 0 22px;
+	}
+
+	.featured__title {
+		font-family: var(--font-title);
+		font-weight: 600;
+		font-size: 32px;
+		line-height: 1.08;
+		letter-spacing: -0.01em;
+		margin: 0 0 16px;
+	}
+
+	.featured__text {
+		font-size: 16px;
+		line-height: 1.62;
+		color: var(--text);
+		margin: 0 0 28px;
+		max-width: 440px;
+	}
+
+	.featured__link {
+		margin-top: auto;
+	}
+
+	/* ---- Cartes secondaires ---- */
+
+	.cards {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		gap: 20px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.card {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		border: 1px solid var(--line-warm);
+		border-radius: var(--radius-md);
+		overflow: hidden;
+		background: var(--surface);
+		transition: border-color 0.18s ease;
+	}
+
+	.card:hover {
+		border-color: var(--line-stronger);
+		color: inherit;
+	}
+
+	.card__body {
+		padding: 24px 24px 26px;
+	}
+
+	.card__index {
+		font-family: var(--font-title);
+		color: var(--muted-softer);
+		font-weight: 600;
+		font-size: 13px;
+		margin: 0 0 12px;
+	}
+
+	.card__title {
+		font-family: var(--font-title);
+		font-weight: 600;
+		font-size: 19px;
+		line-height: 1.15;
+		margin: 0 0 8px;
+	}
+
+	.card__text {
+		font-size: 14px;
+		line-height: 1.55;
+		color: var(--muted);
+		margin: 0;
+	}
+
+	@media (max-width: 640px) {
+		.featured__body {
+			padding: 32px 28px;
+		}
+
+		.featured__title {
+			font-size: 26px;
+		}
+	}
+</style>
