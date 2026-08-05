@@ -34,7 +34,7 @@ Domaine cible : `acre-renovation.fr`
 - [x] Dépôt Git poussé sur GitHub
 - [x] Cloudflare Workers connecté au dépôt
 - [x] Sauvegarde des URLs de l'ancien site récupérée (crawl)
-- [x] Home issue de Claude Design intégrée (en local, pas encore déployée)
+- [x] Home issue de Claude Design intégrée, fusionnée sur `main` et déployée sur l'URL `.workers.dev`
 - [x] Client Prismic et synchro du schéma câblés
 - [x] Chaîne Prismic → build → HTML validée de bout en bout sur le slice `hero`
 - [x] Les 8 slices de la home modélisés, poussés et branchés — `index.astro` ne contient plus aucun contenu
