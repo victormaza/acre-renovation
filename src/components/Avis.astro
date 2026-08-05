@@ -1,0 +1,162 @@
+---
+import SectionHead from './SectionHead.astro';
+
+interface Props {
+	id?: string;
+	eyebrow: string;
+	title: string;
+	linkLabel?: string;
+	linkHref?: string;
+	summary?: { average: string; count: string; stars: number };
+	items: { author: string; rating: number; text: string; date: string }[];
+}
+
+const { id, eyebrow, title, linkLabel, linkHref, summary, items } = Astro.props;
+
+const stars = [1, 2, 3, 4, 5];
+---
+
+<section class="container section" id={id}>
+	<SectionHead eyebrow={eyebrow} title={title} linkLabel={linkLabel} linkHref={linkHref} />
+
+	{
+		summary && (
+			<p class="summary">
+				<span class="summary__average">{summary.average}</span>
+				<span class="stars">
+					{stars.map((step) => (
+						<span
+							class="star"
+							class:list={{ 'star--on': step <= summary.stars }}
+							aria-hidden="true"
+						>
+							★
+						</span>
+					))}
+				</span>
+				<span class="summary__count">{summary.count}</span>
+			</p>
+		)
+	}
+
+	<ul class="grid">
+		{
+			items.map((item) => (
+				<li class="avis">
+					<p class="stars" aria-label={`Note : ${item.rating} sur 5`}>
+						{stars.map((step) => (
+							<span class="star" class:list={{ 'star--on': step <= item.rating }} aria-hidden="true">
+								★
+							</span>
+						))}
+					</p>
+					<blockquote class="avis__text">{item.text}</blockquote>
+					<footer class="avis__footer">
+						<span class="avis__author">{item.author}</span>
+						{item.date && <span class="avis__date">{item.date}</span>}
+					</footer>
+				</li>
+			))
+		}
+	</ul>
+</section>
+
+<style>
+	/* Résumé chiffré, aligné sous l'en-tête de section. */
+	.summary {
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 12px;
+		margin: -24px 0 36px;
+	}
+
+	.summary__average {
+		font-family: var(--font-title);
+		font-weight: 600;
+		font-size: 30px;
+		line-height: 1;
+	}
+
+	.summary__count {
+		font-size: 14.5px;
+		color: var(--muted);
+	}
+
+	.stars {
+		display: inline-flex;
+		gap: 2px;
+		margin: 0;
+		font-size: 15px;
+		line-height: 1;
+	}
+
+	/* Les étoiles éteintes restent visibles, en gris clair : sans elles, une
+	   note de 3 se lit comme trois étoiles sur trois. */
+	.star {
+		color: var(--line-stronger);
+	}
+
+	.star--on {
+		color: var(--accent);
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+		gap: 20px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.avis {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		padding: 26px 28px 24px;
+		border: 1px solid var(--line-warm);
+		border-radius: var(--radius-md);
+		background: var(--surface);
+	}
+
+	.avis .stars {
+		font-size: 14px;
+	}
+
+	.avis__text {
+		margin: 0;
+		font-size: 15.5px;
+		line-height: 1.6;
+		color: var(--text);
+		text-wrap: pretty;
+	}
+
+	.avis__text::before {
+		content: '« ';
+	}
+
+	.avis__text::after {
+		content: ' »';
+	}
+
+	/* Repoussé en bas de carte pour que les auteurs s'alignent d'une carte à
+	   l'autre malgré des avis de longueurs différentes. */
+	.avis__footer {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 12px;
+		margin-top: auto;
+		padding-top: 4px;
+		font-size: 13.5px;
+	}
+
+	.avis__author {
+		font-weight: 600;
+	}
+
+	.avis__date {
+		color: var(--muted-soft);
+	}
+</style>

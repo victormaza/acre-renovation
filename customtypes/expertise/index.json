@@ -1,0 +1,84 @@
+{
+  "id": "expertise",
+  "label": "Expertise",
+  "repeatable": true,
+  "json": {
+    "Main": {
+      "uid": {
+        "type": "UID",
+        "config": {
+          "label": "Identifiant d'URL",
+          "placeholder": "renovation-globale"
+        }
+      },
+      "title": {
+        "type": "Text",
+        "config": {
+          "label": "Titre",
+          "placeholder": "Rénovation globale de maison & d'appartement"
+        }
+      },
+      "badge": {
+        "type": "Text",
+        "config": {
+          "label": "Étiquette",
+          "placeholder": "Activité principale — affichée seulement en mise en avant"
+        }
+      },
+      "short_text": {
+        "type": "Text",
+        "config": {
+          "label": "Phrase de présentation",
+          "placeholder": "Reprise dans la grille des expertises sur la page d'accueil"
+        }
+      },
+      "cta_label": {
+        "type": "Text",
+        "config": {
+          "label": "Libellé du lien",
+          "placeholder": "Découvrir la rénovation globale — sans flèche, elle est ajoutée à l'affichage"
+        }
+      },
+      "image": {
+        "type": "Image",
+        "config": {
+          "label": "Photo",
+          "constraint": {
+            "width": 1200,
+            "height": 900
+          },
+          "thumbnails": []
+        }
+      }
+    },
+    "SEO & Metadata": {
+      "meta_title": {
+        "type": "Text",
+        "config": {
+          "label": "Titre de la page",
+          "placeholder": "Affiché dans l'onglet du navigateur et sur Google"
+        }
+      },
+      "meta_description": {
+        "type": "Text",
+        "config": {
+          "label": "Description",
+          "placeholder": "Résumé affiché sous le titre dans les résultats de recherche"
+        }
+      },
+      "meta_image": {
+        "type": "Image",
+        "config": {
+          "label": "Image de partage",
+          "constraint": {
+            "width": 1200,
+            "height": 630
+          },
+          "thumbnails": []
+        }
+      }
+    }
+  },
+  "status": true,
+  "format": "page"
+}

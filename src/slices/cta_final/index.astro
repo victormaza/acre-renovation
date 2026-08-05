@@ -1,0 +1,37 @@
+---
+import { asText, asLink } from '@prismicio/client';
+import type { KeyTextField, LinkField, RichTextField } from '@prismicio/client';
+import CtaFinal from '../../components/CtaFinal.astro';
+
+export interface CtaFinalSlice {
+	slice_type: 'cta_final';
+	primary: {
+		title: RichTextField;
+		text: RichTextField;
+		button: LinkField & { text?: string | null };
+		note: KeyTextField;
+	};
+}
+
+interface Props {
+	slice: CtaFinalSlice;
+}
+
+const { primary } = Astro.props.slice;
+---
+
+<!--
+	L'ancre #devis est conservée : elle reste la cible des liens saisis dans
+	Prismic avant l'ouverture de /devis. Les CTA du gabarit (en-tête, pied de
+	page, barre mobile) pointent désormais sur la page — voir data/settings.ts.
+-->
+<CtaFinal
+	id="devis"
+	title={asText(primary.title)}
+	text={asText(primary.text)}
+	cta={{
+		label: primary.button?.text ?? 'Demander un devis',
+		href: asLink(primary.button) ?? '#',
+	}}
+	note={primary.note ?? ''}
+/>

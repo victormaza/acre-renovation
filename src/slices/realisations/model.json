@@ -1,0 +1,65 @@
+{
+  "id": "realisations",
+  "type": "SharedSlice",
+  "name": "Réalisations",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "description": "Réalisations",
+      "imageUrl": "",
+      "docURL": "",
+      "version": "initial",
+      "primary": {
+        "eyebrow": {
+          "type": "Text",
+          "config": {
+            "label": "Surtitre",
+            "placeholder": "Réalisations récentes"
+          }
+        },
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Titre",
+            "placeholder": "Des chantiers réels, près de chez vous.",
+            "single": "heading2"
+          }
+        },
+        "link": {
+          "type": "Link",
+          "config": {
+            "label": "Lien « voir tout »",
+            "select": null,
+            "allowTargetBlank": false,
+            "allowText": true,
+            "repeat": false
+          }
+        },
+        "items": {
+          "type": "Group",
+          "config": {
+            "label": "Réalisations affichées (vide = les 4 dernières publiées)",
+            "fields": {
+              "realisation": {
+                "type": "Link",
+                "config": {
+                  "label": "Réalisation",
+                  "select": "document",
+                  "customtypes": [
+                    "realisation"
+                  ],
+                  "allowTargetBlank": false,
+                  "allowText": false,
+                  "repeat": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "items": {}
+    }
+  ],
+  "description": "Grille de chantiers récents, avec badge ville sur la photo. Le contenu vient des documents « Réalisation ». Liste vide = les 4 dernières publiées."
+}

@@ -8,18 +8,76 @@ export const repositoryName = '3u0gsum3';
 
 // Mapping type + UID → chemin d'URL. C'est ce qui alimente `document.url`,
 // donc les liens internes n'ont jamais à être construits à la main.
-//
-// Prismic valide cette table contre les types existants et refuse la requête
-// si l'un d'eux est inconnu : n'ajouter une ligne qu'une fois le custom type
-// créé. Les chemins restent à confirmer avec le plan de redirections 301.
-export const routes: prismic.ClientConfig['routes'] = [
+// Les chemins restent à confirmer avec le plan de redirections 301.
+export const routes: NonNullable<prismic.ClientConfig['routes']> = [
 	{ type: 'homepage', path: '/' },
-	// À réactiver au fur et à mesure de la création des types :
-	// { type: 'realisation', path: '/realisations/:uid' },
-	// { type: 'guide', path: '/guides/:uid' },
-	// { type: 'expertise', path: '/expertises/:uid' },
+	{ type: 'realisation', path: '/realisations/:uid' },
+	{ type: 'guide', path: '/guides/:uid' },
+	{ type: 'expertise', path: '/expertises/:uid' },
+	// À ajouter le jour où le type existe :
 	// { type: 'page_ville', path: '/renovation/:uid' },
 ];
 
-export const createClient = (config: prismic.ClientConfig = {}) =>
-	prismic.createClient(repositoryName, { routes, ...config });
+// L'API de contenu n'annonce un type qu'à partir de son premier document, et
+// rejette *toute* la table de routes si l'un des types cités lui est inconnu.
+// Déclarer `realisation` avant que la première réalisation soit publiée ferait
+// donc échouer jusqu'à la requête de la home. On n'envoie que les routes des
+// types réellement présents : chacune s'active d'elle-même quand le contenu
+// arrive, et le build ne dépend plus de l'ordre de saisie.
+let advertisedTypes: Promise<Set<string>> | undefined;
+
+const getAdvertisedTypes = () => {
+	advertisedTypes ??= prismic
+		.createClient(repositoryName)
+		.getRepository()
+		.then((repository) => new Set(Object.keys(repository.types)));
+	return advertisedTypes;
+};
+
+export const createClient = async (config: prismic.ClientConfig = {}) => {
+	const types = await getAdvertisedTypes();
+	return prismic.createClient(repositoryName, {
+		routes: routes.filter((route) => types.has(route.type)),
+		...config,
+	});
+};
+
+/**
+ * Résout les documents référencés par une slice de listing.
+ *
+ * Les slices `expertises`, `realisations` et `guides` ne stockent plus le
+ * contenu des cartes : elles pointent vers les documents. Le client crée une
+ * fiche une seule fois, et la home suit — pas de recopie, pas de désynchro.
+ *
+ * `picks` vide n'est pas une erreur mais le mode par défaut : on retombe sur
+ * les derniers documents publiés du type. Publier une réalisation suffit donc
+ * à la faire apparaître, la sélection manuelle ne servant qu'à forcer un
+ * ordre ou une vitrine précise.
+ */
+export async function resolvePicks<TDocument extends prismic.PrismicDocument>(
+	type: string,
+	picks: prismic.LinkField[],
+	fallback: { limit?: number; direction?: 'asc' | 'desc' } = {},
+): Promise<TDocument[]> {
+	// Type sans aucun document : la section n'a rien à afficher, et l'API
+	// n'accepterait pas encore d'être interrogée dessus.
+	if (!(await getAdvertisedTypes()).has(type)) return [];
+
+	const client = await createClient();
+	const ids = picks.filter(prismic.isFilled.contentRelationship).map((pick) => pick.id);
+
+	if (ids.length > 0) {
+		// `getByIDs` ne garantit pas l'ordre du tableau demandé : on le rétablit.
+		// Un document dépublié disparaît de la réponse, et donc de la grille,
+		// plutôt que de laisser une carte vide ou un lien mort.
+		const { results } = await client.getByIDs<TDocument>(ids, { pageSize: ids.length });
+		const byID = new Map(results.map((document) => [document.id, document]));
+		return ids.map((id) => byID.get(id)).filter((document) => document !== undefined);
+	}
+
+	const { limit, direction = 'desc' } = fallback;
+	return client.getAllByType<TDocument>(type, {
+		limit,
+		orderings: [{ field: 'document.first_publication_date', direction }],
+	});
+}

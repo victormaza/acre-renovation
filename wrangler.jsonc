@@ -1,8 +1,39 @@
 {
-    "name": "acre-renovation",
-    "compatibility_date": "2026-07-27",
-    "assets": {
-      "directory": "./dist",
-      "not_found_handling": "404-page"
-    }
+  "name": "acre-renovation",
+  "compatibility_date": "2026-07-27",
+
+  // Le Worker n'est plus purement statique : `src/pages/api/devis.ts` est la
+  // seule route rendue à la demande, tout le reste est prérendu et servi comme
+  // asset.
+  //
+  // Pas de clé `main` ici : l'adapter Astro l'ajoute lui-même, et la déclarer
+  // casse le build — le plugin Vite de Cloudflare cherche à la résoudre avant
+  // que `dist/` existe. C'est aussi lui qui recale `assets.directory` sur la
+  // sortie réelle.
+  //
+  // Le déploiement ne se fait donc PAS avec ce fichier mais avec celui que
+  // l'adapter en dérive au build : `npm run deploy`, soit
+  // `wrangler deploy -c dist/server/wrangler.json`. Ce fichier-ci reste la
+  // source éditable — nom, date de compatibilité, variables.
+  // `drop-trailing-slash` : /devis est servi directement au lieu d'être
+  // redirigé en 307 vers /devis/. C'est la forme qu'ont déjà les URLs produites
+  // par la table de routes Prismic (/realisations/:uid…) et celle vers laquelle
+  // pointeront les redirections 301 de l'ancien site — une seule forme
+  // canonique, aucun saut inutile sur les CTA.
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+    "html_handling": "drop-trailing-slash"
+  },
+
+  // Destinataire et expéditeur de la demande de devis. Ce ne sont pas des
+  // secrets : les versionner documente la configuration. L'expéditeur doit être
+  // un domaine ou un envoyeur validé côté Brevo, sinon l'API refuse l'envoi.
+  // La clé d'API, elle, se pose à part : `wrangler secret put BREVO_API_KEY`.
+  //
+  // TODO — confirmer les deux adresses avec le client avant la mise en ligne.
+  "vars": {
+    "DEVIS_TO_EMAIL": "contact@acre-renovation.fr",
+    "DEVIS_FROM_EMAIL": "no-reply@acre-renovation.fr"
   }
+}

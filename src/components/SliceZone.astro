@@ -4,9 +4,25 @@
 // Une slice dont le type n'est pas dans la table est ignorée : un slice ajouté
 // côté Prismic avant d'être codé ne casse pas le build.
 import Hero from '../slices/hero/index.astro';
+import Reassurance from '../slices/reassurance/index.astro';
+import ZoneIntervention from '../slices/zone_intervention/index.astro';
+import Methode from '../slices/methode/index.astro';
+import Expertises from '../slices/expertises/index.astro';
+import Realisations from '../slices/realisations/index.astro';
+import Guides from '../slices/guides/index.astro';
+import Avis from '../slices/avis/index.astro';
+import CtaFinal from '../slices/cta_final/index.astro';
 
 const components: Record<string, any> = {
 	hero: Hero,
+	reassurance: Reassurance,
+	expertises: Expertises,
+	realisations: Realisations,
+	zone_intervention: ZoneIntervention,
+	methode: Methode,
+	guides: Guides,
+	avis: Avis,
+	cta_final: CtaFinal,
 };
 
 interface Props {

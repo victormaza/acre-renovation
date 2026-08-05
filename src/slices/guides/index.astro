@@ -1,0 +1,63 @@
+---
+import { asText, asLink, isFilled } from '@prismicio/client';
+import type { KeyTextField, LinkField, PrismicDocument, RichTextField } from '@prismicio/client';
+import Guides from '../../components/Guides.astro';
+import { resolvePicks } from '../../prismicio';
+
+type GuideDocument = PrismicDocument<
+	{
+		title: KeyTextField;
+		category: KeyTextField;
+		excerpt: RichTextField;
+	},
+	'guide'
+>;
+
+export interface GuidesSlice {
+	slice_type: 'guides';
+	primary: {
+		eyebrow: KeyTextField;
+		title: RichTextField;
+		link: LinkField & { text?: string | null };
+		item_link_label: KeyTextField;
+		items: { guide: LinkField }[];
+	};
+}
+
+interface Props {
+	slice: GuidesSlice;
+}
+
+const { primary } = Astro.props.slice;
+
+const hasLink = isFilled.link(primary.link);
+
+// Trois cartes par ligne dans le design : au-delà, la grille se dédouble et
+// déséquilibre la section.
+const documents = await resolvePicks<GuideDocument>(
+	'guide',
+	(primary.items ?? []).map((item) => item.guide),
+	{ limit: 3 },
+);
+
+const items = documents.map((document) => ({
+	category: document.data.category ?? '',
+	title: document.data.title ?? '',
+	excerpt: asText(document.data.excerpt),
+	href: document.url ?? '#',
+}));
+---
+
+{
+	items.length > 0 && (
+		<Guides
+			id="guides"
+			eyebrow={primary.eyebrow ?? ''}
+			title={asText(primary.title)}
+			linkLabel={hasLink ? (primary.link.text ?? 'Tout voir') : undefined}
+			linkHref={hasLink ? (asLink(primary.link) ?? undefined) : undefined}
+			linkItemLabel={primary.item_link_label ?? 'Lire le guide'}
+			items={items}
+		/>
+	)
+}

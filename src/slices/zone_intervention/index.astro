@@ -1,0 +1,33 @@
+---
+import { asText } from '@prismicio/client';
+import type { KeyTextField, RichTextField } from '@prismicio/client';
+import ZoneIntervention from '../../components/ZoneIntervention.astro';
+
+export interface ZoneInterventionSlice {
+	slice_type: 'zone_intervention';
+	primary: {
+		eyebrow: KeyTextField;
+		title: RichTextField;
+		text: RichTextField;
+		cities: { name: KeyTextField }[];
+	};
+}
+
+interface Props {
+	slice: ZoneInterventionSlice;
+}
+
+const { primary } = Astro.props.slice;
+
+// Une ville laissée vide dans Prismic ne doit pas produire une pastille vide.
+const cities = (primary.cities ?? [])
+	.map((city) => city.name?.trim() ?? '')
+	.filter(Boolean);
+---
+
+<ZoneIntervention
+	eyebrow={primary.eyebrow ?? ''}
+	title={asText(primary.title)}
+	text={asText(primary.text)}
+	cities={cities}
+/>

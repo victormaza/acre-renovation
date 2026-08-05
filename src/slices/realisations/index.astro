@@ -1,0 +1,69 @@
+---
+import { asText, asLink, isFilled } from '@prismicio/client';
+import type {
+	ImageFieldImage,
+	KeyTextField,
+	LinkField,
+	PrismicDocument,
+	RichTextField,
+} from '@prismicio/client';
+import Realisations from '../../components/Realisations.astro';
+import { resolvePicks } from '../../prismicio';
+
+type RealisationDocument = PrismicDocument<
+	{
+		title: KeyTextField;
+		city: KeyTextField;
+		meta: KeyTextField;
+		image: ImageFieldImage;
+	},
+	'realisation'
+>;
+
+export interface RealisationsSlice {
+	slice_type: 'realisations';
+	primary: {
+		eyebrow: KeyTextField;
+		title: RichTextField;
+		link: LinkField & { text?: string | null };
+		items: { realisation: LinkField }[];
+	};
+}
+
+interface Props {
+	slice: RealisationsSlice;
+}
+
+const { primary } = Astro.props.slice;
+
+// Le lien « voir tout » disparaît tant qu'il n'est pas renseigné, plutôt que
+// de pointer vers une page qui n'existe pas encore.
+const hasLink = isFilled.link(primary.link);
+
+const documents = await resolvePicks<RealisationDocument>(
+	'realisation',
+	(primary.items ?? []).map((item) => item.realisation),
+	{ limit: 4 },
+);
+
+const items = documents.map((document) => ({
+	city: document.data.city ?? '',
+	title: document.data.title ?? '',
+	meta: document.data.meta ?? '',
+	href: document.url ?? '#',
+	image: { field: document.data.image, sizes: '(min-width: 900px) 300px, 50vw' },
+}));
+---
+
+{
+	items.length > 0 && (
+		<Realisations
+			id="realisations"
+			eyebrow={primary.eyebrow ?? ''}
+			title={asText(primary.title)}
+			linkLabel={hasLink ? (primary.link.text ?? 'Tout voir') : undefined}
+			linkHref={hasLink ? (asLink(primary.link) ?? undefined) : undefined}
+			items={items}
+		/>
+	)
+}

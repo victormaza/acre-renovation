@@ -1,0 +1,84 @@
+---
+import { asText } from '@prismicio/client';
+import type {
+	ImageFieldImage,
+	KeyTextField,
+	LinkField,
+	PrismicDocument,
+	RichTextField,
+} from '@prismicio/client';
+import Expertises from '../../components/Expertises.astro';
+import { resolvePicks } from '../../prismicio';
+import { slugify } from '../../utils';
+
+type ExpertiseDocument = PrismicDocument<
+	{
+		title: KeyTextField;
+		badge: KeyTextField;
+		short_text: KeyTextField;
+		cta_label: KeyTextField;
+		image: ImageFieldImage;
+	},
+	'expertise'
+>;
+
+export interface ExpertisesSlice {
+	slice_type: 'expertises';
+	primary: {
+		eyebrow: KeyTextField;
+		title: RichTextField;
+		items: { expertise: LinkField }[];
+	};
+}
+
+interface Props {
+	slice: ExpertisesSlice;
+}
+
+const { primary } = Astro.props.slice;
+
+// Repli par ordre croissant de publication : les expertises forment un
+// ensemble stable et volontairement ordonné, l'antériorité y est plus
+// parlante que la nouveauté.
+const documents = await resolvePicks<ExpertiseDocument>(
+	'expertise',
+	(primary.items ?? []).map((item) => item.expertise),
+	{ direction: 'asc' },
+);
+
+// L'ancre reste dérivée du titre, pas de l'UID : c'est elle que vise le menu
+// déroulant (voir src/data/settings.ts).
+const toCard = (document: ExpertiseDocument, index: number) => ({
+	id: slugify(document.data.title ?? '') || `expertise-${index + 1}`,
+	index: String(index + 1).padStart(2, '0'),
+	title: document.data.title ?? '',
+	text: document.data.short_text ?? '',
+	href: document.url ?? '#',
+	image: { field: document.data.image, sizes: '(min-width: 900px) 300px, 50vw' },
+});
+
+// La première expertise de la liste occupe la grande carte, les suivantes la
+// grille. Réordonner dans Prismic change donc la mise en avant et renumérote.
+const [first, ...rest] = documents;
+
+const featured = first && {
+	...toCard(first, 0),
+	index: `01 — ${first.data.badge ?? ''}`.replace(/—\s*$/, '').trim(),
+	linkLabel: first.data.cta_label ?? 'En savoir plus',
+	image: { field: first.data.image, sizes: '(min-width: 900px) 620px, 100vw' },
+};
+
+const items = rest.map((document, index) => toCard(document, index + 1));
+---
+
+{
+	featured && (
+		<Expertises
+			id="renovation-globale"
+			eyebrow={primary.eyebrow ?? ''}
+			title={asText(primary.title)}
+			featured={featured}
+			items={items}
+		/>
+	)
+}

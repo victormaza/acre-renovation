@@ -1,0 +1,96 @@
+{
+  "id": "avis",
+  "type": "SharedSlice",
+  "name": "Avis clients",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "description": "Avis clients",
+      "imageUrl": "",
+      "docURL": "",
+      "version": "initial",
+      "primary": {
+        "eyebrow": {
+          "type": "Text",
+          "config": {
+            "label": "Surtitre",
+            "placeholder": "Avis clients"
+          }
+        },
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Titre",
+            "placeholder": "Ce qu'en disent nos clients.",
+            "single": "heading2"
+          }
+        },
+        "link": {
+          "type": "Link",
+          "config": {
+            "label": "Lien vers la fiche Google",
+            "select": null,
+            "allowTargetBlank": false,
+            "allowText": true,
+            "repeat": false
+          }
+        },
+        "rating_average": {
+          "type": "Text",
+          "config": {
+            "label": "Note globale (laisser vide pour masquer le résumé)",
+            "placeholder": "4,9"
+          }
+        },
+        "rating_count": {
+          "type": "Number",
+          "config": {
+            "label": "Nombre total d'avis Google",
+            "placeholder": "37"
+          }
+        },
+        "items": {
+          "type": "Group",
+          "config": {
+            "label": "Avis (recopiés depuis la fiche Google)",
+            "fields": {
+              "author": {
+                "type": "Text",
+                "config": {
+                  "label": "Auteur",
+                  "placeholder": "Marie L."
+                }
+              },
+              "rating": {
+                "type": "Select",
+                "config": {
+                  "label": "Note",
+                  "placeholder": "5",
+                  "options": ["5", "4", "3", "2", "1"],
+                  "default_value": "5"
+                }
+              },
+              "text": {
+                "type": "StructuredText",
+                "config": {
+                  "label": "Avis",
+                  "placeholder": "Chantier tenu dans les délais, équipe à l'écoute du début à la fin.",
+                  "single": "paragraph"
+                }
+              },
+              "date": {
+                "type": "Date",
+                "config": {
+                  "label": "Date de l'avis"
+                }
+              }
+            }
+          }
+        }
+      },
+      "items": {}
+    }
+  ],
+  "description": "Avis clients recopiés depuis la fiche Google, avec note globale et lien vers la fiche. Section masquée tant qu'aucun avis n'est saisi."
+}

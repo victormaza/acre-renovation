@@ -9,9 +9,14 @@ interface Props {
 	title: string;
 	description?: string;
 	noindex?: boolean;
+	/**
+	 * Retire navigation, pied de page et barre CTA. Réservé au tunnel de devis :
+	 * tout lien latéral y est une occasion d'abandonner en cours de route.
+	 */
+	bare?: boolean;
 }
 
-const { title, description, noindex = false } = Astro.props;
+const { title, description, noindex = false, bare = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://acre-renovation.fr');
 ---
 
@@ -33,21 +38,31 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://acre-renova
 		<meta property="og:url" content={canonical} />
 		<meta name="generator" content={Astro.generator} />
 	</head>
-	<body>
-		<Header nav={nav} cta={devisCta} />
-		<main>
-			<slot />
-		</main>
-		<Footer {...footer} />
-		<StickyCta {...devisCta} />
+	<body class={bare ? 'is-bare' : undefined}>
+		{bare ? <slot /> : (
+			<>
+				<Header nav={nav} cta={devisCta} />
+				<main>
+					<slot />
+				</main>
+				<Footer {...footer} />
+				<StickyCta {...devisCta} />
+			</>
+		)}
 	</body>
 </html>
 
 <style>
 	/* Laisse la place à la barre CTA collante en bas d'écran. */
 	@media (max-width: 860px) {
-		body {
+		body:not(.is-bare) {
 			padding-bottom: 84px;
 		}
+	}
+
+	.is-bare {
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
 	}
 </style>

@@ -1,0 +1,102 @@
+---
+import Base from '../../layouts/Base.astro';
+import FunnelHeader from '../../components/FunnelHeader.astro';
+import { confirmation } from '../../data/devis';
+
+// Destination de la redirection 303 renvoyée par `/api/devis` quand le
+// formulaire est posté nativement, c'est-à-dire sans JavaScript. Avec JS, la
+// confirmation s'affiche en place et cette page n'est jamais atteinte —
+// elle donne aussi une URL propre à suivre en conversion.
+---
+
+<Base bare title="Demande envoyée — Acre Rénovation" noindex>
+	<FunnelHeader />
+	<main class="funnel">
+		<section class="done">
+			<p class="done__mark" aria-hidden="true">✓</p>
+			<h1 class="done__title">Demande envoyée, merci !</h1>
+			<p class="done__text">
+				Nous avons bien reçu votre projet. Un interlocuteur unique vous recontacte <strong
+					>sous {confirmation.delai}</strong
+				> pour organiser la suite.
+			</p>
+			<p class="done__sub">Un récapitulatif vient de partir vers nos équipes.</p>
+			<div class="done__links">
+				{
+					confirmation.links.map((link) => (
+						<a class={link.primary ? 'btn btn--dark' : 'btn btn--outline'} href={link.href}>
+							{link.label}
+							{link.primary && (
+								<span class="arrow" aria-hidden="true">
+									→
+								</span>
+							)}
+						</a>
+					))
+				}
+			</div>
+		</section>
+	</main>
+</Base>
+
+<style>
+	.funnel {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		width: 100%;
+		max-width: 680px;
+		margin-inline: auto;
+		padding: clamp(24px, 4vw, 44px) clamp(20px, 5vw, 40px) 40px;
+	}
+
+	.done {
+		text-align: center;
+		padding: clamp(30px, 6vw, 60px) 0;
+	}
+
+	.done__mark {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 76px;
+		height: 76px;
+		margin: 0 auto 26px;
+		font-size: 34px;
+		color: #3f7d32;
+		background: #e9f2e6;
+		border: 1px solid #cfe3c7;
+		border-radius: 50%;
+	}
+
+	.done__title {
+		font-family: var(--font-title);
+		font-weight: 600;
+		font-size: clamp(28px, 4.5vw, 40px);
+		line-height: 1.06;
+		letter-spacing: -0.015em;
+		margin: 0 0 14px;
+		text-wrap: balance;
+	}
+
+	.done__text {
+		max-width: 460px;
+		margin: 0 auto 8px;
+		font-size: 17px;
+		line-height: 1.6;
+		color: var(--text);
+	}
+
+	.done__sub {
+		margin: 0 0 34px;
+		font-size: 14.5px;
+		color: var(--muted-strong);
+	}
+
+	.done__links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+		justify-content: center;
+	}
+</style>
