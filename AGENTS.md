@@ -96,7 +96,8 @@ Intégrer la home produite par Claude Design, **découpée en composants**.
 
 Ce découpage n'est pas cosmétique : il définit le schéma de slices Prismic. Chaque section visuelle devient un composant qui **reçoit son contenu en props**, même si les valeurs sont codées en dur dans `index.astro` pour l'instant. Le jour où Prismic est branché, seule la source des props change ; le markup n'est pas retouché.
 
-Découpage réalisé, dérivé du handoff `design_handoff_accueil/` :
+Découpage réalisé, dérivé du handoff Claude Design de l'accueil (retiré du dépôt
+une fois l'intégration faite — le code livré fait foi) :
 
 ```
 src/
@@ -223,7 +224,8 @@ Points de structure :
 
 ## Formulaire de devis
 
-Dérivé du handoff `design_handoff_devis/`. Cinq étapes plus un écran de
+Dérivé du handoff Claude Design du devis, lui aussi retiré du dépôt après
+intégration. Cinq étapes plus un écran de
 confirmation, sur `/devis`, hors du gabarit du site : ni navigation, ni pied de
 page, ni barre CTA — d'où le drapeau `bare` de `Base.astro` et le composant
 `FunnelHeader.astro`, qui ne laisse qu'une seule sortie.
