@@ -1,0 +1,77 @@
+{
+  "id": "realisation",
+  "label": "Réalisation",
+  "repeatable": true,
+  "json": {
+    "Main": {
+      "uid": {
+        "type": "UID",
+        "config": {
+          "label": "Identifiant d'URL",
+          "placeholder": "maison-annees-70-merignac"
+        }
+      },
+      "title": {
+        "type": "Text",
+        "config": {
+          "label": "Titre",
+          "placeholder": "Maison des années 70 rénovée"
+        }
+      },
+      "city": {
+        "type": "Text",
+        "config": {
+          "label": "Ville",
+          "placeholder": "Mérignac"
+        }
+      },
+      "meta": {
+        "type": "Text",
+        "config": {
+          "label": "Précision",
+          "placeholder": "Rénovation globale · 165 m²"
+        }
+      },
+      "image": {
+        "type": "Image",
+        "config": {
+          "label": "Photo de couverture (format portrait)",
+          "constraint": {
+            "width": 900,
+            "height": 1200
+          },
+          "thumbnails": []
+        }
+      }
+    },
+    "SEO & Metadata": {
+      "meta_title": {
+        "type": "Text",
+        "config": {
+          "label": "Titre de la page",
+          "placeholder": "Affiché dans l'onglet du navigateur et sur Google"
+        }
+      },
+      "meta_description": {
+        "type": "Text",
+        "config": {
+          "label": "Description",
+          "placeholder": "Résumé affiché sous le titre dans les résultats de recherche"
+        }
+      },
+      "meta_image": {
+        "type": "Image",
+        "config": {
+          "label": "Image de partage",
+          "constraint": {
+            "width": 1200,
+            "height": 630
+          },
+          "thumbnails": []
+        }
+      }
+    }
+  },
+  "status": true,
+  "format": "page"
+}

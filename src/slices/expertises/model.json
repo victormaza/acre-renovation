@@ -1,0 +1,55 @@
+{
+  "id": "expertises",
+  "type": "SharedSlice",
+  "name": "Expertises",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "description": "Expertises",
+      "imageUrl": "",
+      "docURL": "",
+      "version": "initial",
+      "primary": {
+        "eyebrow": {
+          "type": "Text",
+          "config": {
+            "label": "Surtitre",
+            "placeholder": "Nos expertises"
+          }
+        },
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Titre",
+            "placeholder": "Un savoir-faire complet, du gros œuvre aux finitions.",
+            "single": "heading2"
+          }
+        },
+        "items": {
+          "type": "Group",
+          "config": {
+            "label": "Expertises affichées (la première est mise en avant)",
+            "fields": {
+              "expertise": {
+                "type": "Link",
+                "config": {
+                  "label": "Expertise",
+                  "select": "document",
+                  "customtypes": [
+                    "expertise"
+                  ],
+                  "allowTargetBlank": false,
+                  "allowText": false,
+                  "repeat": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "items": {}
+    }
+  ],
+  "description": "Grille d'expertises. Le contenu vient des documents « Expertise » : la première de la liste est mise en avant, la numérotation est calculée à l'affichage. Liste vide = toutes les expertises publiées."
+}

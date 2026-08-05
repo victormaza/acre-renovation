@@ -11,6 +11,30 @@
           "choices": {
             "hero": {
               "type": "SharedSlice"
+            },
+            "reassurance": {
+              "type": "SharedSlice"
+            },
+            "expertises": {
+              "type": "SharedSlice"
+            },
+            "realisations": {
+              "type": "SharedSlice"
+            },
+            "zone_intervention": {
+              "type": "SharedSlice"
+            },
+            "methode": {
+              "type": "SharedSlice"
+            },
+            "guides": {
+              "type": "SharedSlice"
+            },
+            "avis": {
+              "type": "SharedSlice"
+            },
+            "cta_final": {
+              "type": "SharedSlice"
             }
           }
         }

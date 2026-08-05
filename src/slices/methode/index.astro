@@ -1,0 +1,32 @@
+---
+import { asText } from '@prismicio/client';
+import type { KeyTextField, RichTextField } from '@prismicio/client';
+import Methode from '../../components/Methode.astro';
+
+export interface MethodeSlice {
+	slice_type: 'methode';
+	primary: {
+		eyebrow: KeyTextField;
+		title: RichTextField;
+		steps: { title: KeyTextField; text: RichTextField }[];
+	};
+}
+
+interface Props {
+	slice: MethodeSlice;
+}
+
+const { primary } = Astro.props.slice;
+
+// La numérotation 01, 02… suit l'ordre des étapes : elle n'est pas saisie
+// dans Prismic, sinon réordonner les étapes obligerait à tout renuméroter.
+const steps = (primary.steps ?? []).map((step, i) => ({
+	index: String(i + 1).padStart(2, '0'),
+	title: step.title ?? '',
+	text: asText(step.text),
+}));
+---
+
+<!-- L'ancre #entreprise est visée par la navigation : elle relève de la
+     structure du site, pas du contenu, donc elle reste ici. -->
+<Methode id="entreprise" eyebrow={primary.eyebrow ?? ''} title={asText(primary.title)} steps={steps} />

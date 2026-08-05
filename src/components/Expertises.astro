@@ -1,6 +1,7 @@
 ---
 import Photo from './Photo.astro';
 import SectionHead from './SectionHead.astro';
+import type { PhotoInput } from '../types';
 
 interface Expertise {
 	id: string;
@@ -8,7 +9,7 @@ interface Expertise {
 	title: string;
 	text: string;
 	href: string;
-	image: { src?: string; alt?: string; placeholder?: string };
+	image: PhotoInput;
 }
 
 interface Props {

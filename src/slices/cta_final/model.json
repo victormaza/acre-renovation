@@ -1,0 +1,52 @@
+{
+  "id": "cta_final",
+  "type": "SharedSlice",
+  "name": "Appel à l'action",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "description": "Appel à l'action",
+      "imageUrl": "",
+      "docURL": "",
+      "version": "initial",
+      "primary": {
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Titre",
+            "placeholder": "Un projet en tête ? Parlons-en.",
+            "single": "heading2"
+          }
+        },
+        "text": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Texte",
+            "placeholder": "Deux phrases pour inciter à la prise de contact",
+            "single": "paragraph"
+          }
+        },
+        "button": {
+          "type": "Link",
+          "config": {
+            "label": "Bouton",
+            "select": null,
+            "allowTargetBlank": false,
+            "allowText": true,
+            "repeat": false
+          }
+        },
+        "note": {
+          "type": "Text",
+          "config": {
+            "label": "Mention sous le bouton",
+            "placeholder": "Réponse sous 48 h ouvrées · sans engagement"
+          }
+        }
+      },
+      "items": {}
+    }
+  ],
+  "description": "Panneau sombre de fin de page : titre, texte, bouton orange et mention."
+}

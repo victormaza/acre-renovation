@@ -1,0 +1,72 @@
+{
+  "id": "guides",
+  "type": "SharedSlice",
+  "name": "Guides",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "description": "Guides",
+      "imageUrl": "",
+      "docURL": "",
+      "version": "initial",
+      "primary": {
+        "eyebrow": {
+          "type": "Text",
+          "config": {
+            "label": "Surtitre",
+            "placeholder": "Guides"
+          }
+        },
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Titre",
+            "placeholder": "Comprendre avant de se lancer.",
+            "single": "heading2"
+          }
+        },
+        "link": {
+          "type": "Link",
+          "config": {
+            "label": "Lien « voir tout »",
+            "select": null,
+            "allowTargetBlank": false,
+            "allowText": true,
+            "repeat": false
+          }
+        },
+        "item_link_label": {
+          "type": "Text",
+          "config": {
+            "label": "Libellé du lien de chaque carte",
+            "placeholder": "Lire le guide"
+          }
+        },
+        "items": {
+          "type": "Group",
+          "config": {
+            "label": "Guides affichés (vide = les 3 derniers publiés)",
+            "fields": {
+              "guide": {
+                "type": "Link",
+                "config": {
+                  "label": "Guide",
+                  "select": "document",
+                  "customtypes": [
+                    "guide"
+                  ],
+                  "allowTargetBlank": false,
+                  "allowText": false,
+                  "repeat": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "items": {}
+    }
+  ],
+  "description": "Trois articles de fond, sans visuel, séparés par un filet épais. Le contenu vient des documents « Guide ». Liste vide = les 3 derniers publiés."
+}

@@ -2,15 +2,14 @@
   "id": "hero",
   "type": "SharedSlice",
   "name": "Hero",
-  "description": "Bandeau d'ouverture : surtitre, titre, accroche, boutons et grande photo.",
   "variations": [
     {
       "id": "default",
       "name": "Default",
       "description": "Hero",
+      "imageUrl": "",
       "docURL": "",
       "version": "initial",
-      "imageUrl": "",
       "primary": {
         "eyebrow": {
           "type": "Text",
@@ -23,16 +22,16 @@
           "type": "StructuredText",
           "config": {
             "label": "Titre",
-            "single": "heading1",
-            "placeholder": "Votre rénovation globale, menée de A à Z…"
+            "placeholder": "Votre rénovation globale, menée de A à Z…",
+            "single": "heading1"
           }
         },
         "text": {
           "type": "StructuredText",
           "config": {
             "label": "Accroche",
-            "single": "paragraph",
-            "placeholder": "Deux ou trois phrases sous le titre"
+            "placeholder": "Deux ou trois phrases sous le titre",
+            "single": "paragraph"
           }
         },
         "buttons": {
@@ -40,10 +39,13 @@
           "config": {
             "label": "Boutons",
             "select": null,
-            "allowText": true,
             "allowTargetBlank": false,
+            "allowText": true,
             "repeat": true,
-            "variants": ["Filled", "Outline"]
+            "variants": [
+              "Filled",
+              "Outline"
+            ]
           }
         },
         "image": {
@@ -60,5 +62,6 @@
       },
       "items": {}
     }
-  ]
+  ],
+  "description": "Bandeau d'ouverture : surtitre, titre, accroche, boutons et grande photo."
 }

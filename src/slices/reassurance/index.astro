@@ -1,0 +1,24 @@
+---
+import type { KeyTextField } from '@prismicio/client';
+import Reassurance from '../../components/Reassurance.astro';
+
+export interface ReassuranceSlice {
+	slice_type: 'reassurance';
+	primary: {
+		items: { title: KeyTextField; text: KeyTextField }[];
+	};
+}
+
+interface Props {
+	slice: ReassuranceSlice;
+}
+
+const { primary } = Astro.props.slice;
+
+const items = (primary.items ?? []).map((item) => ({
+	title: item.title ?? '',
+	text: item.text ?? '',
+}));
+---
+
+<Reassurance items={items} />

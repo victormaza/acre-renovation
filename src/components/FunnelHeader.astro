@@ -1,0 +1,65 @@
+---
+// En-tête réduit du tunnel de devis : le logo et une seule sortie.
+// Pas de navigation ici — chaque lien de plus est une porte de sortie ouverte
+// au milieu d'un parcours que l'on cherche à faire terminer.
+---
+
+<header class="funnel-header">
+	<div class="funnel-header__inner">
+		<a class="logo" href="/">ACRE<span class="logo__dot">.</span></a>
+		<a class="funnel-header__back" href="/">
+			<span aria-hidden="true">←</span>Retour au site
+		</a>
+	</div>
+</header>
+
+<style>
+	.funnel-header {
+		background: rgb(251 250 247 / 0.92);
+		backdrop-filter: saturate(1.2) blur(8px);
+		border-bottom: 1px solid var(--line);
+	}
+
+	.funnel-header__inner {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 24px;
+		height: 72px;
+		max-width: 1000px;
+		margin-inline: auto;
+		padding-inline: clamp(20px, 5vw, 40px);
+	}
+
+	.logo {
+		display: flex;
+		align-items: baseline;
+		gap: 2px;
+		font-family: var(--font-title);
+		font-weight: 700;
+		font-size: 24px;
+		letter-spacing: 0.12em;
+		color: var(--ink);
+	}
+
+	.logo:hover {
+		color: var(--ink);
+	}
+
+	.logo__dot {
+		color: var(--accent);
+	}
+
+	.funnel-header__back {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 14.5px;
+		font-weight: 500;
+		color: var(--muted);
+	}
+
+	.funnel-header__back:hover {
+		color: var(--ink);
+	}
+</style>

@@ -1,0 +1,34 @@
+---
+import Base from '../layouts/Base.astro';
+import FunnelHeader from '../components/FunnelHeader.astro';
+import DevisForm from '../components/DevisForm.astro';
+import { footer } from '../data/settings';
+
+// La politique de confidentialité vit dans les liens légaux du pied de page :
+// on la reprend là plutôt que de dupliquer une URL qui bougera.
+const privacyHref =
+	footer.legal.find((link) => link.label.startsWith('Politique'))?.href ?? '/politique-de-confidentialite';
+---
+
+<Base
+	bare
+	title="Demande de devis — Acre Rénovation"
+	description="Décrivez votre projet de rénovation en 5 étapes. Réponse sous 48 h ouvrées, sans engagement."
+>
+	<FunnelHeader />
+	<main class="funnel">
+		<DevisForm privacyHref={privacyHref} />
+	</main>
+</Base>
+
+<style>
+	.funnel {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		width: 100%;
+		max-width: 680px;
+		margin-inline: auto;
+		padding: clamp(24px, 4vw, 44px) clamp(20px, 5vw, 40px) 40px;
+	}
+</style>

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  a { color: #e47b02; text-decoration: none; }
+  a:hover { color: #b85e04; }
+  ::selection { background: #e47b02; color: #fff; }
+  input, textarea, button { font-family: inherit; }
+  input:focus-visible, textarea:focus-visible, button:focus-visible { outline: 2px solid #e47b02; outline-offset: 2px; }
+  @keyframes acre-fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes acre-spin { to { transform: rotate(360deg); } }
+  ::placeholder { color: #a99f8d; }
+</style>
+</helmet>
+<div style="font-family: 'Hanken Grotesk', sans-serif; color: #211c17; background: #fbfaf7; -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; flex-direction: column;">
+
+  <!-- ============ HEADER ============ -->
+  <header style="background: rgba(251,250,247,0.92); backdrop-filter: saturate(1.2) blur(8px); border-bottom: 1px solid #ece6da;">
+    <div style="max-width: 1000px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 40px); height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px;">
+      <a href="#" style="display: flex; align-items: baseline; gap: 2px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: 0.12em; color: #211c17;">ACRE<span style="color: #e47b02;">.</span></a>
+      <a href="#" style="display: inline-flex; align-items: center; gap: 8px; font-size: 14.5px; font-weight: 500; color: #7a7162;" style-hover="color: #211c17;"><span style="font-size: 16px;">←</span>Retour au site</a>
+    </div>
+  </header>
+
+  <!-- ============ CONFIGURATOR SHELL ============ -->
+  <main style="flex: 1; width: 100%; max-width: 680px; margin: 0 auto; padding: clamp(24px, 4vw, 44px) clamp(20px, 5vw, 40px) 40px; display: flex; flex-direction: column;">
+
+    <!-- Progress header (hidden on confirmation) -->
+    <sc-if value="{{ showProgress }}" hint-placeholder-val="{{ true }}">
+      <div style="margin-bottom: clamp(28px, 4vw, 40px);">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; min-height: 34px;">
+          <sc-if value="{{ canGoBack }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ goBack }}" style="display: inline-flex; align-items: center; gap: 7px; background: none; border: 1px solid #d8d1c3; color: #3d372e; padding: 8px 14px; border-radius: 4px; font-size: 14px; font-weight: 500; cursor: pointer;" style-hover="border-color: #211c17;"><span style="font-size: 15px;">←</span>Retour</button>
+          </sc-if>
+          <sc-if value="{{ isFirstStep }}" hint-placeholder-val="{{ false }}">
+            <span style="font-size: 13px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #8a8070;">Demande de devis</span>
+          </sc-if>
+          <span style="font-size: 13.5px; font-weight: 600; color: #8a8070; white-space: nowrap;">Étape {{ stepNum }} sur 5</span>
+        </div>
+        <div style="height: 4px; background: #ece6da; border-radius: 999px; overflow: hidden;">
+          <div style="height: 100%; width: {{ progressPct }}; background: #e47b02; border-radius: 999px; transition: width .4s cubic-bezier(.4,0,.2,1);"></div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ---- STEP CONTENT ---- -->
+    <div key="{{ stepKey }}" style="animation: acre-fade .32s ease both; flex: 1;">
+
+      <!-- STEP 1 — project type -->
+      <sc-if value="{{ isStep1 }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <h1 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: clamp(26px, 4vw, 36px); line-height: 1.08; letter-spacing: -0.015em; margin: 0 0 8px; text-wrap: balance;">Quel est votre projet ?</h1>
+          <p style="font-size: 16px; line-height: 1.5; color: #7a7162; margin: 0 0 26px;">Sélectionnez le type de travaux. Vous préciserez les détails ensuite.</p>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <sc-for list="{{ projectTypes }}" as="opt" hint-placeholder-count="5">
+              <button onClick="{{ opt.select }}" style="{{ opt.cardStyle }}" style-hover="border-color: #211c17; background: #fff;">
+                <span style="display: flex; align-items: center; gap: 16px; text-align: left;">
+                  <span style="{{ opt.badgeStyle }}">{{ opt.num }}</span>
+                  <span>
+                    <span style="display: block; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 18px; line-height: 1.2;">{{ opt.label }}</span>
+                    <span style="display: block; font-size: 14px; color: #7a7162; margin-top: 3px;">{{ opt.hint }}</span>
+                  </span>
+                </span>
+                <span style="font-size: 20px; color: #c4bbab; flex-shrink: 0;">→</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- STEP 2 — property & surface -->
+      <sc-if value="{{ isStep2 }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <h1 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: clamp(26px, 4vw, 36px); line-height: 1.08; letter-spacing: -0.015em; margin: 0 0 8px; text-wrap: balance;">Votre bien</h1>
+          <p style="font-size: 16px; line-height: 1.5; color: #7a7162; margin: 0 0 26px;">Type de logement et surface concernée par les travaux.</p>
+
+          <div style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8a8070; margin-bottom: 12px;">Type de bien</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 30px;">
+            <sc-for list="{{ propertyTypes }}" as="opt" hint-placeholder-count="2">
+              <button onClick="{{ opt.select }}" style="{{ opt.style }}" style-hover="border-color: #211c17;">{{ opt.label }}</button>
+            </sc-for>
+          </div>
+
+          <div style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8a8070; margin-bottom: 12px;">Surface concernée</div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;">
+            <sc-for list="{{ surfaces }}" as="opt" hint-placeholder-count="5">
+              <button onClick="{{ opt.select }}" style="{{ opt.style }}" style-hover="border-color: #211c17;">{{ opt.label }}</button>
+            </sc-for>
+          </div>
+
+          <div style="margin-top: 36px;">
+            <button onClick="{{ next }}" disabled="{{ step2Disabled }}" style="{{ primaryBtnStyle }}" style-hover="{{ primaryBtnHover }}">Continuer <span>→</span></button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- STEP 3 — location -->
+      <sc-if value="{{ isStep3 }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <h1 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: clamp(26px, 4vw, 36px); line-height: 1.08; letter-spacing: -0.015em; margin: 0 0 8px; text-wrap: balance;">Où se situe le projet ?</h1>
+          <p style="font-size: 16px; line-height: 1.5; color: #7a7162; margin: 0 0 26px;">Nous intervenons dans un rayon de 100 km autour de Bordeaux.</p>
+
+          <label for="loc" style="display: block; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8a8070; margin-bottom: 12px;">Ville ou code postal</label>
+          <input id="loc" type="text" value="{{ location }}" onInput="{{ onLocation }}" placeholder="ex. Mérignac ou 33700" autoComplete="off" style="width: 100%; padding: 16px 18px; font-size: 17px; background: #fff; border: 1px solid #d8d1c3; border-radius: 6px; color: #211c17;" />
+
+          <sc-if value="{{ showZoneNote }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; gap: 12px; align-items: flex-start; margin-top: 16px; padding: 14px 16px; background: #f7f0e4; border: 1px solid #ecd9b8; border-radius: 6px;">
+              <span style="flex-shrink: 0; margin-top: 1px;">💬</span>
+              <span style="font-size: 14.5px; line-height: 1.5; color: #6b5e42;">Votre commune semble un peu éloignée de notre zone habituelle. Envoyez tout de même votre demande : nous étudions chaque projet et vous répondrons.</span>
+            </div>
+          </sc-if>
+
+          <div style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px;">
+            <sc-for list="{{ citySuggestions }}" as="c" hint-placeholder-count="6">
+              <button onClick="{{ c.select }}" style="font-size: 14px; font-weight: 500; background: #fff; border: 1px solid #e2daca; color: #3d372e; padding: 8px 14px; border-radius: 999px; cursor: pointer;" style-hover="border-color: #211c17;">{{ c.name }}</button>
+            </sc-for>
+          </div>
+
+          <div style="margin-top: 36px;">
+            <button onClick="{{ next }}" disabled="{{ step3Disabled }}" style="{{ primaryBtnStyle }}" style-hover="{{ primaryBtnHover }}">Continuer <span>→</span></button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- STEP 4 — budget & timing -->
+      <sc-if value="{{ isStep4 }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <h1 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: clamp(26px, 4vw, 36px); line-height: 1.08; letter-spacing: -0.015em; margin: 0 0 8px; text-wrap: balance;">Budget &amp; échéance</h1>
+          <p style="font-size: 16px; line-height: 1.5; color: #7a7162; margin: 0 0 26px;">Une estimation suffit — elle nous aide à calibrer notre proposition.</p>
+
+          <div style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8a8070; margin-bottom: 12px;">Budget envisagé</div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 30px;">
+            <sc-for list="{{ budgets }}" as="opt" hint-placeholder-count="5">
+              <button onClick="{{ opt.select }}" style="{{ opt.style }}" style-hover="border-color: #211c17;">{{ opt.label }}</button>
+            </sc-for>
+          </div>
+
+          <div style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8a8070; margin-bottom: 12px;">Échéance souhaitée</div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <sc-for list="{{ timings }}" as="opt" hint-placeholder-count="3">
+              <button onClick="{{ opt.select }}" style="{{ opt.style }}" style-hover="border-color: #211c17;">
+                <span style="display: flex; align-items: center; gap: 13px;"><span style="{{ opt.dotStyle }}"></span><span style="font-weight: 500;">{{ opt.label }}</span></span>
+                <span style="font-size: 14px; color: #7a7162;">{{ opt.hint }}</span>
+              </button>
+            </sc-for>
+          </div>
+
+          <div style="margin-top: 36px;">
+            <button onClick="{{ next }}" disabled="{{ step4Disabled }}" style="{{ primaryBtnStyle }}" style-hover="{{ primaryBtnHover }}">Continuer <span>→</span></button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- STEP 5 — contact -->
+      <sc-if value="{{ isStep5 }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <h1 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: clamp(26px, 4vw, 36px); line-height: 1.08; letter-spacing: -0.015em; margin: 0 0 8px; text-wrap: balance;">Vos coordonnées</h1>
+          <p style="font-size: 16px; line-height: 1.5; color: #7a7162; margin: 0 0 24px;">Dernière étape. Un email <em>ou</em> un téléphone suffit pour vous recontacter.</p>
+
+          <!-- recap -->
+          <div style="background: #f2eee5; border: 1px solid #eae3d6; border-radius: 6px; padding: 16px 18px; margin-bottom: 28px;">
+            <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #a99f8d; margin-bottom: 12px;">Votre projet</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+              <sc-for list="{{ recap }}" as="r" hint-placeholder-count="4">
+                <span style="font-size: 13.5px; font-weight: 500; background: #fbfaf7; border: 1px solid #e2daca; color: #3d372e; padding: 6px 12px; border-radius: 999px;">{{ r }}</span>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+            <div>
+              <label for="fn" style="display: block; font-size: 13px; font-weight: 600; color: #3d372e; margin-bottom: 7px;">Prénom</label>
+              <input id="fn" type="text" value="{{ firstName }}" onInput="{{ onField.firstName }}" style="{{ inputStyle }}" />
+            </div>
+            <div>
+              <label for="ln" style="display: block; font-size: 13px; font-weight: 600; color: #3d372e; margin-bottom: 7px;">Nom</label>
+              <input id="ln" type="text" value="{{ lastName }}" onInput="{{ onField.lastName }}" style="{{ inputStyle }}" />
+            </div>
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <label for="em" style="display: block; font-size: 13px; font-weight: 600; color: #3d372e; margin-bottom: 7px;">Email</label>
+            <input id="em" type="email" value="{{ email }}" onInput="{{ onField.email }}" onBlur="{{ validateContact }}" placeholder="vous@exemple.fr" style="{{ emailStyle }}" />
+            <sc-if value="{{ emailError }}" hint-placeholder-val="{{ false }}"><div style="font-size: 13px; color: #b3401a; margin-top: 6px;">{{ emailError }}</div></sc-if>
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <label for="tel" style="display: block; font-size: 13px; font-weight: 600; color: #3d372e; margin-bottom: 7px;">Téléphone</label>
+            <input id="tel" type="tel" value="{{ phone }}" onInput="{{ onField.phone }}" onBlur="{{ validateContact }}" placeholder="06 12 34 56 78" style="{{ phoneStyle }}" />
+            <sc-if value="{{ phoneError }}" hint-placeholder-val="{{ false }}"><div style="font-size: 13px; color: #b3401a; margin-top: 6px;">{{ phoneError }}</div></sc-if>
+          </div>
+
+          <sc-if value="{{ contactError }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size: 13.5px; color: #b3401a; margin: 0 0 16px; padding: 10px 14px; background: #fbeae4; border: 1px solid #f0c9ba; border-radius: 6px;">{{ contactError }}</div>
+          </sc-if>
+
+          <div style="margin-bottom: 16px;">
+            <label for="desc" style="display: block; font-size: 13px; font-weight: 600; color: #3d372e; margin-bottom: 7px;">Décrivez votre projet <span style="color: #a99f8d; font-weight: 400;">— facultatif</span></label>
+            <textarea id="desc" rows="4" value="{{ description }}" onInput="{{ onField.description }}" placeholder="Quelques mots sur ce que vous imaginez, l'état actuel, vos contraintes…" style="width: 100%; padding: 14px 16px; font-size: 16px; line-height: 1.5; background: #fff; border: 1px solid #d8d1c3; border-radius: 6px; color: #211c17; resize: vertical;"></textarea>
+          </div>
+
+          <div style="margin-bottom: 22px;">
+            <div style="display: block; font-size: 13px; font-weight: 600; color: #3d372e; margin-bottom: 7px;">Photos <span style="color: #a99f8d; font-weight: 400;">— facultatif (plans, existant, inspirations)</span></div>
+            <label for="files" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 18px; border: 1.5px dashed #d0c7b6; border-radius: 6px; background: #fdfcf9; cursor: pointer; font-size: 14.5px; color: #7a7162;" style-hover="border-color: #e47b02; color: #b85e04;"><span style="font-size: 18px;">＋</span>Ajouter des fichiers</label>
+            <input id="files" type="file" multiple accept="image/*,.pdf" onChange="{{ onFiles }}" style="display: none;" />
+            <sc-if value="{{ hasFiles }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
+                <sc-for list="{{ fileList }}" as="f" hint-placeholder-count="2">
+                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; background: #fff; border: 1px solid #e7e0d3; border-radius: 6px;">
+                    <span style="display: flex; align-items: center; gap: 10px; min-width: 0;"><span style="color: #e47b02;">🖼</span><span style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ f.name }}</span><span style="font-size: 12.5px; color: #a99f8d; flex-shrink: 0;">{{ f.size }}</span></span>
+                    <button onClick="{{ f.remove }}" style="background: none; border: none; color: #a99f8d; font-size: 18px; cursor: pointer; line-height: 1; padding: 2px 4px;" style-hover="color: #b3401a;">×</button>
+                  </div>
+                </sc-for>
+                <div style="font-size: 12.5px; color: #a99f8d;">Jusqu'à 8 fichiers · 10 Mo max par fichier</div>
+              </div>
+            </sc-if>
+          </div>
+
+          <label style="display: flex; align-items: flex-start; gap: 11px; margin-bottom: 24px; cursor: pointer;">
+            <input type="checkbox" checked="{{ consent }}" onChange="{{ onConsent }}" style="width: 19px; height: 19px; margin-top: 2px; accent-color: #e47b02; flex-shrink: 0; cursor: pointer;" />
+            <span style="font-size: 13.5px; line-height: 1.5; color: #554e42;">J'accepte qu'Acre Rénovation utilise ces informations pour me recontacter au sujet de mon projet. <a href="#" target="_blank">Politique de confidentialité</a>.</span>
+          </label>
+
+          <button onClick="{{ submit }}" disabled="{{ submitDisabled }}" style="{{ submitBtnStyle }}" style-hover="{{ submitBtnHover }}">
+            <sc-if value="{{ isSending }}" hint-placeholder-val="{{ false }}"><span style="display: inline-block; width: 17px; height: 17px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: acre-spin .7s linear infinite;"></span></sc-if>
+            <span>{{ submitLabel }}</span>
+          </button>
+
+          <sc-if value="{{ sendFailed }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size: 13.5px; color: #b3401a; margin-top: 14px; padding: 12px 14px; background: #fbeae4; border: 1px solid #f0c9ba; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; gap: 12px;"><span>L'envoi a échoué. Vérifiez votre connexion.</span><button onClick="{{ submit }}" style="background: none; border: none; color: #b3401a; font-weight: 600; text-decoration: underline; cursor: pointer;">Réessayer</button></div>
+          </sc-if>
+
+          <p style="font-size: 12.5px; color: #a99f8d; text-align: center; margin: 16px 0 0;">🔒 Vos données ne sont utilisées que pour traiter votre demande.</p>
+        </div>
+      </sc-if>
+
+      <!-- CONFIRMATION -->
+      <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+        <div style="text-align: center; padding: clamp(30px, 6vw, 60px) 0;">
+          <div style="width: 76px; height: 76px; border-radius: 50%; background: #e9f2e6; border: 1px solid #cfe3c7; display: flex; align-items: center; justify-content: center; margin: 0 auto 26px;">
+            <span style="font-size: 34px; color: #3f7d32;">✓</span>
+          </div>
+          <h1 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: clamp(28px, 4.5vw, 40px); line-height: 1.06; letter-spacing: -0.015em; margin: 0 0 14px; text-wrap: balance;">Demande envoyée, merci {{ firstName }} !</h1>
+          <p style="font-size: 17px; line-height: 1.6; color: #554e42; margin: 0 auto 8px; max-width: 460px;">Nous avons bien reçu votre projet. Un interlocuteur unique vous recontacte <strong>sous 48 h ouvrées</strong> pour organiser la suite.</p>
+          <p style="font-size: 14.5px; color: #8a8070; margin: 0 0 34px;">Un récapitulatif vient de partir vers nos équipes.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
+            <a href="#" style="display: inline-flex; align-items: center; gap: 9px; background: #211c17; color: #f7f3ec; padding: 14px 24px; border-radius: 4px; font-size: 15.5px; font-weight: 600;" style-hover="background: #000;">Voir nos réalisations <span style="color: #e47b02;">→</span></a>
+            <a href="#" style="display: inline-flex; align-items: center; gap: 9px; color: #211c17; padding: 14px 22px; border-radius: 4px; font-size: 15.5px; font-weight: 600; border: 1px solid #d8d1c3;" style-hover="border-color: #211c17;">Lire nos guides</a>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+
+    <!-- persistent reassurance (hidden on confirmation) -->
+    <sc-if value="{{ showProgress }}" hint-placeholder-val="{{ true }}">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 32px; padding-top: 24px; border-top: 1px solid #ece6da; font-size: 13px; color: #8a8070;">
+        <span style="display: inline-flex; align-items: center; gap: 7px;"><span style="color: #e47b02;">●</span>Sans engagement</span>
+        <span style="display: inline-flex; align-items: center; gap: 7px;"><span style="color: #e47b02;">●</span>Réponse sous 48 h</span>
+        <span style="display: inline-flex; align-items: center; gap: 7px;"><span style="color: #e47b02;">●</span>Garantie décennale</span>
+      </div>
+    </sc-if>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:760,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = {
+    step: 1, // 1..5, 6 = confirmation
+    projectType: null,
+    propertyType: null,
+    surface: null,
+    location: '',
+    budget: null,
+    timing: null,
+    firstName: '', lastName: '', email: '', phone: '', description: '',
+    files: [],
+    consent: false,
+    emailError: '', phoneError: '', contactError: '',
+    sending: false, sendFailed: false,
+  };
+
+  IN_ZONE = ['bordeaux','merignac','mérignac','pessac','talence','begles','bègles','bruges','le bouscat','andernos','cap ferret','lege','arcachon','arès','ares','gujan','biganos','la teste','libourne','saint-medard','saint-médard','gradignan','villenave','cenon','floirac','bassens','ambares','eysines','le haillan','lormont','blanquefort'];
+
+  set(patch) { this.setState(patch); }
+  goStep(n) { this.setState({ step: n }); if (typeof window !== 'undefined') window.scrollTo({ top: 0 }); }
+
+  isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); }
+  isPhone(v) { const d = v.replace(/[^\d+]/g, ''); return d.length >= 9; }
+
+  validateContact = () => {
+    const { email, phone } = this.state;
+    let emailError = '', phoneError = '';
+    if (email.trim() && !this.isEmail(email)) emailError = 'Format d\u2019email invalide.';
+    if (phone.trim() && !this.isPhone(phone)) phoneError = 'Num\u00e9ro de t\u00e9l\u00e9phone incomplet.';
+    this.setState({ emailError, phoneError });
+  };
+
+  fmtSize(bytes) {
+    if (bytes < 1024) return bytes + ' o';
+    if (bytes < 1048576) return Math.round(bytes / 1024) + ' Ko';
+    return (bytes / 1048576).toFixed(1) + ' Mo';
+  }
+
+  card(active) {
+    return `display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;text-align:left;padding:18px 20px;background:${active ? '#fff' : '#fdfcf9'};border:1.5px solid ${active ? '#e47b02' : '#e7e0d3'};border-radius:8px;cursor:pointer;transition:border-color .15s,background .15s;`;
+  }
+  chip(active) {
+    return `display:flex;align-items:center;justify-content:center;text-align:center;padding:15px 14px;background:${active ? '#fff' : '#fdfcf9'};border:1.5px solid ${active ? '#e47b02' : '#e7e0d3'};border-radius:6px;font-size:15px;font-weight:${active ? 600 : 500};color:#211c17;cursor:pointer;transition:border-color .15s;`;
+  }
+  rowOpt(active) {
+    return `display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:15px 18px;background:${active ? '#fff' : '#fdfcf9'};border:1.5px solid ${active ? '#e47b02' : '#e7e0d3'};border-radius:6px;cursor:pointer;transition:border-color .15s;`;
+  }
+
+  renderVals() {
+    const s = this.state;
+    const step = s.step;
+    const primaryBtnStyle = `display:inline-flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:16px;font-size:16px;font-weight:600;border-radius:4px;border:none;cursor:pointer;background:#211c17;color:#f7f3ec;transition:background .15s,opacity .15s;`;
+
+    const projectDefs = [
+      ['Rénovation globale', 'Maison ou appartement'],
+      ['Extension ou surélévation', 'Gagner de la surface'],
+      ['Piscine ou aménagement extérieur', 'Terrasse, piscine, abords'],
+      ['Rénovation cuisine ou salle de bain', 'Pièces d\u2019eau clés en main'],
+      ['Aménagement intérieur sur-mesure', 'Rangements, menuiseries'],
+    ];
+    const projectTypes = projectDefs.map((d, i) => {
+      const active = s.projectType === d[0];
+      return {
+        label: d[0], hint: d[1], num: String(i + 1).padStart(2, '0'),
+        cardStyle: this.card(active),
+        badgeStyle: `flex-shrink:0;width:38px;height:38px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:15px;background:${active ? '#e47b02' : '#f2eee5'};color:${active ? '#211410' : '#a99f8d'};`,
+        select: () => { this.setState({ projectType: d[0] }); this.goStep(2); },
+      };
+    });
+
+    const propertyTypes = ['Maison', 'Appartement'].map(l => ({
+      label: l, style: this.chip(s.propertyType === l),
+      select: () => this.setState({ propertyType: l }),
+    }));
+
+    const surfaceDefs = ['Moins de 50 m²', '50 – 100 m²', '100 – 150 m²', '150 – 200 m²', 'Plus de 200 m²'];
+    const surfaces = surfaceDefs.map(l => ({
+      label: l, style: this.chip(s.surface === l),
+      select: () => this.setState({ surface: l }),
+    }));
+
+    const budgetDefs = ['Moins de 30 k€', '30 – 60 k€', '60 – 100 k€', '100 – 200 k€', 'Plus de 200 k€'];
+    const budgets = budgetDefs.map(l => ({
+      label: l, style: this.chip(s.budget === l),
+      select: () => this.setState({ budget: l }),
+    }));
+
+    const timingDefs = [
+      ['Dès que possible', 'Projet prioritaire'],
+      ['Dans 3 à 6 mois', 'À planifier'],
+      ['Je me renseigne', 'Pas de date fixée'],
+    ];
+    const timings = timingDefs.map(d => {
+      const active = s.timing === d[0];
+      return {
+        label: d[0], hint: d[1], style: this.rowOpt(active),
+        dotStyle: `width:11px;height:11px;border-radius:50%;flex-shrink:0;border:1.5px solid ${active ? '#e47b02' : '#c4bbab'};background:${active ? '#e47b02' : 'transparent'};`,
+        select: () => this.setState({ timing: d[0] }),
+      };
+    });
+
+    const cityDefs = ['Bordeaux', 'Mérignac', 'Pessac', 'Andernos', 'Cap Ferret', 'Arcachon'];
+    const citySuggestions = cityDefs.map(name => ({
+      name, select: () => this.setState({ location: name, emailError: s.emailError }),
+    }));
+
+    const locNorm = s.location.trim().toLowerCase();
+    const isPostal = /^\d{5}$/.test(locNorm);
+    const inZoneCity = this.IN_ZONE.some(c => locNorm && (locNorm.includes(c) || c.includes(locNorm)));
+    const inZonePostal = isPostal && (locNorm.startsWith('33') || locNorm.startsWith('40') || locNorm.startsWith('47'));
+    const showZoneNote = !inZoneCity && !inZonePostal && (isPostal || locNorm.length >= 4);
+
+    const recap = [s.projectType, s.propertyType, s.surface, s.location, s.budget, s.timing].filter(Boolean);
+
+    const inputStyle = `width:100%;padding:14px 16px;font-size:16px;background:#fff;border:1px solid #d8d1c3;border-radius:6px;color:#211c17;`;
+    const errInput = `width:100%;padding:14px 16px;font-size:16px;background:#fff;border:1.5px solid #d98b6a;border-radius:6px;color:#211c17;`;
+
+    const contactOk = (s.email.trim() && this.isEmail(s.email)) || (s.phone.trim() && this.isPhone(s.phone));
+    const submitDisabled = !s.consent || !contactOk || !s.firstName.trim() || s.sending;
+
+    const onField = {
+      firstName: e => this.setState({ firstName: e.target.value }),
+      lastName: e => this.setState({ lastName: e.target.value }),
+      email: e => this.setState({ email: e.target.value, emailError: '', contactError: '' }),
+      phone: e => this.setState({ phone: e.target.value, phoneError: '', contactError: '' }),
+      description: e => this.setState({ description: e.target.value }),
+    };
+
+    return {
+      // progress
+      showProgress: step <= 5,
+      stepNum: step, stepKey: 'step-' + step,
+      progressPct: (Math.min(step, 5) / 5 * 100) + '%',
+      isFirstStep: step === 1,
+      canGoBack: step > 1 && step <= 5,
+      goBack: () => this.goStep(step - 1),
+      // step flags
+      isStep1: step === 1, isStep2: step === 2, isStep3: step === 3,
+      isStep4: step === 4, isStep5: step === 5, isDone: step === 6,
+      next: () => this.goStep(step + 1),
+      // step 1
+      projectTypes,
+      // step 2
+      propertyTypes, surfaces,
+      step2Disabled: !(s.propertyType && s.surface),
+      // step 3
+      location: s.location,
+      onLocation: e => this.setState({ location: e.target.value }),
+      citySuggestions, showZoneNote,
+      step3Disabled: s.location.trim().length < 2,
+      // step 4
+      budgets, timings,
+      step4Disabled: !(s.budget && s.timing),
+      // shared primary button
+      primaryBtnStyle: primaryBtnStyle + (step === 2 && !(s.propertyType && s.surface) ? 'opacity:.4;pointer-events:none;' : '') + (step === 3 && s.location.trim().length < 2 ? 'opacity:.4;pointer-events:none;' : '') + (step === 4 && !(s.budget && s.timing) ? 'opacity:.4;pointer-events:none;' : ''),
+      primaryBtnHover: 'background:#000;',
+      // step 5
+      recap,
+      firstName: s.firstName, lastName: s.lastName, email: s.email, phone: s.phone, description: s.description,
+      onField,
+      inputStyle,
+      emailStyle: s.emailError ? errInput : inputStyle,
+      phoneStyle: s.phoneError ? errInput : inputStyle,
+      emailError: s.emailError, phoneError: s.phoneError, contactError: s.contactError,
+      validateContact: this.validateContact,
+      consent: s.consent,
+      onConsent: e => this.setState({ consent: e.target.checked }),
+      hasFiles: s.files.length > 0,
+      fileList: s.files.map((f, i) => ({
+        name: f.name, size: f.size,
+        remove: () => this.setState({ files: s.files.filter((_, j) => j !== i) }),
+      })),
+      onFiles: e => {
+        const incoming = Array.from(e.target.files || []).map(f => ({ name: f.name, size: this.fmtSize(f.size) }));
+        this.setState({ files: [...s.files, ...incoming].slice(0, 8) });
+      },
+      submitDisabled,
+      submitBtnStyle: `display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:17px;font-size:17px;font-weight:700;border-radius:4px;border:none;cursor:pointer;background:#e47b02;color:#211410;transition:background .15s,opacity .15s;${submitDisabled ? 'opacity:.45;pointer-events:none;' : ''}`,
+      submitBtnHover: 'background:#f38a15;',
+      submitLabel: s.sending ? 'Envoi en cours…' : 'Envoyer ma demande',
+      isSending: s.sending,
+      sendFailed: s.sendFailed,
+      submit: () => {
+        if (!s.firstName.trim()) { return; }
+        if (!contactOk) { this.setState({ contactError: 'Indiquez au moins un email ou un téléphone valide.' }); return; }
+        this.setState({ sending: true, sendFailed: false, contactError: '' });
+        setTimeout(() => { this.setState({ sending: false, step: 6 }); if (typeof window !== 'undefined') window.scrollTo({ top: 0 }); }, 1400);
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+{
+  "id": "zone_intervention",
+  "type": "SharedSlice",
+  "name": "Zone d'intervention",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "description": "Zone d'intervention",
+      "imageUrl": "",
+      "docURL": "",
+      "version": "initial",
+      "primary": {
+        "eyebrow": {
+          "type": "Text",
+          "config": {
+            "label": "Surtitre",
+            "placeholder": "Zone d'intervention"
+          }
+        },
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Titre",
+            "placeholder": "100 km autour de Bordeaux.",
+            "single": "heading2"
+          }
+        },
+        "text": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Texte",
+            "placeholder": "Deux phrases sur la zone couverte",
+            "single": "paragraph"
+          }
+        },
+        "cities": {
+          "type": "Group",
+          "config": {
+            "label": "Villes",
+            "fields": {
+              "name": {
+                "type": "Text",
+                "config": {
+                  "label": "Ville",
+                  "placeholder": "Mérignac"
+                }
+              }
+            }
+          }
+        }
+      },
+      "items": {}
+    }
+  ],
+  "description": "Bande colorée : texte, pastilles de villes et schéma décoratif."
+}

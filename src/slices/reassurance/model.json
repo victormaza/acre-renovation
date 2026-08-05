@@ -1,0 +1,41 @@
+{
+  "id": "reassurance",
+  "type": "SharedSlice",
+  "name": "Réassurance",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "description": "Réassurance",
+      "imageUrl": "",
+      "docURL": "",
+      "version": "initial",
+      "primary": {
+        "items": {
+          "type": "Group",
+          "config": {
+            "label": "Blocs",
+            "fields": {
+              "title": {
+                "type": "Text",
+                "config": {
+                  "label": "Titre",
+                  "placeholder": "Garantie décennale"
+                }
+              },
+              "text": {
+                "type": "Text",
+                "config": {
+                  "label": "Précision",
+                  "placeholder": "Couverture sur l'ensemble des travaux"
+                }
+              }
+            }
+          }
+        }
+      },
+      "items": {}
+    }
+  ],
+  "description": "Bandeau de garanties : quatre blocs courts séparés par un filet."
+}

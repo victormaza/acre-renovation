@@ -1,0 +1,88 @@
+---
+import { asText, asLink, isFilled } from '@prismicio/client';
+import type {
+	DateField,
+	KeyTextField,
+	LinkField,
+	NumberField,
+	RichTextField,
+	SelectField,
+} from '@prismicio/client';
+import Avis from '../../components/Avis.astro';
+
+export interface AvisSlice {
+	slice_type: 'avis';
+	primary: {
+		eyebrow: KeyTextField;
+		title: RichTextField;
+		link: LinkField & { text?: string | null };
+		rating_average: KeyTextField;
+		rating_count: NumberField;
+		items: {
+			author: KeyTextField;
+			rating: SelectField;
+			text: RichTextField;
+			date: DateField;
+		}[];
+	};
+}
+
+interface Props {
+	slice: AvisSlice;
+}
+
+const { primary } = Astro.props.slice;
+
+const hasLink = isFilled.link(primary.link);
+
+const monthYear = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' });
+
+// Le jour exact d'un avis n'apporte rien et vieillit mal ; le mois suffit à
+// situer le chantier.
+function formatDate(value: DateField): string {
+	if (!value) return '';
+	const date = new Date(value);
+	return Number.isNaN(date.getTime()) ? '' : monthYear.format(date);
+}
+
+const items = (primary.items ?? [])
+	.map((item) => ({
+		author: item.author ?? '',
+		// Le champ est un Select de « 5 » à « 1 » : la valeur ne peut pas sortir
+		// de la plage, mais un avis saisi avant l'ajout du champ arrive vide.
+		rating: Number(item.rating) || 5,
+		text: asText(item.text),
+		date: formatDate(item.date),
+	}))
+	// Un avis sans texte ne rend qu'une carte vide avec des étoiles.
+	.filter((item) => item.text !== '');
+
+// Le résumé chiffré est solidaire de la note : sans elle, le nombre d'avis
+// seul ne veut rien dire.
+const summary = isFilled.keyText(primary.rating_average)
+	? {
+			average: primary.rating_average,
+			// La note est saisie à la française (« 4,9 ») : la virgule doit être
+			// rendue au point avant d'être arrondie pour allumer les étoiles.
+			stars: Math.round(Number(primary.rating_average.replace(',', '.'))) || 5,
+			count:
+				typeof primary.rating_count === 'number'
+					? `sur ${primary.rating_count} avis Google`
+					: 'sur Google',
+		}
+	: undefined;
+---
+
+{
+	items.length > 0 && (
+		<Avis
+			id="avis"
+			eyebrow={primary.eyebrow ?? ''}
+			title={asText(primary.title)}
+			linkLabel={hasLink ? (primary.link.text ?? 'Voir tous les avis') : undefined}
+			linkHref={hasLink ? (asLink(primary.link) ?? undefined) : undefined}
+			summary={summary}
+			items={items}
+		/>
+	)
+}

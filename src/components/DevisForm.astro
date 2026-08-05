@@ -1,0 +1,1285 @@
+---
+import {
+	projectTypes,
+	propertyTypes,
+	surfaces,
+	budgets,
+	timings,
+	citySuggestions,
+	reassurance,
+	confirmation,
+} from '../data/devis';
+
+interface Props {
+	/** Lien vers la politique de confidentialité, exigé par la case de consentement. */
+	privacyHref: string;
+}
+
+const { privacyHref } = Astro.props;
+
+const STEPS = 5;
+---
+
+{/*
+	Le formulaire est un vrai <form> qui sait poster tout seul : sans JavaScript,
+	les cinq étapes s'affichent à la suite et l'envoi natif atterrit sur
+	/devis/merci. Le JS ne fait que replier ce long formulaire en parcours guidé.
+	D'où le `hidden` en dur sur tout ce qui n'a de sens qu'avec lui — pas de
+	scintillement au chargement, pas de bouton mort si le script ne part pas.
+*/}
+
+<form class="devis" id="devis-form" method="post" action="/api/devis" novalidate>
+	{/* Piège à robots : un humain ne remplit jamais un champ qu'il ne voit pas. */}
+	<div class="devis__trap" aria-hidden="true">
+		<label for="devis-societe">Société</label>
+		<input id="devis-societe" type="text" name="societe" tabindex="-1" autocomplete="off" />
+	</div>
+	<input type="hidden" name="ts" value="" />
+
+	<div class="devis__progress" hidden>
+		<div class="devis__progress-row">
+			<button class="devis__back" type="button" hidden>
+				<span aria-hidden="true">←</span>Retour
+			</button>
+			<span class="devis__kicker">Demande de devis</span>
+			<p class="devis__counter" aria-live="polite">
+				Étape <span data-current>1</span> sur {STEPS}
+			</p>
+		</div>
+		<div class="devis__bar">
+			<div class="devis__bar-fill"></div>
+		</div>
+	</div>
+
+	{/* ---------- Étape 1 — type de projet ---------- */}
+	<section class="devis__step" data-step="1">
+		<h1 class="devis__title" tabindex="-1">Quel est votre projet ?</h1>
+		<p class="devis__lead">Sélectionnez le type de travaux. Vous préciserez les détails ensuite.</p>
+
+		<fieldset class="devis__fieldset">
+			<legend class="devis__sr">Type de projet</legend>
+			<div class="devis__cards">
+				{
+					projectTypes.map((opt, index) => (
+						<label class="opt opt--card">
+							<input class="devis__sr" type="radio" name="projectType" value={opt.label} />
+							<span class="opt__badge">{String(index + 1).padStart(2, '0')}</span>
+							<span class="opt__body">
+								<span class="opt__label">{opt.label}</span>
+								<span class="opt__hint">{opt.hint}</span>
+							</span>
+							<span class="opt__arrow" aria-hidden="true">
+								→
+							</span>
+						</label>
+					))
+				}
+			</div>
+		</fieldset>
+	</section>
+
+	{/* ---------- Étape 2 — le bien ---------- */}
+	<section class="devis__step" data-step="2">
+		<h2 class="devis__title" tabindex="-1">Votre bien</h2>
+		<p class="devis__lead">Type de logement et surface concernée par les travaux.</p>
+
+		<fieldset class="devis__fieldset">
+			<legend class="devis__legend">Type de bien</legend>
+			<div class="devis__grid devis__grid--two">
+				{
+					propertyTypes.map((opt) => (
+						<label class="opt opt--chip">
+							<input class="devis__sr" type="radio" name="propertyType" value={opt.label} />
+							<span>{opt.label}</span>
+						</label>
+					))
+				}
+			</div>
+		</fieldset>
+
+		<fieldset class="devis__fieldset">
+			<legend class="devis__legend">Surface concernée</legend>
+			<div class="devis__grid devis__grid--auto">
+				{
+					surfaces.map((opt) => (
+						<label class="opt opt--chip">
+							<input class="devis__sr" type="radio" name="surface" value={opt.label} />
+							<span>{opt.label}</span>
+						</label>
+					))
+				}
+			</div>
+		</fieldset>
+
+		<button class="devis__next" type="button" data-next hidden>Continuer <span aria-hidden="true">→</span></button>
+	</section>
+
+	{/* ---------- Étape 3 — localisation ---------- */}
+	<section class="devis__step" data-step="3">
+		<h2 class="devis__title" tabindex="-1">Où se situe le projet ?</h2>
+		<p class="devis__lead">Nous intervenons dans un rayon de 100 km autour de Bordeaux.</p>
+
+		<label class="devis__legend devis__legend--label" for="devis-location">Ville ou code postal</label>
+		<input
+			class="devis__input devis__input--lg"
+			id="devis-location"
+			type="text"
+			name="location"
+			placeholder="ex. Mérignac ou 33700"
+			autocomplete="address-level2"
+			aria-describedby="devis-zone"
+		/>
+
+		<p class="devis__zone" id="devis-zone" hidden>
+			<span class="devis__zone-icon" aria-hidden="true">💬</span>
+			<span
+				>Votre commune semble un peu éloignée de notre zone habituelle. Envoyez tout de même votre
+				demande : nous étudions chaque projet et vous répondrons.</span
+			>
+		</p>
+
+		<div class="devis__cities">
+			{
+				citySuggestions.map((city) => (
+					<button class="devis__city" type="button" data-city={city}>
+						{city}
+					</button>
+				))
+			}
+		</div>
+
+		<button class="devis__next" type="button" data-next hidden>Continuer <span aria-hidden="true">→</span></button>
+	</section>
+
+	{/* ---------- Étape 4 — budget & échéance ---------- */}
+	<section class="devis__step" data-step="4">
+		<h2 class="devis__title" tabindex="-1">Budget &amp; échéance</h2>
+		<p class="devis__lead">Une estimation suffit — elle nous aide à calibrer notre proposition.</p>
+
+		<fieldset class="devis__fieldset">
+			<legend class="devis__legend">Budget envisagé</legend>
+			<div class="devis__grid devis__grid--wide">
+				{
+					budgets.map((opt) => (
+						<label class="opt opt--chip">
+							<input class="devis__sr" type="radio" name="budget" value={opt.label} />
+							<span>{opt.label}</span>
+						</label>
+					))
+				}
+			</div>
+		</fieldset>
+
+		<fieldset class="devis__fieldset">
+			<legend class="devis__legend">Échéance souhaitée</legend>
+			<div class="devis__rows">
+				{
+					timings.map((opt) => (
+						<label class="opt opt--row">
+							<input class="devis__sr" type="radio" name="timing" value={opt.label} />
+							<span class="opt__radio">
+								<span class="opt__dot" aria-hidden="true" />
+								<span class="opt__label-row">{opt.label}</span>
+							</span>
+							<span class="opt__hint">{opt.hint}</span>
+						</label>
+					))
+				}
+			</div>
+		</fieldset>
+
+		<button class="devis__next" type="button" data-next hidden>Continuer <span aria-hidden="true">→</span></button>
+	</section>
+
+	{/* ---------- Étape 5 — coordonnées ---------- */}
+	<section class="devis__step" data-step="5">
+		<h2 class="devis__title" tabindex="-1">Vos coordonnées</h2>
+		<p class="devis__lead">
+			Dernière étape. Un email <em>ou</em> un téléphone suffit pour vous recontacter.
+		</p>
+
+		{/* Rempli par le script à partir des étapes précédentes : sans JS il n'a rien à résumer. */}
+		<div class="devis__recap" hidden>
+			<p class="devis__recap-title">Votre projet</p>
+			<div class="devis__recap-chips" data-recap></div>
+		</div>
+
+		<div class="devis__grid devis__grid--two devis__grid--fields">
+			<div class="devis__field">
+				<label class="devis__label" for="devis-firstname">Prénom</label>
+				<input
+					class="devis__input"
+					id="devis-firstname"
+					type="text"
+					name="firstName"
+					autocomplete="given-name"
+				/>
+			</div>
+			<div class="devis__field">
+				<label class="devis__label" for="devis-lastname">Nom</label>
+				<input
+					class="devis__input"
+					id="devis-lastname"
+					type="text"
+					name="lastName"
+					autocomplete="family-name"
+				/>
+			</div>
+		</div>
+
+		<div class="devis__field">
+			<label class="devis__label" for="devis-email">Email</label>
+			<input
+				class="devis__input"
+				id="devis-email"
+				type="email"
+				name="email"
+				placeholder="vous@exemple.fr"
+				autocomplete="email"
+				aria-describedby="devis-email-error"
+			/>
+			<p class="devis__error" id="devis-email-error" aria-live="polite" hidden></p>
+		</div>
+
+		<div class="devis__field">
+			<label class="devis__label" for="devis-phone">Téléphone</label>
+			<input
+				class="devis__input"
+				id="devis-phone"
+				type="tel"
+				name="phone"
+				placeholder="06 12 34 56 78"
+				autocomplete="tel"
+				aria-describedby="devis-phone-error"
+			/>
+			<p class="devis__error" id="devis-phone-error" aria-live="polite" hidden></p>
+		</div>
+
+		<p class="devis__alert" data-contact-error aria-live="polite" hidden></p>
+
+		<div class="devis__field">
+			<label class="devis__label" for="devis-description">
+				Décrivez votre projet <span class="devis__optional">— facultatif</span>
+			</label>
+			<textarea
+				class="devis__input devis__textarea"
+				id="devis-description"
+				name="description"
+				rows="4"
+				placeholder="Quelques mots sur ce que vous imaginez, l'état actuel, vos contraintes…"></textarea>
+		</div>
+
+		<label class="devis__consent">
+			<input type="checkbox" name="consent" value="oui" />
+			<span>
+				J'accepte qu'Acre Rénovation utilise ces informations pour me recontacter au sujet de mon
+				projet. <a href={privacyHref}>Politique de confidentialité</a>.
+			</span>
+		</label>
+
+		<button class="devis__submit" type="submit">
+			<span class="devis__spinner" aria-hidden="true" hidden></span>
+			<span data-submit-label>Envoyer ma demande</span>
+		</button>
+
+		<p class="devis__alert devis__alert--retry" data-send-error aria-live="assertive" hidden>
+			<span>L'envoi a échoué. Vérifiez votre connexion.</span>
+			<button type="submit">Réessayer</button>
+		</p>
+
+		<p class="devis__note">
+			<span aria-hidden="true">🔒</span> Vos données ne sont utilisées que pour traiter votre demande.
+		</p>
+	</section>
+</form>
+
+{/* ---------- Confirmation ---------- */}
+<section class="done" data-done hidden>
+	<p class="done__mark" aria-hidden="true">✓</p>
+	<h2 class="done__title">Demande envoyée, merci<span data-done-name></span> !</h2>
+	{/* `<strong>` gardé sur la même ligne : Astro supprime le retour à la ligne
+	    qui précède une balise, et « recontacte » se collait au délai. */}
+	<p class="done__text">
+		Nous avons bien reçu votre projet. Un interlocuteur unique vous recontacte <strong
+			>sous {confirmation.delai}</strong
+		> pour organiser la suite.
+	</p>
+	<p class="done__sub">Un récapitulatif vient de partir vers nos équipes.</p>
+	<div class="done__links">
+		{
+			confirmation.links.map((link) => (
+				<a class={link.primary ? 'btn btn--dark' : 'btn btn--outline'} href={link.href}>
+					{link.label}
+					{link.primary && (
+						<span class="arrow" aria-hidden="true">
+							→
+						</span>
+					)}
+				</a>
+			))
+		}
+	</div>
+</section>
+
+<ul class="devis__reassurance" data-reassurance>
+	{
+		reassurance.map((item) => (
+			<li>
+				<span class="btn-dot" aria-hidden="true" />
+				{item}
+			</li>
+		))
+	}
+</ul>
+
+<script>
+	import { inZoneCities, inZonePostalPrefixes, normalizeCity } from '../data/devis';
+
+	const STEPS = 5;
+
+	const form = document.querySelector<HTMLFormElement>('#devis-form');
+	const done = document.querySelector<HTMLElement>('[data-done]');
+	const reassurance = document.querySelector<HTMLElement>('[data-reassurance]');
+	if (!form || !done || !reassurance) throw new Error('Configurateur de devis introuvable');
+
+	const steps = [...form.querySelectorAll<HTMLElement>('.devis__step')];
+	const progress = form.querySelector<HTMLElement>('.devis__progress')!;
+	const backButton = form.querySelector<HTMLButtonElement>('.devis__back')!;
+	const kicker = form.querySelector<HTMLElement>('.devis__kicker')!;
+	const counter = form.querySelector<HTMLElement>('[data-current]')!;
+	const barFill = form.querySelector<HTMLElement>('.devis__bar-fill')!;
+	const recap = form.querySelector<HTMLElement>('.devis__recap')!;
+	const recapChips = form.querySelector<HTMLElement>('[data-recap]')!;
+	const zoneNote = form.querySelector<HTMLElement>('#devis-zone')!;
+	const submitButton = form.querySelector<HTMLButtonElement>('.devis__submit')!;
+	const submitLabel = form.querySelector<HTMLElement>('[data-submit-label]')!;
+	const spinner = form.querySelector<HTMLElement>('.devis__spinner')!;
+	const sendError = form.querySelector<HTMLElement>('[data-send-error]')!;
+	const contactError = form.querySelector<HTMLElement>('[data-contact-error]')!;
+
+	const field = <T extends HTMLElement>(name: string) => form.elements.namedItem(name) as T;
+	const locationInput = field<HTMLInputElement>('location');
+	const email = field<HTMLInputElement>('email');
+	const phone = field<HTMLInputElement>('phone');
+	const firstName = field<HTMLInputElement>('firstName');
+	const consent = field<HTMLInputElement>('consent');
+
+	// Horodatage d'ouverture : un envoi quasi instantané trahit un robot.
+	field<HTMLInputElement>('ts').value = String(Date.now());
+
+	const checked = (name: string) =>
+		form.querySelector<HTMLInputElement>(`input[name="${name}"]:checked`)?.value ?? '';
+
+	const isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+	const isPhone = (value: string) => value.replace(/[^\d+]/g, '').length >= 9;
+
+	let step = 1;
+
+	/* ---------- Navigation ---------- */
+
+	// Bascule le formulaire déplié en parcours guidé : une seule étape à l'écran,
+	// donc plus de marges d'empilement entre elles.
+	form.classList.add('devis--guided');
+
+	function render() {
+		steps.forEach((section) => {
+			const isCurrent = Number(section.dataset.step) === step;
+			section.hidden = !isCurrent;
+			// Redémarre l'animation d'entrée : retirer puis remettre la classe ne
+			// suffit pas tant que le style n'a pas été recalculé entre les deux.
+			if (isCurrent) {
+				section.classList.remove('devis__step--enter');
+				void section.offsetWidth;
+				section.classList.add('devis__step--enter');
+			}
+		});
+
+		progress.hidden = false;
+		backButton.hidden = step === 1;
+		kicker.hidden = step !== 1;
+		counter.textContent = String(step);
+		barFill.style.width = `${(step / STEPS) * 100}%`;
+
+		if (step === 5) renderRecap();
+		updateNextButtons();
+	}
+
+	function goTo(next: number) {
+		step = Math.min(Math.max(next, 1), STEPS);
+		render();
+		window.scrollTo({ top: 0 });
+		// Le focus doit suivre l'étape, sinon la navigation clavier repart du haut
+		// du document à chaque changement.
+		steps[step - 1]?.querySelector<HTMLElement>('h1, h2')?.focus();
+	}
+
+	backButton.addEventListener('click', () => goTo(step - 1));
+	form.querySelectorAll<HTMLButtonElement>('[data-next]').forEach((button) => {
+		button.hidden = false;
+		button.addEventListener('click', () => goTo(step + 1));
+	});
+
+	/* ---------- Conditions de passage ---------- */
+
+	function stepIsComplete(which: number) {
+		if (which === 1) return Boolean(checked('projectType'));
+		if (which === 2) return Boolean(checked('propertyType') && checked('surface'));
+		if (which === 3) return locationInput.value.trim().length >= 2;
+		if (which === 4) return Boolean(checked('budget') && checked('timing'));
+		return contactIsValid();
+	}
+
+	function contactIsValid() {
+		const hasContact =
+			(email.value.trim() && isEmail(email.value)) || (phone.value.trim() && isPhone(phone.value));
+		return Boolean(firstName.value.trim() && hasContact && consent.checked);
+	}
+
+	function updateNextButtons() {
+		const next = steps[step - 1]?.querySelector<HTMLButtonElement>('[data-next]');
+		if (next) next.disabled = !stepIsComplete(step);
+		submitButton.disabled = !contactIsValid() || submitButton.dataset.sending === 'true';
+	}
+
+	/* ---------- Étape 1 : le choix vaut validation ---------- */
+
+	form.querySelectorAll<HTMLInputElement>('input[name="projectType"]').forEach((input) => {
+		input.addEventListener('change', () => goTo(2));
+	});
+
+	/* ---------- Étape 3 : ville et message hors-zone ---------- */
+
+	form.querySelectorAll<HTMLButtonElement>('[data-city]').forEach((button) => {
+		button.addEventListener('click', () => {
+			locationInput.value = button.dataset.city ?? '';
+			locationInput.dispatchEvent(new Event('input', { bubbles: true }));
+			locationInput.focus();
+		});
+	});
+
+	function updateZoneNote() {
+		const value = normalizeCity(locationInput.value);
+		const isPostal = /^\d{5}$/.test(value);
+		const knownCity = value.length > 0 && inZoneCities.some((city) => city.includes(value) || value.includes(city));
+		const knownPostal = isPostal && inZonePostalPrefixes.some((prefix) => value.startsWith(prefix));
+		// Message informatif seulement : il n'empêche jamais l'envoi.
+		zoneNote.hidden = knownCity || knownPostal || !(isPostal || value.length >= 4);
+	}
+
+	/* ---------- Étape 5 : récapitulatif et validation ---------- */
+
+	function renderRecap() {
+		const entries = [
+			checked('projectType'),
+			checked('propertyType'),
+			checked('surface'),
+			locationInput.value.trim(),
+			checked('budget'),
+			checked('timing'),
+		].filter(Boolean);
+
+		recapChips.replaceChildren(
+			...entries.map((entry) => {
+				const chip = document.createElement('span');
+				chip.textContent = entry;
+				return chip;
+			})
+		);
+		recap.hidden = entries.length === 0;
+	}
+
+	function showError(target: HTMLElement, input: HTMLInputElement, message: string) {
+		target.textContent = message;
+		target.hidden = !message;
+		input.classList.toggle('devis__input--error', Boolean(message));
+		input.setAttribute('aria-invalid', String(Boolean(message)));
+	}
+
+	const emailError = document.getElementById('devis-email-error')!;
+	const phoneError = document.getElementById('devis-phone-error')!;
+
+	email.addEventListener('blur', () =>
+		showError(emailError, email, email.value.trim() && !isEmail(email.value) ? "Format d'email invalide." : '')
+	);
+	phone.addEventListener('blur', () =>
+		showError(phoneError, phone, phone.value.trim() && !isPhone(phone.value) ? 'Numéro de téléphone incomplet.' : '')
+	);
+
+	/* ---------- Réactions globales ---------- */
+
+	form.addEventListener('input', (event) => {
+		if (event.target === locationInput) updateZoneNote();
+		if (event.target === email) showError(emailError, email, '');
+		if (event.target === phone) showError(phoneError, phone, '');
+		if (event.target === email || event.target === phone) contactError.hidden = true;
+		updateNextButtons();
+	});
+	form.addEventListener('change', updateNextButtons);
+
+	/* ---------- Envoi ---------- */
+
+	function setSending(sending: boolean) {
+		submitButton.dataset.sending = String(sending);
+		spinner.hidden = !sending;
+		submitLabel.textContent = sending ? 'Envoi en cours…' : 'Envoyer ma demande';
+		updateNextButtons();
+	}
+
+	form.addEventListener('submit', async (event) => {
+		event.preventDefault();
+		if (submitButton.dataset.sending === 'true') return;
+
+		if (!contactIsValid()) {
+			contactError.textContent = 'Indiquez au moins un email ou un téléphone valide.';
+			contactError.hidden = false;
+			return;
+		}
+
+		setSending(true);
+		sendError.hidden = true;
+		contactError.hidden = true;
+
+		try {
+			const response = await fetch(form.action, {
+				method: 'POST',
+				headers: { 'content-type': 'application/json', accept: 'application/json' },
+				body: JSON.stringify(Object.fromEntries(new FormData(form))),
+			});
+			if (!response.ok) throw new Error(`Réponse ${response.status}`);
+
+			form.hidden = true;
+			reassurance.hidden = true;
+			done.hidden = false;
+			const name = firstName.value.trim();
+			done.querySelector('[data-done-name]')!.textContent = name ? ` ${name}` : '';
+			window.scrollTo({ top: 0 });
+		} catch {
+			sendError.hidden = false;
+		} finally {
+			setSending(false);
+		}
+	});
+
+	render();
+	updateZoneNote();
+</script>
+
+<style>
+	/* ============ Coquille ============ */
+
+	/*
+		Tout l'affichage conditionnel passe par l'attribut `hidden`, et presque
+		chaque bloc concerné se voit attribuer un `display` ici. Sans ce rappel,
+		la règle de la feuille par défaut (`[hidden] { display: none }`) perd
+		l'arbitrage et les éléments masqués restent à l'écran.
+	*/
+	[hidden] {
+		display: none !important;
+	}
+
+	.devis {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.devis__sr,
+	.devis__trap {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+
+	.devis__title {
+		font-family: var(--font-title);
+		font-weight: 600;
+		font-size: clamp(26px, 4vw, 36px);
+		line-height: 1.08;
+		letter-spacing: -0.015em;
+		margin: 0 0 8px;
+		text-wrap: balance;
+	}
+
+	.devis__title:focus-visible {
+		outline: none;
+	}
+
+	.devis__lead {
+		font-size: 16px;
+		line-height: 1.5;
+		color: var(--muted);
+		margin: 0 0 26px;
+	}
+
+	/* ============ Progression ============ */
+
+	.devis__progress {
+		margin-bottom: clamp(28px, 4vw, 40px);
+	}
+
+	.devis__progress-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		min-height: 34px;
+		margin-bottom: 16px;
+	}
+
+	.devis__back {
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
+		padding: 8px 14px;
+		font: inherit;
+		font-size: 14px;
+		font-weight: 500;
+		color: var(--text-nav);
+		background: none;
+		border: 1px solid var(--line-strong);
+		border-radius: var(--radius-sm);
+		cursor: pointer;
+		transition: border-color 0.15s ease;
+	}
+
+	.devis__back:hover {
+		border-color: var(--ink);
+	}
+
+	.devis__kicker {
+		font-size: 13px;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--muted-strong);
+	}
+
+	.devis__counter {
+		margin: 0;
+		font-size: 13.5px;
+		font-weight: 600;
+		color: var(--muted-strong);
+		white-space: nowrap;
+	}
+
+	.devis__bar {
+		height: 4px;
+		background: var(--line);
+		border-radius: 999px;
+		overflow: hidden;
+	}
+
+	.devis__bar-fill {
+		height: 100%;
+		width: 20%;
+		background: var(--accent);
+		border-radius: 999px;
+		transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	/* ============ Étapes ============ */
+
+	.devis__step {
+		flex: 1;
+	}
+
+	/* Sans JS, les cinq étapes s'empilent : il leur faut de l'air entre elles. */
+	.devis__step + .devis__step {
+		margin-top: 56px;
+	}
+
+	/* En parcours guidé, une seule étape est à l'écran — la marge n'a plus d'objet. */
+	.devis--guided .devis__step + .devis__step {
+		margin-top: 0;
+	}
+
+	.devis__step--enter {
+		animation: devis-fade 0.32s ease both;
+	}
+
+	@keyframes devis-fade {
+		from {
+			opacity: 0;
+			transform: translateY(10px);
+		}
+		to {
+			opacity: 1;
+			transform: none;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.devis__step--enter {
+			animation: none;
+		}
+
+		.devis__bar-fill {
+			transition: none;
+		}
+	}
+
+	.devis__fieldset {
+		margin: 0 0 30px;
+		padding: 0;
+		border: none;
+	}
+
+	.devis__fieldset:last-of-type {
+		margin-bottom: 0;
+	}
+
+	.devis__legend {
+		display: block;
+		padding: 0;
+		margin-bottom: 12px;
+		font-size: 13px;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--muted-strong);
+	}
+
+	.devis__cards {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.devis__grid {
+		display: grid;
+		gap: 10px;
+	}
+
+	.devis__grid--two {
+		grid-template-columns: 1fr 1fr;
+		gap: 12px;
+	}
+
+	.devis__grid--auto {
+		grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	}
+
+	.devis__grid--wide {
+		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	}
+
+	.devis__rows {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	/* ============ Options — cartes, puces, lignes ============ */
+
+	/*
+		Chaque option est une vraie radio masquée dans son <label> : la navigation
+		aux flèches, l'annonce du groupe et l'envoi sans JS viennent gratuitement,
+		et l'état sélectionné tient dans :has() sans une ligne de script.
+	*/
+
+	.opt {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		background: #fdfcf9;
+		border: 1.5px solid var(--line-warm);
+		cursor: pointer;
+		transition: border-color 0.15s ease, background-color 0.15s ease;
+	}
+
+	.opt:hover {
+		border-color: var(--ink);
+	}
+
+	.opt:has(input:checked) {
+		background: var(--surface);
+		border-color: var(--accent);
+	}
+
+	.opt:has(input:focus-visible) {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
+
+	.opt--card {
+		justify-content: space-between;
+		padding: 18px 20px;
+		border-radius: var(--radius-lg);
+	}
+
+	.opt--card:hover {
+		background: var(--surface);
+	}
+
+	.opt__badge {
+		flex: none;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 38px;
+		height: 38px;
+		border-radius: var(--radius-md);
+		font-family: var(--font-title);
+		font-weight: 600;
+		font-size: 15px;
+		background: var(--bg-alt);
+		color: var(--muted-soft);
+		transition: background-color 0.15s ease, color 0.15s ease;
+	}
+
+	.opt--card:has(input:checked) .opt__badge {
+		background: var(--accent);
+		color: var(--on-accent);
+	}
+
+	.opt__body {
+		flex: 1;
+		margin-right: auto;
+	}
+
+	.opt__label {
+		display: block;
+		font-family: var(--font-title);
+		font-weight: 600;
+		font-size: 18px;
+		line-height: 1.2;
+	}
+
+	.opt__hint {
+		display: block;
+		margin-top: 3px;
+		font-size: 14px;
+		color: var(--muted);
+	}
+
+	.opt__arrow {
+		flex: none;
+		font-size: 20px;
+		color: #c4bbab;
+	}
+
+	.opt--chip {
+		justify-content: center;
+		text-align: center;
+		padding: 15px 14px;
+		border-radius: var(--radius-md);
+		font-size: 15px;
+		font-weight: 500;
+		color: var(--ink);
+	}
+
+	.opt--chip:has(input:checked) {
+		font-weight: 600;
+	}
+
+	.opt--row {
+		justify-content: space-between;
+		padding: 15px 18px;
+		border-radius: var(--radius-md);
+	}
+
+	.opt__radio {
+		display: flex;
+		align-items: center;
+		gap: 13px;
+	}
+
+	.opt__dot {
+		flex: none;
+		width: 11px;
+		height: 11px;
+		border: 1.5px solid #c4bbab;
+		border-radius: 50%;
+		transition: border-color 0.15s ease, background-color 0.15s ease;
+	}
+
+	.opt--row:has(input:checked) .opt__dot {
+		background: var(--accent);
+		border-color: var(--accent);
+	}
+
+	.opt__label-row {
+		font-weight: 500;
+	}
+
+	.opt--row .opt__hint {
+		margin-top: 0;
+		text-align: right;
+	}
+
+	/* ============ Champs ============ */
+
+	.devis__field {
+		margin-bottom: 16px;
+	}
+
+	.devis__grid--fields {
+		margin-bottom: 16px;
+	}
+
+	.devis__grid--fields .devis__field {
+		margin-bottom: 0;
+	}
+
+	.devis__label,
+	.devis__legend--label {
+		display: block;
+		margin-bottom: 7px;
+		font-size: 13px;
+		font-weight: 600;
+		color: var(--text-nav);
+	}
+
+	.devis__legend--label {
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--muted-strong);
+		margin-bottom: 12px;
+	}
+
+	.devis__optional {
+		color: var(--muted-soft);
+		font-weight: 400;
+	}
+
+	.devis__input {
+		width: 100%;
+		padding: 14px 16px;
+		font: inherit;
+		font-size: 16px;
+		color: var(--ink);
+		background: var(--surface);
+		border: 1px solid var(--line-strong);
+		border-radius: var(--radius-md);
+	}
+
+	.devis__input--lg {
+		padding: 16px 18px;
+		font-size: 17px;
+	}
+
+	.devis__input--error {
+		border-width: 1.5px;
+		border-color: #d98b6a;
+	}
+
+	.devis__textarea {
+		line-height: 1.5;
+		resize: vertical;
+	}
+
+	.devis__input::placeholder {
+		color: var(--muted-soft);
+	}
+
+	.devis__error {
+		margin: 6px 0 0;
+		font-size: 13px;
+		color: #b3401a;
+	}
+
+	.devis__alert {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		margin: 0 0 16px;
+		padding: 10px 14px;
+		font-size: 13.5px;
+		color: #b3401a;
+		background: #fbeae4;
+		border: 1px solid #f0c9ba;
+		border-radius: var(--radius-md);
+	}
+
+	.devis__alert--retry {
+		margin: 14px 0 0;
+		padding: 12px 14px;
+	}
+
+	.devis__alert button {
+		font: inherit;
+		font-weight: 600;
+		color: inherit;
+		background: none;
+		border: none;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+
+	/* ============ Localisation ============ */
+
+	.devis__zone {
+		display: flex;
+		align-items: flex-start;
+		gap: 12px;
+		margin: 16px 0 0;
+		padding: 14px 16px;
+		font-size: 14.5px;
+		line-height: 1.5;
+		color: #6b5e42;
+		background: #f7f0e4;
+		border: 1px solid #ecd9b8;
+		border-radius: var(--radius-md);
+	}
+
+	.devis__zone-icon {
+		flex: none;
+		margin-top: 1px;
+	}
+
+	.devis__cities {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin-top: 20px;
+	}
+
+	.devis__city {
+		padding: 8px 14px;
+		font: inherit;
+		font-size: 14px;
+		font-weight: 500;
+		color: var(--text-nav);
+		background: var(--surface);
+		border: 1px solid var(--line-chip);
+		border-radius: 999px;
+		cursor: pointer;
+		transition: border-color 0.15s ease;
+	}
+
+	.devis__city:hover {
+		border-color: var(--ink);
+	}
+
+	/* ============ Récapitulatif ============ */
+
+	.devis__recap {
+		margin-bottom: 28px;
+		padding: 16px 18px;
+		background: var(--bg-alt);
+		border: 1px solid var(--line-alt);
+		border-radius: var(--radius-md);
+	}
+
+	.devis__recap-title {
+		margin: 0 0 12px;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--muted-soft);
+	}
+
+	.devis__recap-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	/*
+		`:global` obligatoire : ces puces sont créées par le script au moment du
+		récapitulatif, donc sans l'attribut de portée qu'Astro ajoute au markup
+		rendu. Sans ça, la règle ne les atteint jamais.
+	*/
+	.devis__recap-chips > :global(span) {
+		padding: 6px 12px;
+		font-size: 13.5px;
+		font-weight: 500;
+		color: var(--text-nav);
+		background: var(--bg);
+		border: 1px solid var(--line-chip);
+		border-radius: 999px;
+	}
+
+	/* ============ Consentement et envoi ============ */
+
+	.devis__consent {
+		display: flex;
+		align-items: flex-start;
+		gap: 11px;
+		margin-bottom: 24px;
+		font-size: 13.5px;
+		line-height: 1.5;
+		color: var(--text);
+		cursor: pointer;
+	}
+
+	/* Le reset global met `color: inherit` sur les liens : sans ça, le lien vers
+	   la politique de confidentialité ne se distingue pas du texte autour. */
+	.devis__consent a {
+		color: var(--accent-link-hover);
+		text-decoration: underline;
+	}
+
+	.devis__consent input {
+		flex: none;
+		width: 19px;
+		height: 19px;
+		margin: 2px 0 0;
+		accent-color: var(--accent);
+		cursor: pointer;
+	}
+
+	.devis__next,
+	.devis__submit {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 9px;
+		width: 100%;
+		font: inherit;
+		border: none;
+		border-radius: var(--radius-sm);
+		cursor: pointer;
+		transition: background-color 0.15s ease, opacity 0.15s ease;
+	}
+
+	.devis__next {
+		margin-top: 36px;
+		padding: 16px;
+		font-size: 16px;
+		font-weight: 600;
+		color: var(--on-ink);
+		background: var(--ink);
+	}
+
+	.devis__next:hover {
+		background: #000;
+	}
+
+	.devis__submit {
+		gap: 10px;
+		padding: 17px;
+		font-size: 17px;
+		font-weight: 700;
+		color: var(--on-accent);
+		background: var(--accent);
+	}
+
+	.devis__submit:hover {
+		background: var(--accent-hover);
+	}
+
+	.devis__next:disabled,
+	.devis__submit:disabled {
+		opacity: 0.45;
+		cursor: not-allowed;
+	}
+
+	.devis__spinner {
+		width: 17px;
+		height: 17px;
+		border: 2px solid rgb(255 255 255 / 0.4);
+		border-top-color: #fff;
+		border-radius: 50%;
+		animation: devis-spin 0.7s linear infinite;
+	}
+
+	@keyframes devis-spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	.devis__note {
+		margin: 16px 0 0;
+		font-size: 12.5px;
+		text-align: center;
+		color: var(--muted-soft);
+	}
+
+	/* ============ Réassurance ============ */
+
+	.devis__reassurance {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 20px;
+		margin: 32px 0 0;
+		padding: 24px 0 0;
+		list-style: none;
+		border-top: 1px solid var(--line);
+		font-size: 13px;
+		color: var(--muted-strong);
+	}
+
+	.devis__reassurance li {
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
+	}
+
+	/* ============ Confirmation ============ */
+
+	.done {
+		text-align: center;
+		padding: clamp(30px, 6vw, 60px) 0;
+	}
+
+	.done__mark {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 76px;
+		height: 76px;
+		margin: 0 auto 26px;
+		font-size: 34px;
+		color: #3f7d32;
+		background: #e9f2e6;
+		border: 1px solid #cfe3c7;
+		border-radius: 50%;
+	}
+
+	.done__title {
+		font-family: var(--font-title);
+		font-weight: 600;
+		font-size: clamp(28px, 4.5vw, 40px);
+		line-height: 1.06;
+		letter-spacing: -0.015em;
+		margin: 0 0 14px;
+		text-wrap: balance;
+	}
+
+	.done__text {
+		max-width: 460px;
+		margin: 0 auto 8px;
+		font-size: 17px;
+		line-height: 1.6;
+		color: var(--text);
+	}
+
+	.done__sub {
+		margin: 0 0 34px;
+		font-size: 14.5px;
+		color: var(--muted-strong);
+	}
+
+	.done__links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+		justify-content: center;
+	}
+
+	@media (max-width: 480px) {
+		.devis__grid--two {
+			grid-template-columns: 1fr;
+		}
+
+		.opt--row {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 6px;
+		}
+
+		.opt--row .opt__hint {
+			text-align: left;
+		}
+	}
+</style>
