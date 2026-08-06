@@ -42,8 +42,9 @@ Domaine cible : `acre-renovation.fr`
 - [x] Types repeatable `expertise`, `realisation`, `guide` créés — les slices de listing pointent vers les documents au lieu de les recopier
 - [x] Configurateur de devis `/devis` intégré, branché sur `/api/devis` et Brevo
 - [x] Slice `avis` créée — avis Google recopiés à la main dans Prismic
-- [ ] **Créer le compte Brevo, valider l'expéditeur et poser `BREVO_API_KEY`** — sans ça, `/devis` affiche « le formulaire n'est pas encore configuré »
-- [ ] Confirmer les deux adresses email dans les `vars` de `wrangler.jsonc`
+- [x] Webhook de rebuild branché — publier dans Prismic déclenche un build Cloudflare
+- [ ] **Créer le compte Brevo, valider `contact@acre-sas.fr` comme expéditeur et poser `BREVO_API_KEY`** — sans ça, `/devis` affiche « le formulaire n'est pas encore configuré »
+- [x] Adresses email confirmées : `contact@acre-sas.fr` en expéditeur *et* en destinataire
 - [ ] Saisir les premiers documents `expertise`, `realisation` et `guide` : les trois sections de la home sont masquées tant qu'ils n'existent pas
 - [ ] Saisir les avis dans la slice `avis` et l'ajouter à la home : la section est masquée tant qu'aucun avis n'est saisi
 - [ ] Gabarits de pages `/expertises/:uid`, `/realisations/:uid`, `/guides/:uid` — les cartes de la home pointent déjà dessus
@@ -54,7 +55,7 @@ Domaine cible : `acre-renovation.fr`
 ### Configuration Cloudflare
 
 Build command : `npm run build`
-Deploy command : `npx wrangler deploy -c dist/server/wrangler.json`
+Deploy command : `npx wrangler deploy`
 Builds sur branches non-production : activés (donne les previews de PR)
 
 **Le site n'est plus purement statique depuis l'ouverture du formulaire de devis.**
@@ -66,6 +67,22 @@ Conséquence sur le déploiement : **on ne déploie plus avec le `wrangler.jsonc
 racine**, mais avec celui que l'adapter en dérive au build, dans `dist/server/`.
 C'est lui qui porte `main`, le binding `ASSETS` et le bon `assets.directory`.
 `npm run deploy` enchaîne les deux.
+
+Le `-c dist/server/wrangler.json` du script npm est une **ceinture, pas une
+nécessité** : l'adapter écrit aussi `.wrangler/deploy/config.json`, un fichier de
+redirection que `wrangler deploy` lit tout seul. D'où la commande courte côté
+Cloudflare, vérifiée dans le log de build du 6 août 2026 :
+
+```
+Using redirected Wrangler configuration.
+ - Configuration being used: "dist/server/wrangler.json"
+ - Original user's configuration: "wrangler.jsonc"
+ - Deploy configuration file: ".wrangler/deploy/config.json"
+```
+
+Ne pas « corriger » le dashboard pour y remettre le `-c` en croyant réparer
+quelque chose : les deux formes déploient le même Worker, route `/api/devis`
+comprise.
 
 Ne pas ajouter de clé `main` dans le `wrangler.jsonc` de la racine : le plugin Vite
 de Cloudflare cherche à la résoudre au démarrage du build, avant que `dist/` existe,
@@ -305,11 +322,17 @@ Trois variables, lues à l'exécution dans l'environnement du Worker via `astro:
 | `DEVIS_TO_EMAIL` | `vars` de `wrangler.jsonc` | Boîte qui reçoit les demandes |
 | `DEVIS_FROM_EMAIL` | `vars` de `wrangler.jsonc` | Expéditeur, **validé côté Brevo** |
 
+**Les deux adresses valent `contact@acre-sas.fr`** : le client ne veut qu'une seule
+adresse sur ce parcours. L'email part donc de la boîte qui le reçoit. Sans effet
+sur la réponse au prospect, le `replyTo` portant son adresse à lui.
+
 En local, les trois viennent de `.env` (voir `.env.example`). Tant que la clé
 manque, la route répond 500 avec un message explicite plutôt que de planter.
 
-L'expéditeur suppose des enregistrements SPF/DKIM chez LWS, qui héberge encore le
-DNS. Ils peuvent être posés dès maintenant sans toucher au site en ligne.
+⚠️ L'expéditeur est sur **`acre-sas.fr`**, pas sur `acre-renovation.fr` : c'est ce
+domaine-là qu'il faut authentifier chez Brevo (SPF/DKIM), et son DNS peut être
+ailleurs que chez LWS. Les enregistrements peuvent être posés dès maintenant sans
+toucher au site en ligne.
 
 ### Photos écartées en v1
 
@@ -320,7 +343,35 @@ rouvrir si le client réclame les plans en pièce jointe.
 
 ### Webhook de rebuild
 
-Créer un Deploy Hook côté Cloudflare, coller son URL dans Prismic → Settings → Webhooks, déclencheur sur publication.
+Branché le 6 août 2026. Publier dans Prismic déclenche un build Cloudflare, sans
+intervention.
+
+| Bout | Où | Nom |
+|---|---|---|
+| Deploy Hook | Cloudflare → Worker `acre-renovation` → Settings → Builds → Deploy Hooks | `prismic-publication`, branche `main` |
+| Webhook | Prismic → Settings → Webhooks | `Rebuild Cloudflare (main)` |
+
+Les Deploy Hooks n'existaient que pour Pages jusqu'en avril 2026 ; Workers Builds
+les a depuis. Le hook est lié à **une branche**, d'où le nom : un hook pour `main`,
+et rien d'autre à brancher tant qu'il n'y a qu'une cible de production.
+
+⚠️ **L'URL du hook est un secret** — qui l'a peut déclencher des builds. Elle n'est
+donc pas dans le dépôt : elle se relit dans le dashboard Cloudflare, et se révoque
+en supprimant le hook.
+
+**Seuls les deux déclencheurs `Documents` sont cochés** côté Prismic (publication et
+dépublication). Les déclencheurs `Releases` et `Tags` sont décochés à dessein : ils
+ne changent rien au HTML rendu et consommeraient du quota de build — 3 000 minutes
+par mois sur le plan gratuit — pour reconstruire à l'identique. Publier une release
+publie ses documents, donc le cas reste couvert.
+
+Limites à connaître : 10 builds/minute par Worker, 100/minute par compte. Sans
+objet à ce rythme de publication, mais c'est le plafond qui tomberait le jour d'une
+reprise de contenu en masse.
+
+Pour tester sans publier : bouton **Trigger it** de la ligne du webhook, puis
+onglet **Logs** de Prismic (on attend `200`) et l'historique des builds côté
+Cloudflare.
 
 ### Previews — écartées pour l'instant
 

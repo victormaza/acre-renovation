@@ -31,9 +31,13 @@
   // un domaine ou un envoyeur validé côté Brevo, sinon l'API refuse l'envoi.
   // La clé d'API, elle, se pose à part : `wrangler secret put BREVO_API_KEY`.
   //
-  // TODO — confirmer les deux adresses avec le client avant la mise en ligne.
+  // Une seule adresse des deux côtés, à la demande du client : la demande part
+  // de `contact@acre-sas.fr` et arrive dans la même boîte. Le `replyTo` porte
+  // l'adresse du prospect, donc répondre au message tombe bien chez lui.
+  // À valider chez Brevo sur le domaine `acre-sas.fr` — et non
+  // `acre-renovation.fr` — SPF/DKIM compris.
   "vars": {
-    "DEVIS_TO_EMAIL": "contact@acre-renovation.fr",
-    "DEVIS_FROM_EMAIL": "no-reply@acre-renovation.fr"
+    "DEVIS_TO_EMAIL": "contact@acre-sas.fr",
+    "DEVIS_FROM_EMAIL": "contact@acre-sas.fr"
   }
 }
