@@ -17,7 +17,7 @@ export const projectTypes: Choice[] = [
 	{ label: 'Extension ou surélévation', hint: 'Gagner de la surface' },
 	{ label: 'Piscine ou aménagement extérieur', hint: 'Terrasse, piscine, abords' },
 	{ label: 'Rénovation cuisine ou salle de bain', hint: "Pièces d'eau clés en main" },
-	{ label: 'Aménagement intérieur sur-mesure', hint: 'Rangements, menuiseries' },
+	{ label: 'Autres travaux divers', hint: 'Un autre besoin' },
 ];
 
 /** Étape 2 */
@@ -38,6 +38,7 @@ export const budgets: Choice[] = [
 	{ label: '60 – 100 k€' },
 	{ label: '100 – 200 k€' },
 	{ label: 'Plus de 200 k€' },
+	{ label: 'Je ne sais pas' },
 ];
 
 export const timings: Choice[] = [
