@@ -5,6 +5,7 @@ import Methode from '../../components/Methode.astro';
 
 export interface MethodeSlice {
 	slice_type: 'methode';
+	variation: 'default' | 'dark';
 	primary: {
 		eyebrow: KeyTextField;
 		title: RichTextField;
@@ -16,7 +17,8 @@ interface Props {
 	slice: MethodeSlice;
 }
 
-const { primary } = Astro.props.slice;
+const slice = Astro.props.slice;
+const { primary } = slice;
 
 // La numérotation 01, 02… suit l'ordre des étapes : elle n'est pas saisie
 // dans Prismic, sinon réordonner les étapes obligerait à tout renuméroter.
@@ -25,8 +27,21 @@ const steps = (primary.steps ?? []).map((step, i) => ({
 	title: step.title ?? '',
 	text: asText(step.text),
 }));
+
+const isDark = slice.variation === 'dark';
 ---
 
 <!-- L'ancre #entreprise est visée par la navigation : elle relève de la
-     structure du site, pas du contenu, donc elle reste ici. -->
-<Methode id="entreprise" eyebrow={primary.eyebrow ?? ''} title={asText(primary.title)} steps={steps} />
+     structure du site, pas du contenu, donc elle reste ici. Elle ne vaut que
+     pour l'accueil, seul endroit où la variante claire est posée. -->
+{
+	steps.length > 0 && (
+		<Methode
+			id={isDark ? undefined : 'entreprise'}
+			tone={isDark ? 'dark' : 'light'}
+			eyebrow={primary.eyebrow ?? ''}
+			title={asText(primary.title)}
+			steps={steps}
+		/>
+	)
+}

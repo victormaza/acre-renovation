@@ -12,12 +12,14 @@
 
 	/* Textes */
 	--ink: #211c17;
+	--ink-soft: #2c2620;
 	--text: #554e42;
 	--text-nav: #3d372e;
 	--muted: #7a7162;
 	--muted-strong: #8a8070;
 	--muted-soft: #a99f8d;
 	--muted-softer: #b1a795;
+	--muted-faint: #c4bbab;
 
 	/* Bordures, de la plus discrète à la plus marquée */
 	--line: #ece6da;
@@ -38,6 +40,14 @@
 	--on-ink-title: #fbf8f2;
 	--on-ink-text: #b8b0a2;
 	--on-ink-muted: #8f877a;
+	--on-ink-eyebrow: #b8a894;
+	--on-ink-line: #3a332b;
+
+	/* Encadrés d'alerte — les points d'attention des pages expertise */
+	--warn-bg: #f7f0e4;
+	--warn-line: #ecd9b8;
+	--warn-title: #4a3f28;
+	--warn-text: #6b5e42;
 
 	/* Typographie */
 	--font-title: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', sans-serif;
@@ -50,6 +60,7 @@
 
 	/* Gabarit */
 	--container: 1240px;
+	--container-narrow: 860px;
 	--gutter: 40px;
 	--section-space: 104px;
 
@@ -110,6 +121,11 @@ img {
 	max-width: var(--container);
 	margin-inline: auto;
 	padding-inline: var(--gutter);
+}
+
+/* Largeur de lecture, pour les sections de texte suivi : intro et FAQ. */
+.container--narrow {
+	max-width: var(--container-narrow);
 }
 
 .section {

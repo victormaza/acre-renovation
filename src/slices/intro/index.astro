@@ -1,0 +1,27 @@
+---
+import { asText } from '@prismicio/client';
+import type { KeyTextField, RichTextField } from '@prismicio/client';
+import Intro from '../../components/Intro.astro';
+
+export interface IntroSlice {
+	slice_type: 'intro';
+	primary: {
+		eyebrow: KeyTextField;
+		text: RichTextField;
+	};
+}
+
+interface Props {
+	slice: IntroSlice;
+}
+
+const { primary } = Astro.props.slice;
+
+// Chaque paragraphe saisi devient un <p> : `asText` sur le champ entier les
+// aurait recollés en un seul bloc, alors que le design les espace.
+const paragraphs = (primary.text ?? [])
+	.map((block) => asText([block]).trim())
+	.filter((text) => text.length > 0);
+---
+
+{paragraphs.length > 0 && <Intro eyebrow={primary.eyebrow ?? ''} paragraphs={paragraphs} />}

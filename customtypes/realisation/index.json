@@ -32,6 +32,19 @@
           "placeholder": "Rénovation globale · 165 m²"
         }
       },
+      "expertise": {
+        "type": "Link",
+        "config": {
+          "label": "Expertise concernée — sert à remonter ce chantier sur sa page expertise",
+          "select": "document",
+          "customtypes": [
+            "expertise"
+          ],
+          "allowTargetBlank": false,
+          "allowText": false,
+          "repeat": false
+        }
+      },
       "image": {
         "type": "Image",
         "config": {

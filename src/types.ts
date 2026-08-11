@@ -17,3 +17,16 @@ export interface CtaInput {
 	label: string;
 	href: string;
 }
+
+/**
+ * Ce que la page rendue transmet à ses slices, en plus de leur propre contenu.
+ *
+ * Une slice partagée ne sait pas d'elle-même sur quelle page elle est posée.
+ * `realisations` en a besoin : sur une page expertise, son repli automatique
+ * doit se limiter aux chantiers de *cette* expertise, pas aux derniers publiés
+ * tous types confondus.
+ */
+export interface SliceContext {
+	/** ID du document `expertise` dont la page rend cette slice. */
+	expertiseId?: string;
+}

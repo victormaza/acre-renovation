@@ -5,31 +5,50 @@ interface Props {
 	id?: string;
 	eyebrow: string;
 	title: string;
+	/**
+	 * `dark` rend la section en négatif sur fond encre. C'est la rupture de
+	 * rythme des pages expertise, qui déroulent sinon un fond clair continu ;
+	 * l'accueil garde le rendu clair, la section y suivant déjà un bloc sombre.
+	 */
+	tone?: 'light' | 'dark';
 	steps: { index: string; title: string; text: string }[];
 }
 
-const { id, eyebrow, title, steps } = Astro.props;
+const { id, eyebrow, title, tone = 'light', steps } = Astro.props;
+const isDark = tone === 'dark';
 ---
 
-<section class="container section" id={id}>
-	<div class="head">
-		<SectionHead eyebrow={eyebrow} title={title} />
-	</div>
+<section class:list={['methode', isDark ? 'methode--dark' : 'section']} id={id}>
+	<div class="container">
+		<div class="head">
+			<SectionHead eyebrow={eyebrow} title={title} />
+		</div>
 
-	<ol class="steps">
-		{
-			steps.map((step) => (
-				<li class="step">
-					<p class="step__index">{step.index}</p>
-					<h3 class="step__title">{step.title}</h3>
-					<p class="step__text">{step.text}</p>
-				</li>
-			))
-		}
-	</ol>
+		<ol class="steps">
+			{
+				steps.map((step) => (
+					<li class="step">
+						<p class="step__index">{step.index}</p>
+						<h3 class="step__title">{step.title}</h3>
+						<p class="step__text">{step.text}</p>
+					</li>
+				))
+			}
+		</ol>
+	</div>
 </section>
 
 <style>
+	.methode--dark {
+		margin-top: var(--section-space);
+		background: var(--ink);
+		color: var(--on-ink);
+	}
+
+	.methode--dark .container {
+		padding-block: clamp(64px, 8vw, 92px);
+	}
+
 	/* L'en-tête de cette section est plus resserré que le gabarit commun. */
 	.head {
 		max-width: 640px;
@@ -40,6 +59,18 @@ const { id, eyebrow, title, steps } = Astro.props;
 		margin-bottom: 0;
 	}
 
+	.methode--dark .head {
+		margin-bottom: clamp(40px, 5vw, 56px);
+	}
+
+	.methode--dark .head :global(.eyebrow) {
+		color: var(--on-ink-eyebrow);
+	}
+
+	.methode--dark .head :global(.title-lg) {
+		color: var(--on-ink-title);
+	}
+
 	.steps {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -48,9 +79,25 @@ const { id, eyebrow, title, steps } = Astro.props;
 		list-style: none;
 	}
 
+	.methode--dark .steps {
+		grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+		border-top: 1px solid var(--on-ink-line);
+	}
+
 	.step {
 		padding: 32px 28px 34px;
 		border-top: 1px solid var(--line-warm);
+	}
+
+	/* En négatif, le filet horizontal est porté par la grille : les étapes ne
+	   sont plus séparées que verticalement. */
+	.methode--dark .step {
+		border-top: 0;
+		border-right: 1px solid var(--on-ink-line);
+	}
+
+	.methode--dark .step:last-child {
+		border-right: 0;
 	}
 
 	.step__index {
@@ -68,6 +115,10 @@ const { id, eyebrow, title, steps } = Astro.props;
 		margin: 0 0 10px;
 	}
 
+	.methode--dark .step__title {
+		color: var(--on-ink-title);
+	}
+
 	.step__text {
 		font-size: 14.5px;
 		line-height: 1.55;
@@ -75,9 +126,24 @@ const { id, eyebrow, title, steps } = Astro.props;
 		margin: 0;
 	}
 
+	.methode--dark .step__text {
+		color: var(--on-ink-text);
+	}
+
 	@media (max-width: 640px) {
 		.step {
 			padding-inline: 0;
+		}
+
+		/* Le filet vertical n'a plus de sens une fois les étapes empilées. */
+		.methode--dark .step {
+			padding-inline: 0;
+			border-right: 0;
+			border-top: 1px solid var(--on-ink-line);
+		}
+
+		.methode--dark .steps {
+			border-top: 0;
 		}
 	}
 </style>

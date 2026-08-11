@@ -24,7 +24,11 @@ const { items } = Astro.props;
 		padding-top: 40px;
 	}
 
-	/* Les séparateurs 1px sont obtenus par le gap laissant voir le fond. */
+	/* Les séparateurs 1px sont peints par le halo de chaque bloc, qui déborde
+	   dans le gap. Colorer le fond de la grille serait plus court, mais le
+	   laisserait apparaître en aplat sur une dernière ligne incomplète — ce
+	   qui arrive dès que la largeur ne loge pas les quatre blocs de front. Le
+	   halo qui dépasse au pourtour est rogné par l'`overflow` du conteneur. */
 	.reassurance__grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -32,7 +36,7 @@ const { items } = Astro.props;
 		margin: 0;
 		padding: 0;
 		list-style: none;
-		background: var(--line);
+		background: var(--bg);
 		border: 1px solid var(--line);
 		border-radius: var(--radius-md);
 		overflow: hidden;
@@ -40,6 +44,7 @@ const { items } = Astro.props;
 
 	.reassurance__item {
 		background: var(--bg);
+		box-shadow: 0 0 0 1px var(--line);
 		padding: 26px 28px;
 	}
 

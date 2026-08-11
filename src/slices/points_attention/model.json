@@ -1,0 +1,65 @@
+{
+  "id": "points_attention",
+  "type": "SharedSlice",
+  "name": "Points d'attention",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "description": "Points d'attention",
+      "imageUrl": "",
+      "docURL": "",
+      "version": "initial",
+      "primary": {
+        "eyebrow": {
+          "type": "Text",
+          "config": {
+            "label": "Surtitre",
+            "placeholder": "Le conseil d'expert"
+          }
+        },
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Titre",
+            "placeholder": "Points d'attention",
+            "single": "heading2"
+          }
+        },
+        "text": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Introduction",
+            "placeholder": "Ce que notre expérience de terrain nous a appris à anticiper.",
+            "single": "paragraph"
+          }
+        },
+        "items": {
+          "type": "Group",
+          "config": {
+            "label": "Points d'attention",
+            "fields": {
+              "title": {
+                "type": "Text",
+                "config": {
+                  "label": "Sujet",
+                  "placeholder": "Autorisations d'urbanisme"
+                }
+              },
+              "text": {
+                "type": "StructuredText",
+                "config": {
+                  "label": "Explication",
+                  "placeholder": "La contrainte, et comment vous l'anticipez",
+                  "single": "paragraph"
+                }
+              }
+            }
+          }
+        }
+      },
+      "items": {}
+    }
+  ],
+  "description": "Contraintes, autorisations et pièges du type de chantier, en encadrés ambrés. Section masquée tant qu'aucun point n'est saisi."
+}

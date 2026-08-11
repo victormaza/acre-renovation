@@ -34,6 +34,13 @@ const getAdvertisedTypes = () => {
 	return advertisedTypes;
 };
 
+/**
+ * Le type est-il connu de l'API de contenu ? Faux tant qu'aucun document du
+ * type n'a été publié — l'interroger renverrait alors une erreur. À vérifier
+ * avant tout `getAllByType`, y compris dans un `getStaticPaths()`.
+ */
+export const hasType = async (type: string) => (await getAdvertisedTypes()).has(type);
+
 export const createClient = async (config: prismic.ClientConfig = {}) => {
 	const types = await getAdvertisedTypes();
 	return prismic.createClient(repositoryName, {
@@ -53,15 +60,18 @@ export const createClient = async (config: prismic.ClientConfig = {}) => {
  * les derniers documents publiés du type. Publier une réalisation suffit donc
  * à la faire apparaître, la sélection manuelle ne servant qu'à forcer un
  * ordre ou une vitrine précise.
+ *
+ * `filters` restreint ce repli sans toucher à la sélection manuelle : un choix
+ * explicite du client est toujours honoré, même s'il sort du filtre.
  */
 export async function resolvePicks<TDocument extends prismic.PrismicDocument>(
 	type: string,
 	picks: prismic.LinkField[],
-	fallback: { limit?: number; direction?: 'asc' | 'desc' } = {},
+	fallback: { limit?: number; direction?: 'asc' | 'desc'; filters?: string[] } = {},
 ): Promise<TDocument[]> {
 	// Type sans aucun document : la section n'a rien à afficher, et l'API
 	// n'accepterait pas encore d'être interrogée dessus.
-	if (!(await getAdvertisedTypes()).has(type)) return [];
+	if (!(await hasType(type))) return [];
 
 	const client = await createClient();
 	const ids = picks.filter(prismic.isFilled.contentRelationship).map((pick) => pick.id);
@@ -75,9 +85,10 @@ export async function resolvePicks<TDocument extends prismic.PrismicDocument>(
 		return ids.map((id) => byID.get(id)).filter((document) => document !== undefined);
 	}
 
-	const { limit, direction = 'desc' } = fallback;
+	const { limit, direction = 'desc', filters } = fallback;
 	return client.getAllByType<TDocument>(type, {
 		limit,
+		filters,
 		orderings: [{ field: 'document.first_publication_date', direction }],
 	});
 }

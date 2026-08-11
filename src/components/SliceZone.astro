@@ -4,6 +4,11 @@
 // Une slice dont le type n'est pas dans la table est ignorée : un slice ajouté
 // côté Prismic avant d'être codé ne casse pas le build.
 import Hero from '../slices/hero/index.astro';
+import ExpertiseHero from '../slices/expertise_hero/index.astro';
+import Intro from '../slices/intro/index.astro';
+import Prestation from '../slices/prestation/index.astro';
+import PointsAttention from '../slices/points_attention/index.astro';
+import Faq from '../slices/faq/index.astro';
 import Reassurance from '../slices/reassurance/index.astro';
 import ZoneIntervention from '../slices/zone_intervention/index.astro';
 import Methode from '../slices/methode/index.astro';
@@ -12,9 +17,15 @@ import Realisations from '../slices/realisations/index.astro';
 import Guides from '../slices/guides/index.astro';
 import Avis from '../slices/avis/index.astro';
 import CtaFinal from '../slices/cta_final/index.astro';
+import type { SliceContext } from '../types';
 
 const components: Record<string, any> = {
 	hero: Hero,
+	expertise_hero: ExpertiseHero,
+	intro: Intro,
+	prestation: Prestation,
+	points_attention: PointsAttention,
+	faq: Faq,
 	reassurance: Reassurance,
 	expertises: Expertises,
 	realisations: Realisations,
@@ -26,15 +37,22 @@ const components: Record<string, any> = {
 };
 
 interface Props {
-	slices: { slice_type: string; id?: string }[];
+	/**
+	 * Absent, et non vide, tant que le champ n'a pas été poussé chez Prismic
+	 * ou que le document est antérieur à sa création. Une page sans section
+	 * vaut mieux qu'un build rouge sur un document en cours de saisie.
+	 */
+	slices?: { slice_type: string; id?: string }[];
+	/** Contexte de la page rendue, transmis tel quel à chaque slice. */
+	context?: SliceContext;
 }
 
-const { slices } = Astro.props;
+const { slices = [], context } = Astro.props;
 ---
 
 {
 	slices.map((slice) => {
 		const Component = components[slice.slice_type];
-		return Component ? <Component slice={slice} /> : null;
+		return Component ? <Component slice={slice} context={context} /> : null;
 	})
 }

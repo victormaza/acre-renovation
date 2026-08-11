@@ -1,0 +1,39 @@
+---
+// Mise en contexte en tête de page : quelques paragraphes en gros corps de
+// titrage, sur une largeur de lecture réduite. Le contraste de corps avec le
+// reste de la page est le seul effet recherché.
+interface Props {
+	eyebrow: string;
+	paragraphs: string[];
+}
+
+const { eyebrow, paragraphs } = Astro.props;
+---
+
+<section class="section">
+	<div class="container container--narrow">
+		<p class="eyebrow intro__eyebrow">{eyebrow}</p>
+		{paragraphs.map((paragraph) => <p class="intro__text">{paragraph}</p>)}
+	</div>
+</section>
+
+<style>
+	.intro__eyebrow {
+		margin: 0 0 22px;
+	}
+
+	.intro__text {
+		font-family: var(--font-title);
+		font-weight: 400;
+		font-size: clamp(21px, 2.6vw, 27px);
+		line-height: 1.42;
+		letter-spacing: -0.01em;
+		color: var(--ink-soft);
+		margin: 0 0 20px;
+		text-wrap: pretty;
+	}
+
+	.intro__text:last-child {
+		margin-bottom: 0;
+	}
+</style>

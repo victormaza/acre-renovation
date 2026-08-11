@@ -51,7 +51,56 @@
         }
       },
       "items": {}
+    },
+    {
+      "id": "dark",
+      "name": "Sur fond sombre",
+      "description": "Méthode en négatif",
+      "imageUrl": "",
+      "docURL": "",
+      "version": "initial",
+      "primary": {
+        "eyebrow": {
+          "type": "Text",
+          "config": {
+            "label": "Surtitre",
+            "placeholder": "Notre méthode"
+          }
+        },
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Titre",
+            "placeholder": "Du premier rendez-vous à la remise des clés.",
+            "single": "heading2"
+          }
+        },
+        "steps": {
+          "type": "Group",
+          "config": {
+            "label": "Étapes",
+            "fields": {
+              "title": {
+                "type": "Text",
+                "config": {
+                  "label": "Titre de l'étape",
+                  "placeholder": "Premier contact"
+                }
+              },
+              "text": {
+                "type": "StructuredText",
+                "config": {
+                  "label": "Description",
+                  "placeholder": "Une phrase sur ce qui se passe à cette étape",
+                  "single": "paragraph"
+                }
+              }
+            }
+          }
+        }
+      },
+      "items": {}
     }
   ],
-  "description": "Étapes du déroulé d'un chantier. La numérotation est calculée à l'affichage."
+  "description": "Étapes du déroulé d'un chantier. La numérotation est calculée à l'affichage. La variante « Sur fond sombre » sert de rupture de rythme sur les pages expertise."
 }

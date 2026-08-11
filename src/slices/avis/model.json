@@ -67,8 +67,14 @@
                 "config": {
                   "label": "Note",
                   "placeholder": "5",
-                  "options": ["5", "4", "3", "2", "1"],
-                  "default_value": "5"
+                  "default_value": "5",
+                  "options": [
+                    "5",
+                    "4",
+                    "3",
+                    "2",
+                    "1"
+                  ]
                 }
               },
               "text": {

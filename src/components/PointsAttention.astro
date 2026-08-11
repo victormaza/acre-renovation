@@ -1,0 +1,131 @@
+---
+// Le conseil d'expert : colonne de gauche qui suit le défilement, encadrés
+// ambrés à droite. Sa raison d'être est de lever les doutes (autorisations,
+// délais, découvertes en dépose) — d'où le traitement visuel distinct.
+interface Props {
+	id?: string;
+	eyebrow: string;
+	title: string;
+	text: string;
+	items: { title: string; text: string }[];
+}
+
+const { id, eyebrow, title, text, items } = Astro.props;
+---
+
+<section class="section" id={id}>
+	<div class="container watch">
+		<div class="watch__head">
+			<p class="eyebrow">{eyebrow}</p>
+			<h2 class="watch__title">{title}</h2>
+			<p class="watch__intro">{text}</p>
+		</div>
+
+		<ul class="watch__list">
+			{
+				items.map((item) => (
+					<li class="watch__item">
+						<span class="watch__mark" aria-hidden="true">
+							!
+						</span>
+						<div>
+							<h3 class="watch__item-title">{item.title}</h3>
+							<p class="watch__item-text">{item.text}</p>
+						</div>
+					</li>
+				))
+			}
+		</ul>
+	</div>
+</section>
+
+<style>
+	.watch {
+		display: grid;
+		gap: clamp(28px, 4vw, 56px);
+		align-items: start;
+	}
+
+	@media (min-width: 860px) {
+		.watch {
+			grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.4fr);
+		}
+
+		/* Le titre reste à l'écran pendant la lecture des encadrés. L'offset
+		   dégage la hauteur de l'en-tête collant. */
+		.watch__head {
+			position: sticky;
+			top: 100px;
+		}
+	}
+
+	.eyebrow {
+		margin: 0 0 18px;
+	}
+
+	.watch__title {
+		font-family: var(--font-title);
+		font-weight: 600;
+		font-size: clamp(26px, 3.4vw, 38px);
+		line-height: 1.06;
+		letter-spacing: -0.015em;
+		margin: 0 0 14px;
+		text-wrap: balance;
+	}
+
+	.watch__intro {
+		font-size: 16px;
+		line-height: 1.6;
+		color: var(--muted);
+		margin: 0;
+		max-width: 340px;
+	}
+
+	.watch__list {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.watch__item {
+		display: flex;
+		gap: 18px;
+		background: var(--warn-bg);
+		border: 1px solid var(--warn-line);
+		border-radius: var(--radius-lg);
+		padding: 22px 24px;
+	}
+
+	.watch__mark {
+		flex: none;
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		background: var(--accent);
+		color: var(--on-accent);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-family: var(--font-title);
+		font-weight: 700;
+		font-size: 15px;
+	}
+
+	.watch__item-title {
+		font-family: var(--font-title);
+		font-weight: 600;
+		font-size: 18px;
+		margin: 0 0 6px;
+		color: var(--warn-title);
+	}
+
+	.watch__item-text {
+		font-size: 14.5px;
+		line-height: 1.58;
+		color: var(--warn-text);
+		margin: 0;
+	}
+</style>

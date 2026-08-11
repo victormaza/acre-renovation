@@ -36,10 +36,17 @@
             "repeat": false
           }
         },
+        "count": {
+          "type": "Number",
+          "config": {
+            "label": "Nombre affiché quand la liste ci-dessous est vide",
+            "placeholder": "4"
+          }
+        },
         "items": {
           "type": "Group",
           "config": {
-            "label": "Réalisations affichées (vide = les 4 dernières publiées)",
+            "label": "Réalisations affichées (vide = les dernières publiées)",
             "fields": {
               "realisation": {
                 "type": "Link",
@@ -61,5 +68,5 @@
       "items": {}
     }
   ],
-  "description": "Grille de chantiers récents, avec badge ville sur la photo. Le contenu vient des documents « Réalisation ». Liste vide = les 4 dernières publiées."
+  "description": "Grille de chantiers récents, avec badge ville sur la photo. Le contenu vient des documents « Réalisation ». Liste vide = les dernières publiées ; sur une page expertise, les dernières rattachées à cette expertise."
 }
