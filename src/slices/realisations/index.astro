@@ -1,6 +1,7 @@
 ---
-import { asText, asLink, isFilled, filter } from '@prismicio/client';
+import { asText, asLink, isFilled } from '@prismicio/client';
 import type {
+	ContentRelationshipField,
 	ImageFieldImage,
 	KeyTextField,
 	LinkField,
@@ -17,6 +18,7 @@ type RealisationDocument = PrismicDocument<
 		title: KeyTextField;
 		city: KeyTextField;
 		meta: KeyTextField;
+		expertise: ContentRelationshipField;
 		image: ImageFieldImage;
 	},
 	'realisation'
@@ -49,14 +51,20 @@ const hasLink = isFilled.link(primary.link);
 // chantiers rattachés à cette expertise — sinon la section « Réalisations
 // liées » afficherait des chantiers d'un autre métier. La sélection manuelle,
 // elle, reste souveraine : c'est un choix explicite du client.
-const filters = context?.expertiseId
-	? [filter.at('my.realisation.expertise', context.expertiseId)]
-	: undefined;
+const expertiseId = context?.expertiseId;
+
+const isLinkedToExpertise = (document: RealisationDocument) => {
+	const link = document.data.expertise;
+	return !!link && isFilled.contentRelationship(link) && link.id === expertiseId;
+};
 
 const documents = await resolvePicks<RealisationDocument>(
 	'realisation',
 	(primary.items ?? []).map((item) => item.realisation),
-	{ limit: primary.count ?? 4, filters },
+	{
+		limit: primary.count ?? 4,
+		match: expertiseId ? isLinkedToExpertise : undefined,
+	},
 );
 
 const items = documents.map((document) => ({
