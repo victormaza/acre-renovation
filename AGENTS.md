@@ -47,7 +47,9 @@ Domaine cible : `acre-renovation.fr`
 - [x] Adresses email confirmées : `contact@acre-sas.fr` en expéditeur *et* en destinataire
 - [ ] Saisir les premiers documents `expertise`, `realisation` et `guide` : les trois sections de la home sont masquées tant qu'ils n'existent pas
 - [ ] Saisir les avis dans la slice `avis` et l'ajouter à la home : la section est masquée tant qu'aucun avis n'est saisi
-- [ ] Gabarits de pages `/expertises/:uid`, `/realisations/:uid`, `/guides/:uid` — les cartes de la home pointent déjà dessus
+- [x] Gabarit `/expertises/:uid` intégré — 5 nouvelles slices, page `[uid].astro`, schéma poussé
+- [ ] Saisir les sections des 5 documents `expertise` : la page est vide tant que sa slice zone l'est
+- [ ] Gabarits de pages `/realisations/:uid` et `/guides/:uid` — les cartes de la home pointent déjà dessus
 - [ ] Type repeatable `page_ville`
 - [ ] Locale `en-us` à supprimer — bloquée par le document `homepage` en `en-us`
 - [ ] Plan de redirections 301
@@ -224,7 +226,7 @@ et ne l'affiche pas en résultat enrichi ; le risque d'action manuelle est réel
 Points de structure :
 
 - Champ **UID** sur chaque type repeatable : c'est lui qui pilote les routes Astro.
-- Liens `realisation → expertise` et `realisation → page_ville` en **Content Relationship**, pas en texte libre. Permet les listings croisés (« nos réalisations à Libourne », « nos chantiers d'isolation ») sans ressaisie ni faute de frappe côté client.
+- Liens `realisation → expertise` (**créé**) et `realisation → page_ville` (à venir) en **Content Relationship**, pas en texte libre. Permet les listings croisés (« nos réalisations à Libourne », « nos chantiers d'isolation ») sans ressaisie ni faute de frappe côté client. C'est `realisation → expertise` qui alimente la section « Réalisations liées » des pages expertise.
 - **Avant/après** : un champ **Group** répétable contenant deux images + une légende. Le client ajoute autant de paires qu'il veut, et la section reste optionnelle.
 
 ---
@@ -236,6 +238,78 @@ Points de structure :
 - **Slice zone** : pas de `<SliceZone>` officiel pour Astro, `src/components/SliceZone.astro` le remplace. Une slice publiée mais pas encore codée est ignorée plutôt que de casser le build.
 - **Adaptateurs de slices** : `src/slices/<id>/index.astro` traduit les champs Prismic en props du composant correspondant de `src/components/`. Le markup n'est jamais touché par Prismic — c'est ce qui rend le découpage en props utile.
 - **Images** : `@prismicio/client` expose `asImageWidthSrcSet`, qui produit `src` + `srcset` avec les paramètres imgix du CDN Prismic (`auto=format,compress`, `width=`). Tout passe par `src/components/Photo.astro`, seul fichier du site qui sait d'où vient une image. C'est le mécanisme qui règle le problème du volume de photos.
+- **Contexte de page** : `<SliceZone context={…}>` transmet à chaque slice ce qu'elle ne peut pas déduire de son propre contenu. Une seule chose y transite pour l'instant — l'ID de l'expertise courante, dont la slice `realisations` a besoin (voir plus bas). Typé par `SliceContext` dans `src/types.ts`.
+
+---
+
+## Gabarit de page expertise
+
+Dérivé du handoff Claude Design de l'expertise, retiré du dépôt après
+intégration comme les précédents. **Un seul gabarit sert les 5 pages de
+service** : la page n'est qu'une slice zone, et c'est le contenu saisi qui
+décide de sa longueur.
+
+```
+src/pages/expertises/[uid].astro   ← getStaticPaths + fil d'ariane + slice zone
+src/components/
+  Breadcrumb.astro                 ← fil d'ariane, hors slice zone
+  ExpertiseHero.astro              ← texte + photo côte à côte
+  Intro.astro
+  Prestation.astro
+  PointsAttention.astro
+  Faq.astro
+```
+
+Slices posables sur le type `expertise` : `expertise_hero`, `intro`,
+`prestation`, `methode`, `points_attention`, `realisations`, `faq`,
+`reassurance`, `cta_final`. Les quatre dernières sont celles de l'accueil,
+reprises telles quelles.
+
+**Aucune section n'est obligatoire dans le code.** Le caractère optionnel de
+la méthode, des points d'attention et de la FAQ n'est pas un drapeau : la
+section n'existe que si sa slice est posée, et l'adaptateur la masque en plus
+si sa liste est vide. La version « réduite » du handoff n'est donc pas un mode,
+juste une page où l'on a posé moins de slices.
+
+Trois points qui ne se devinent pas à la lecture :
+
+- **`expertise_hero` est distinct du `hero` de l'accueil**, qui déroule sa photo
+  en pleine largeur sous le titre. Les deux portent un `<h1>` : ne jamais poser
+  les deux sur la même page. Le champ **Ampleur** (`Standard` / `Ample`) est le
+  seul réglage de taille — il agrandit titre et photo pour la rénovation
+  globale, sans changer le markup.
+- **La méthode a une variation `dark`**, en négatif sur `--ink`. C'est la
+  rupture de rythme des pages expertise, qui déroulent sinon un fond clair
+  continu. L'accueil garde la variation par défaut, et c'est elle seule qui
+  porte l'ancre `#entreprise`.
+- **`realisations` se filtre toute seule sur la page expertise.** Le champ
+  `expertise` du type `realisation` (Content Relationship) est ce qui rattache
+  un chantier à un métier ; le repli automatique de la slice ne pioche alors
+  que là-dedans, via le `context` de la slice zone. Une sélection manuelle
+  reste souveraine, filtre ou pas. Le champ **Nombre affiché** règle la taille
+  du repli, 4 par défaut.
+
+⚠️ **Rattacher chaque réalisation à son expertise** est ce qui fait vivre la
+section « Réalisations liées ». Sans ce champ rempli, la section reste vide sur
+toutes les pages expertise — et ne s'affiche donc pas du tout.
+
+### Séparateurs de grille : halo plutôt que fond
+
+`Reassurance` et `Prestation` dessinent leurs filets 1px avec un
+`box-shadow: 0 0 0 1px` sur chaque cellule, qui déborde dans le `gap`. Colorer
+le fond de la grille est plus court et c'est ce que faisait `Reassurance`, mais
+ce fond réapparaît en aplat dès que la dernière ligne est incomplète — le
+nombre de colonnes venant d'un `auto-fit`, le cas est la règle et non
+l'exception. Le halo qui dépasse au pourtour est rogné par l'`overflow` du
+conteneur.
+
+### Ancres de navigation préfixées
+
+`src/data/settings.ts` pointait sur `#renovation-globale`, `#realisations`…
+Ces ancres sont des sections de l'accueil : depuis une page expertise, elles ne
+menaient nulle part. Elles sont désormais en `/#…`. Les liens encore inertes
+(zones d'intervention, mentions légales) gardent `#` tant que leur page
+n'existe pas.
 
 ---
 

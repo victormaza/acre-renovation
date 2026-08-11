@@ -1,0 +1,34 @@
+{
+  "id": "intro",
+  "type": "SharedSlice",
+  "name": "Bloc introductif",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "description": "Bloc introductif",
+      "imageUrl": "",
+      "docURL": "",
+      "version": "initial",
+      "primary": {
+        "eyebrow": {
+          "type": "Text",
+          "config": {
+            "label": "Surtitre",
+            "placeholder": "En quelques mots"
+          }
+        },
+        "text": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Texte — un ou deux paragraphes",
+            "placeholder": "Mise en contexte concrète : à qui ça s'adresse, ce que vous prenez en charge",
+            "multi": "paragraph"
+          }
+        }
+      },
+      "items": {}
+    }
+  ],
+  "description": "Mise en contexte en gros corps, sur une largeur de lecture réduite. Chaque paragraphe saisi devient un bloc à l'écran."
+}

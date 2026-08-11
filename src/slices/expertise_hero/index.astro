@@ -1,0 +1,58 @@
+---
+import { asText, asLink } from '@prismicio/client';
+import type { ImageFieldImage, KeyTextField, RichTextField } from '@prismicio/client';
+import ExpertiseHero from '../../components/ExpertiseHero.astro';
+
+/** Lien répétable avec texte et variante — `allowText` + `repeat` + `variants`. */
+interface ButtonLink {
+	text?: string | null;
+	variant?: string | null;
+}
+
+export interface ExpertiseHeroSlice {
+	slice_type: 'expertise_hero';
+	primary: {
+		eyebrow: KeyTextField;
+		title: RichTextField;
+		text: RichTextField;
+		buttons: ButtonLink[];
+		image: ImageFieldImage;
+		scale: 'Standard' | 'Ample' | null;
+	};
+}
+
+interface Props {
+	slice: ExpertiseHeroSlice;
+}
+
+const { primary } = Astro.props.slice;
+
+// Même logique que le hero de l'accueil : un bouton plein puis un bouton
+// contour, la variante Prismic faisant foi et l'ordre de saisie servant de
+// repli. Le second est optionnel — toutes les expertises n'ont pas encore de
+// réalisation à montrer.
+const buttons = primary.buttons ?? [];
+const filled = buttons.find((b) => b.variant === 'Filled') ?? buttons[0];
+const outline = buttons.find((b) => b.variant === 'Outline') ?? buttons[1];
+
+const toCta = (button?: ButtonLink) =>
+	button && {
+		label: button.text ?? '',
+		href: asLink(button as Parameters<typeof asLink>[0]) || '#',
+	};
+
+const primaryCta = toCta(filled) ?? { label: 'Demander un devis', href: '/devis' };
+---
+
+<ExpertiseHero
+	eyebrow={primary.eyebrow ?? ''}
+	title={asText(primary.title)}
+	text={asText(primary.text)}
+	primaryCta={primaryCta}
+	secondaryCta={toCta(outline) ?? undefined}
+	scale={primary.scale === 'Ample' ? 'ample' : 'standard'}
+	image={{
+		field: primary.image,
+		sizes: '(min-width: 860px) 620px, calc(100vw - 80px)',
+	}}
+/>

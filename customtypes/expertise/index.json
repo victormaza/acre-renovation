@@ -49,6 +49,41 @@
           },
           "thumbnails": []
         }
+      },
+      "slices": {
+        "type": "Slices",
+        "fieldset": "Sections de la page",
+        "config": {
+          "choices": {
+            "expertise_hero": {
+              "type": "SharedSlice"
+            },
+            "intro": {
+              "type": "SharedSlice"
+            },
+            "prestation": {
+              "type": "SharedSlice"
+            },
+            "methode": {
+              "type": "SharedSlice"
+            },
+            "points_attention": {
+              "type": "SharedSlice"
+            },
+            "realisations": {
+              "type": "SharedSlice"
+            },
+            "faq": {
+              "type": "SharedSlice"
+            },
+            "reassurance": {
+              "type": "SharedSlice"
+            },
+            "cta_final": {
+              "type": "SharedSlice"
+            }
+          }
+        }
       }
     },
     "SEO & Metadata": {

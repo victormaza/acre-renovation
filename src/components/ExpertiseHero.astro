@@ -1,0 +1,109 @@
+---
+// Bandeau d'ouverture des pages expertise : texte à gauche, photo à droite.
+// Distinct du Hero de l'accueil, qui déroule sa photo en pleine largeur sous
+// le titre. Les deux portent un <h1> ; une page ne rend jamais les deux.
+import Photo from './Photo.astro';
+import type { CtaInput, PhotoInput } from '../types';
+
+interface Props {
+	eyebrow: string;
+	title: string;
+	text: string;
+	primaryCta: CtaInput;
+	secondaryCta?: CtaInput;
+	image: PhotoInput;
+	/**
+	 * « ample » élargit le titre et la photo, pour l'expertise qui porte
+	 * l'activité principale. Le markup ne change pas, seuls les réglages.
+	 */
+	scale?: 'standard' | 'ample';
+}
+
+const { eyebrow, title, text, primaryCta, secondaryCta, image, scale = 'standard' } = Astro.props;
+const isAmple = scale === 'ample';
+---
+
+<section class:list={['hero', isAmple && 'hero--ample']}>
+	<div class="container hero__grid">
+		<div class="hero__text">
+			<p class="eyebrow">{eyebrow}</p>
+			<h1 class="hero__title">{title}</h1>
+			<p class="hero__lead">{text}</p>
+			<div class="hero__actions">
+				<a class="btn btn--dark" href={primaryCta.href}>
+					<span class="btn-dot"></span>{primaryCta.label}
+				</a>
+				{
+					secondaryCta && (
+						<a class="btn btn--outline" href={secondaryCta.href}>
+							{secondaryCta.label} <span class="arrow">→</span>
+						</a>
+					)
+				}
+			</div>
+		</div>
+		<div class="hero__media">
+			<Photo
+				{...image}
+				ratio={isAmple ? '5 / 4' : '4 / 3'}
+				radius="var(--radius-md)"
+				loading="eager"
+			/>
+		</div>
+	</div>
+</section>
+
+<style>
+	.hero {
+		/* Le fil d'ariane porte déjà l'écart avec l'en-tête. */
+		padding-top: 0;
+	}
+
+	.hero__grid {
+		display: grid;
+		gap: clamp(28px, 4vw, 56px);
+		align-items: center;
+	}
+
+	@media (min-width: 860px) {
+		.hero__grid {
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		}
+
+		.hero--ample .hero__grid {
+			grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.15fr);
+		}
+	}
+
+	.eyebrow {
+		margin: 0 0 20px;
+	}
+
+	.hero__title {
+		font-family: var(--font-title);
+		font-weight: 600;
+		font-size: clamp(30px, 4.4vw, 50px);
+		line-height: 1.03;
+		letter-spacing: -0.02em;
+		margin: 0 0 22px;
+		text-wrap: balance;
+	}
+
+	.hero--ample .hero__title {
+		font-size: clamp(34px, 5vw, 60px);
+	}
+
+	.hero__lead {
+		font-size: clamp(17px, 2.2vw, 20px);
+		line-height: 1.55;
+		color: var(--text);
+		max-width: 540px;
+		margin: 0 0 30px;
+	}
+
+	.hero__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 14px;
+	}
+</style>

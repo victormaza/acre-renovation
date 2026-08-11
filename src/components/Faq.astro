@@ -1,0 +1,112 @@
+---
+// Questions fréquentes en accordéon natif : <details>/<summary> ouvrent et
+// ferment sans une ligne de JavaScript, et le contenu des réponses fermées
+// reste dans le HTML — c'est ce que vient y chercher la longue traîne.
+interface Props {
+	id?: string;
+	eyebrow: string;
+	title: string;
+	items: { question: string; answer: string }[];
+}
+
+const { id, eyebrow, title, items } = Astro.props;
+---
+
+<section class="section" id={id}>
+	<div class="container container--narrow">
+		<div class="faq__head">
+			<p class="eyebrow">{eyebrow}</p>
+			<h2 class="title-lg">{title}</h2>
+		</div>
+
+		<div class="faq__list">
+			{
+				items.map((item) => (
+					<details class="faq__item">
+						<summary class="faq__question">
+							<span class="faq__label">{item.question}</span>
+							<span class="faq__plus" aria-hidden="true">
+								+
+							</span>
+						</summary>
+						<p class="faq__answer">{item.answer}</p>
+					</details>
+				))
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	.faq__head {
+		margin-bottom: clamp(32px, 4vw, 44px);
+	}
+
+	.eyebrow {
+		margin: 0 0 18px;
+	}
+
+	.faq__list {
+		border-top: 1px solid var(--line-warm);
+	}
+
+	.faq__item {
+		border-bottom: 1px solid var(--line-warm);
+	}
+
+	.faq__question {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 20px;
+		cursor: pointer;
+		padding: 24px 4px;
+		/* Les deux règles retirent le triangle par défaut, l'une pour WebKit,
+		   l'autre pour le reste. */
+		list-style: none;
+	}
+
+	.faq__question::-webkit-details-marker {
+		display: none;
+	}
+
+	.faq__label {
+		font-family: var(--font-title);
+		font-weight: 600;
+		font-size: clamp(17px, 2.2vw, 20px);
+		line-height: 1.3;
+		color: var(--ink);
+	}
+
+	/* Le + pivote d'un huitième de tour à l'ouverture : il devient une croix. */
+	.faq__plus {
+		flex: none;
+		width: 26px;
+		height: 26px;
+		color: var(--accent);
+		font-size: 24px;
+		line-height: 26px;
+		text-align: center;
+		font-weight: 300;
+		transition: transform 0.25s ease;
+	}
+
+	.faq__item[open] .faq__plus {
+		transform: rotate(45deg);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.faq__plus {
+			transition: none;
+		}
+	}
+
+	.faq__answer {
+		font-size: 16px;
+		line-height: 1.62;
+		color: var(--text);
+		margin: 0;
+		padding: 0 44px 26px 4px;
+		max-width: 680px;
+	}
+</style>

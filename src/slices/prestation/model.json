@@ -1,0 +1,57 @@
+{
+  "id": "prestation",
+  "type": "SharedSlice",
+  "name": "Ce que comprend la prestation",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "description": "Ce que comprend la prestation",
+      "imageUrl": "",
+      "docURL": "",
+      "version": "initial",
+      "primary": {
+        "eyebrow": {
+          "type": "Text",
+          "config": {
+            "label": "Surtitre",
+            "placeholder": "Ce que comprend la prestation"
+          }
+        },
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Titre",
+            "placeholder": "Tous les lots, pilotés sous un même toit.",
+            "single": "heading2"
+          }
+        },
+        "items": {
+          "type": "Group",
+          "config": {
+            "label": "Postes couverts",
+            "fields": {
+              "title": {
+                "type": "Text",
+                "config": {
+                  "label": "Poste",
+                  "placeholder": "Démolition & gros œuvre"
+                }
+              },
+              "text": {
+                "type": "StructuredText",
+                "config": {
+                  "label": "Description",
+                  "placeholder": "Une phrase sur ce que couvre ce poste",
+                  "single": "paragraph"
+                }
+              }
+            }
+          }
+        }
+      },
+      "items": {}
+    }
+  ],
+  "description": "Grille des postes couverts par l'expertise, numérotés à l'affichage. Section masquée tant qu'aucun poste n'est saisi."
+}

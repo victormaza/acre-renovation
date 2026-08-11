@@ -1,0 +1,92 @@
+---
+// Ce que comprend la prestation : grille scannable d'items numérotés.
+// Les séparateurs 1px viennent du gap laissant voir le fond, comme Réassurance.
+import SectionHead from './SectionHead.astro';
+
+interface Props {
+	id?: string;
+	eyebrow: string;
+	title: string;
+	items: { index: string; title: string; text: string }[];
+}
+
+const { id, eyebrow, title, items } = Astro.props;
+---
+
+<section class="section" id={id}>
+	<div class="container">
+		<div class="head">
+			<SectionHead eyebrow={eyebrow} title={title} />
+		</div>
+
+		<ul class="scope">
+			{
+				items.map((item) => (
+					<li class="scope__item">
+						<p class="scope__index">{item.index}</p>
+						<h3 class="scope__title">{item.title}</h3>
+						<p class="scope__text">{item.text}</p>
+					</li>
+				))
+			}
+		</ul>
+	</div>
+</section>
+
+<style>
+	.head {
+		max-width: 640px;
+		margin-bottom: clamp(36px, 4vw, 48px);
+	}
+
+	.head :global(.head) {
+		margin-bottom: 0;
+	}
+
+	/* Les séparateurs 1px sont peints par le halo de chaque item, qui déborde
+	   dans le gap. Colorer le fond de la grille serait plus court, mais le
+	   laisserait apparaître en aplat sur une dernière ligne incomplète — le
+	   nombre de colonnes variant avec la largeur, le cas est la règle. Le halo
+	   qui dépasse au pourtour est rogné par l'`overflow` du conteneur. */
+	.scope {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+		gap: 1px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		background: var(--bg);
+		border: 1px solid var(--line-warm);
+		border-radius: var(--radius-md);
+		overflow: hidden;
+	}
+
+	.scope__item {
+		background: var(--bg);
+		box-shadow: 0 0 0 1px var(--line-warm);
+		padding: 26px 26px 28px;
+	}
+
+	.scope__index {
+		font-family: var(--font-title);
+		font-weight: 700;
+		font-size: 13px;
+		color: var(--accent);
+		margin: 0 0 14px;
+	}
+
+	.scope__title {
+		font-family: var(--font-title);
+		font-weight: 600;
+		font-size: 18px;
+		line-height: 1.2;
+		margin: 0 0 8px;
+	}
+
+	.scope__text {
+		font-size: 14.5px;
+		line-height: 1.55;
+		color: var(--muted);
+		margin: 0;
+	}
+</style>

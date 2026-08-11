@@ -1,0 +1,37 @@
+---
+import { asText } from '@prismicio/client';
+import type { KeyTextField, RichTextField } from '@prismicio/client';
+import PointsAttention from '../../components/PointsAttention.astro';
+
+export interface PointsAttentionSlice {
+	slice_type: 'points_attention';
+	primary: {
+		eyebrow: KeyTextField;
+		title: RichTextField;
+		text: RichTextField;
+		items: { title: KeyTextField; text: RichTextField }[];
+	};
+}
+
+interface Props {
+	slice: PointsAttentionSlice;
+}
+
+const { primary } = Astro.props.slice;
+
+const items = (primary.items ?? []).map((item) => ({
+	title: item.title ?? '',
+	text: asText(item.text),
+}));
+---
+
+{
+	items.length > 0 && (
+		<PointsAttention
+			eyebrow={primary.eyebrow ?? ''}
+			title={asText(primary.title) || "Points d'attention"}
+			text={asText(primary.text)}
+			items={items}
+		/>
+	)
+}

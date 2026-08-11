@@ -1,0 +1,73 @@
+---
+// Fil d'ariane des pages internes. Il relève de la structure du site, pas du
+// contenu : il est donc posé par la page, en dehors de la slice zone.
+// Le dernier segment n'est pas un lien — c'est la page courante.
+interface Props {
+	items: { label: string; href?: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="container breadcrumb" aria-label="Fil d'ariane">
+	<ol class="breadcrumb__list">
+		{
+			items.map((item, index) => (
+				<li class="breadcrumb__item">
+					{index > 0 && (
+						<span class="breadcrumb__sep" aria-hidden="true">
+							›
+						</span>
+					)}
+					{item.href ? (
+						<a class="breadcrumb__link" href={item.href}>
+							{item.label}
+						</a>
+					) : (
+						<span class="breadcrumb__current" aria-current="page">
+							{item.label}
+						</span>
+					)}
+				</li>
+			))
+		}
+	</ol>
+</nav>
+
+<style>
+	.breadcrumb {
+		padding-top: clamp(28px, 4vw, 44px);
+		padding-bottom: clamp(22px, 3vw, 34px);
+	}
+
+	.breadcrumb__list {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 9px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		font-size: 13.5px;
+		color: var(--muted-strong);
+	}
+
+	.breadcrumb__item {
+		display: flex;
+		align-items: center;
+		gap: 9px;
+	}
+
+	.breadcrumb__sep {
+		color: var(--muted-faint);
+	}
+
+	.breadcrumb__link:hover {
+		color: var(--ink);
+	}
+
+	.breadcrumb__current {
+		color: var(--text-nav);
+		font-weight: 500;
+	}
+</style>

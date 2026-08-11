@@ -1,14 +1,16 @@
 ---
-import { asText, asLink, isFilled } from '@prismicio/client';
+import { asText, asLink, isFilled, filter } from '@prismicio/client';
 import type {
 	ImageFieldImage,
 	KeyTextField,
 	LinkField,
+	NumberField,
 	PrismicDocument,
 	RichTextField,
 } from '@prismicio/client';
 import Realisations from '../../components/Realisations.astro';
 import { resolvePicks } from '../../prismicio';
+import type { SliceContext } from '../../types';
 
 type RealisationDocument = PrismicDocument<
 	{
@@ -26,24 +28,35 @@ export interface RealisationsSlice {
 		eyebrow: KeyTextField;
 		title: RichTextField;
 		link: LinkField & { text?: string | null };
+		count: NumberField;
 		items: { realisation: LinkField }[];
 	};
 }
 
 interface Props {
 	slice: RealisationsSlice;
+	context?: SliceContext;
 }
 
 const { primary } = Astro.props.slice;
+const context = Astro.props.context;
 
 // Le lien « voir tout » disparaît tant qu'il n'est pas renseigné, plutôt que
 // de pointer vers une page qui n'existe pas encore.
 const hasLink = isFilled.link(primary.link);
 
+// Sur une page expertise, le repli automatique ne pioche que dans les
+// chantiers rattachés à cette expertise — sinon la section « Réalisations
+// liées » afficherait des chantiers d'un autre métier. La sélection manuelle,
+// elle, reste souveraine : c'est un choix explicite du client.
+const filters = context?.expertiseId
+	? [filter.at('my.realisation.expertise', context.expertiseId)]
+	: undefined;
+
 const documents = await resolvePicks<RealisationDocument>(
 	'realisation',
 	(primary.items ?? []).map((item) => item.realisation),
-	{ limit: 4 },
+	{ limit: primary.count ?? 4, filters },
 );
 
 const items = documents.map((document) => ({

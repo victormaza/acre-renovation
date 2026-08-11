@@ -1,0 +1,37 @@
+---
+import { asText } from '@prismicio/client';
+import type { KeyTextField, RichTextField } from '@prismicio/client';
+import Faq from '../../components/Faq.astro';
+
+export interface FaqSlice {
+	slice_type: 'faq';
+	primary: {
+		eyebrow: KeyTextField;
+		title: RichTextField;
+		items: { question: KeyTextField; answer: RichTextField }[];
+	};
+}
+
+interface Props {
+	slice: FaqSlice;
+}
+
+const { primary } = Astro.props.slice;
+
+// Une question sans réponse ouvrirait un accordéon vide : on l'écarte plutôt
+// que de la laisser piéger le lecteur.
+const items = (primary.items ?? [])
+	.map((item) => ({ question: item.question ?? '', answer: asText(item.answer) }))
+	.filter((item) => item.question && item.answer);
+---
+
+{
+	items.length > 0 && (
+		<Faq
+			id="questions"
+			eyebrow={primary.eyebrow ?? ''}
+			title={asText(primary.title)}
+			items={items}
+		/>
+	)
+}

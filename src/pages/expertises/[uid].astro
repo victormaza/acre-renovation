@@ -1,0 +1,49 @@
+---
+import type { KeyTextField, PrismicDocument, SliceZone as SliceZoneField } from '@prismicio/client';
+import { createClient, hasType } from '../../prismicio';
+import Base from '../../layouts/Base.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import SliceZone from '../../components/SliceZone.astro';
+
+type ExpertiseDocument = PrismicDocument<
+	{
+		title: KeyTextField;
+		meta_title: KeyTextField;
+		meta_description: KeyTextField;
+		slices: SliceZoneField;
+	},
+	'expertise'
+>;
+
+export async function getStaticPaths() {
+	// Tant qu'aucune expertise n'est publiée, le type n'est pas annoncé par
+	// l'API et l'interroger échouerait. Aucune page n'est alors générée : les
+	// gabarits s'activent d'eux-mêmes à la première publication.
+	if (!(await hasType('expertise'))) return [];
+
+	const client = await createClient();
+	const documents = await client.getAllByType<ExpertiseDocument>('expertise');
+
+	return documents.map((document) => ({
+		params: { uid: document.uid },
+		props: { document },
+	}));
+}
+
+interface Props {
+	document: ExpertiseDocument;
+}
+
+const { document } = Astro.props;
+const title = document.data.title ?? '';
+---
+
+<Base
+	title={document.data.meta_title || `${title} — Acre Rénovation`}
+	description={document.data.meta_description || undefined}
+>
+	<Breadcrumb items={[{ label: 'Accueil', href: '/' }, { label: title }]} />
+	<!-- `expertiseId` limite le repli de la slice « Réalisations » aux
+	     chantiers rattachés à cette expertise. -->
+	<SliceZone slices={document.data.slices} context={{ expertiseId: document.id }} />
+</Base>

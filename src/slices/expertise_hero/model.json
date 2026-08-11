@@ -1,0 +1,79 @@
+{
+  "id": "expertise_hero",
+  "type": "SharedSlice",
+  "name": "Hero d'expertise",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "description": "Hero d'expertise",
+      "imageUrl": "",
+      "docURL": "",
+      "version": "initial",
+      "primary": {
+        "eyebrow": {
+          "type": "Text",
+          "config": {
+            "label": "Surtitre",
+            "placeholder": "Expertise · Activité principale"
+          }
+        },
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Titre",
+            "placeholder": "Rénovation globale de maison & d'appartement",
+            "single": "heading1"
+          }
+        },
+        "text": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Accroche",
+            "placeholder": "Le problème que vous résolvez, pas une définition du métier",
+            "single": "paragraph"
+          }
+        },
+        "buttons": {
+          "type": "Link",
+          "config": {
+            "label": "Boutons",
+            "select": null,
+            "allowTargetBlank": false,
+            "allowText": true,
+            "repeat": true,
+            "variants": [
+              "Filled",
+              "Outline"
+            ]
+          }
+        },
+        "image": {
+          "type": "Image",
+          "config": {
+            "label": "Photo du type de chantier",
+            "constraint": {
+              "width": 1400,
+              "height": 1120
+            },
+            "thumbnails": []
+          }
+        },
+        "scale": {
+          "type": "Select",
+          "config": {
+            "label": "Ampleur — « Ample » agrandit le titre et la photo",
+            "placeholder": "Standard",
+            "default_value": "Standard",
+            "options": [
+              "Standard",
+              "Ample"
+            ]
+          }
+        }
+      },
+      "items": {}
+    }
+  ],
+  "description": "Ouverture d'une page expertise : surtitre, titre principal, accroche, double bouton et photo. Réservé aux pages expertise — l'accueil a son propre hero."
+}

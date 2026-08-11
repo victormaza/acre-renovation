@@ -1,0 +1,39 @@
+---
+import { asText } from '@prismicio/client';
+import type { KeyTextField, RichTextField } from '@prismicio/client';
+import Prestation from '../../components/Prestation.astro';
+
+export interface PrestationSlice {
+	slice_type: 'prestation';
+	primary: {
+		eyebrow: KeyTextField;
+		title: RichTextField;
+		items: { title: KeyTextField; text: RichTextField }[];
+	};
+}
+
+interface Props {
+	slice: PrestationSlice;
+}
+
+const { primary } = Astro.props.slice;
+
+// Numérotation calculée à l'affichage, comme pour les étapes de la méthode :
+// réordonner les postes dans Prismic ne demande aucune ressaisie.
+const items = (primary.items ?? []).map((item, i) => ({
+	index: String(i + 1).padStart(2, '0'),
+	title: item.title ?? '',
+	text: asText(item.text),
+}));
+---
+
+{
+	items.length > 0 && (
+		<Prestation
+			id="prestation"
+			eyebrow={primary.eyebrow ?? ''}
+			title={asText(primary.title)}
+			items={items}
+		/>
+	)
+}

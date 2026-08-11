@@ -1,0 +1,57 @@
+{
+  "id": "faq",
+  "type": "SharedSlice",
+  "name": "Questions fréquentes",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "description": "Questions fréquentes",
+      "imageUrl": "",
+      "docURL": "",
+      "version": "initial",
+      "primary": {
+        "eyebrow": {
+          "type": "Text",
+          "config": {
+            "label": "Surtitre",
+            "placeholder": "Questions fréquentes"
+          }
+        },
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Titre",
+            "placeholder": "Vous vous demandez peut-être…",
+            "single": "heading2"
+          }
+        },
+        "items": {
+          "type": "Group",
+          "config": {
+            "label": "Questions",
+            "fields": {
+              "question": {
+                "type": "Text",
+                "config": {
+                  "label": "Question",
+                  "placeholder": "Combien de temps dure une rénovation globale ?"
+                }
+              },
+              "answer": {
+                "type": "StructuredText",
+                "config": {
+                  "label": "Réponse",
+                  "placeholder": "Une réponse concrète, chiffrée si possible",
+                  "single": "paragraph"
+                }
+              }
+            }
+          }
+        }
+      },
+      "items": {}
+    }
+  ],
+  "description": "Accordéon de questions fréquentes. Une question sans réponse est ignorée, et la section est masquée tant qu'aucune paire complète n'est saisie."
+}
