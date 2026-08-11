@@ -289,6 +289,21 @@ Trois points qui ne se devinent pas à la lecture :
   reste souveraine, filtre ou pas. Le champ **Nombre affiché** règle la taille
   du repli, 4 par défaut.
 
+⚠️ **Ce filtrage se fait en mémoire, pas dans la requête** — et ce n'est pas
+un raccourci. `filter.at('my.realisation.expertise', …)` a fait échouer le
+build Cloudflare avec « unexpected field » : **l'index de requête de Prismic
+n'apprend un champ qu'à la première publication qui le renseigne**. Tant
+qu'aucune réalisation n'était rattachée, le champ n'existait pas pour l'API,
+alors même qu'il était bien au schéma. C'est le même piège que la table de
+routes, un cran plus bas : là le type, ici le champ. `resolvePicks` prend donc
+un prédicat `match` appliqué après la requête, et le `limit` s'applique après
+le filtrage — sinon il rognerait avant, et renverrait moins que demandé.
+
+Ne pas « optimiser » en repassant à un filtre de requête : ça remarche tant
+qu'un document porte le champ, et ça casse le jour où l'on repart d'un contenu
+vide. À l'échelle du site, filtrer quelques dizaines de documents en mémoire ne
+coûte rien.
+
 ⚠️ **Rattacher chaque réalisation à son expertise** est ce qui fait vivre la
 section « Réalisations liées ». Sans ce champ rempli, la section reste vide sur
 toutes les pages expertise — et ne s'affiche donc pas du tout.

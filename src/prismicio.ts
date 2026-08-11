@@ -61,13 +61,17 @@ export const createClient = async (config: prismic.ClientConfig = {}) => {
  * à la faire apparaître, la sélection manuelle ne servant qu'à forcer un
  * ordre ou une vitrine précise.
  *
- * `filters` restreint ce repli sans toucher à la sélection manuelle : un choix
+ * `match` restreint ce repli sans toucher à la sélection manuelle : un choix
  * explicite du client est toujours honoré, même s'il sort du filtre.
  */
 export async function resolvePicks<TDocument extends prismic.PrismicDocument>(
 	type: string,
 	picks: prismic.LinkField[],
-	fallback: { limit?: number; direction?: 'asc' | 'desc'; filters?: string[] } = {},
+	fallback: {
+		limit?: number;
+		direction?: 'asc' | 'desc';
+		match?: (document: TDocument) => boolean;
+	} = {},
 ): Promise<TDocument[]> {
 	// Type sans aucun document : la section n'a rien à afficher, et l'API
 	// n'accepterait pas encore d'être interrogée dessus.
@@ -85,10 +89,24 @@ export async function resolvePicks<TDocument extends prismic.PrismicDocument>(
 		return ids.map((id) => byID.get(id)).filter((document) => document !== undefined);
 	}
 
-	const { limit, direction = 'desc', filters } = fallback;
-	return client.getAllByType<TDocument>(type, {
-		limit,
-		filters,
+	const { limit, direction = 'desc', match } = fallback;
+
+	// Le tri est délégué à l'API, mais pas le filtrage. `filter.at()` sur un
+	// champ que *aucun* document publié ne renseigne encore échoue : l'index de
+	// requête n'apprend un champ qu'à la première publication qui le porte, et
+	// `at(my.realisation.expertise, …)` répondait « unexpected field » tant
+	// qu'aucune réalisation n'était rattachée. Même piège que la table de
+	// routes plus haut, un cran plus bas. On trie donc en mémoire : à l'échelle
+	// du site, c'est quelques dizaines de documents.
+	const documents = await client.getAllByType<TDocument>(type, {
+		limit: match ? undefined : limit,
 		orderings: [{ field: 'document.first_publication_date', direction }],
 	});
+
+	if (!match) return documents;
+
+	// Le `limit` s'applique après coup, sinon il rognerait avant le filtrage et
+	// renverrait moins de documents que demandé — voire aucun.
+	const kept = documents.filter(match);
+	return limit === undefined ? kept : kept.slice(0, limit);
 }
