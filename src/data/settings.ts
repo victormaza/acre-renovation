@@ -2,50 +2,37 @@
 // Correspond au futur custom type single `settings` de Prismic. Le jour où il
 // existe, seul ce fichier est remplacé par un appel client ; les composants ne
 // bougent pas.
+//
+// Les entrées « expertises » n'y figurent plus : elles sont dérivées des
+// documents publiés au build, par `src/navigation.ts`. C'est ce qui évite
+// qu'une expertise renommée, réordonnée ou pas encore écrite laisse un lien
+// mort dans le menu.
+//
+// Les ancres restantes visent des sections de l'accueil, d'où le `/` en tête :
+// depuis une page expertise, un `#ancre` nu ne mènerait nulle part.
 
-export const devisCta = {
+import type { NavItem, NavLink } from '../types';
+
+export const devisCta: NavLink = {
 	label: 'Demander un devis',
 	href: '/devis',
 };
 
-export const nav = [
-	{ label: 'Rénovation globale', href: '/#renovation-globale' },
-	// Ces ancres sont produites par slugify() sur le titre de chaque expertise
-	// (voir src/slices/expertises/index.astro). Renommer une expertise dans
-	// Prismic change donc son ancre : à répercuter ici tant que la navigation
-	// n'est pas elle-même pilotée par le CMS.
-	//
-	// Elles visent des sections de l'accueil, d'où le `/` en tête : depuis une
-	// page expertise, un `#ancre` nu ne mènerait nulle part.
-	{
-		label: 'Nos expertises',
-		children: [
-			{ label: 'Extension & surélévation', href: '/#extension-surelevation' },
-			{ label: 'Piscine & aménagement extérieur', href: '/#piscine-amenagement-exterieur' },
-			{ label: 'Cuisine & salle de bain', href: '/#cuisine-salle-de-bain' },
-			{ label: 'Aménagement intérieur sur-mesure', href: '/#amenagement-interieur-sur-mesure' },
-		],
-	},
+/** Entrées de menu qui ne dépendent pas du contenu. */
+export const navRest: NavItem[] = [
 	{ label: 'Réalisations', href: '/#realisations' },
 	{ label: 'Guides', href: '/#guides' },
 	{ label: 'Entreprise', href: '/#entreprise' },
 ];
 
+export const expertisesMenuLabel = 'Nos expertises';
+
 export const footer = {
 	baseline:
 		'Entreprise générale de rénovation en Gironde. Interlocuteur unique, gestion de A à Z, depuis 2018.',
 	mentions: 'Garantie décennale · Assurances professionnelles',
+	expertisesColumnTitle: 'Expertises',
 	columns: [
-		{
-			title: 'Expertises',
-			links: [
-				{ label: 'Rénovation globale', href: '/#renovation-globale' },
-				{ label: 'Extension & surélévation', href: '/#extension-surelevation' },
-				{ label: 'Piscine & extérieur', href: '/#piscine-amenagement-exterieur' },
-				{ label: 'Cuisine & salle de bain', href: '/#cuisine-salle-de-bain' },
-				{ label: 'Aménagement sur-mesure', href: '/#amenagement-interieur-sur-mesure' },
-			],
-		},
 		{
 			title: 'Entreprise',
 			links: [

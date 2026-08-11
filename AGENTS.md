@@ -48,7 +48,9 @@ Domaine cible : `acre-renovation.fr`
 - [ ] Saisir les premiers documents `expertise`, `realisation` et `guide` : les trois sections de la home sont masquées tant qu'ils n'existent pas
 - [ ] Saisir les avis dans la slice `avis` et l'ajouter à la home : la section est masquée tant qu'aucun avis n'est saisi
 - [x] Gabarit `/expertises/:uid` intégré — 5 nouvelles slices, page `[uid].astro`, schéma poussé
-- [ ] Saisir les sections des 5 documents `expertise` : la page est vide tant que sa slice zone l'est
+- [x] Menu et pied de page dérivés des expertises publiées — plus de lien mort possible
+- [ ] Saisir les sections des 5 documents `expertise` : la page est vide tant que sa slice zone l'est, et le menu ne cite que les expertises publiées
+- [ ] Renseigner `nav_label` sur chaque expertise — sans lui le menu reprend le titre complet, trop long
 - [ ] Gabarits de pages `/realisations/:uid` et `/guides/:uid` — les cartes de la home pointent déjà dessus
 - [ ] Type repeatable `page_ville`
 - [ ] Locale `en-us` à supprimer — bloquée par le document `homepage` en `en-us`
@@ -318,13 +320,43 @@ nombre de colonnes venant d'un `auto-fit`, le cas est la règle et non
 l'exception. Le halo qui dépasse au pourtour est rogné par l'`overflow` du
 conteneur.
 
-### Ancres de navigation préfixées
+### Navigation — les expertises viennent de Prismic
 
-`src/data/settings.ts` pointait sur `#renovation-globale`, `#realisations`…
-Ces ancres sont des sections de l'accueil : depuis une page expertise, elles ne
-menaient nulle part. Elles sont désormais en `/#…`. Les liens encore inertes
-(zones d'intervention, mentions légales) gardent `#` tant que leur page
-n'existe pas.
+`src/data/settings.ts` listait les cinq expertises en dur, en ancres de
+l'accueil (`#extension-surelevation`…). Deux défauts, découverts l'un après
+l'autre :
+
+- depuis une page expertise, un `#ancre` nu ne mène nulle part — corrigé en
+  préfixant par `/` ;
+- **quatre de ces cinq ancres ne menaient nulle part non plus sur l'accueil.**
+  La grille des expertises est peuplée par les documents publiés : une seule
+  expertise écrite, une seule ancre rendue. Le menu promettait quatre sections
+  qui n'existaient dans aucune page.
+
+`src/navigation.ts` assemble donc menu et pied de page au build : les entrées
+« expertises » sont dérivées des documents publiés, les autres restent dans
+`settings.ts`. Une expertise publiée entre d'elle-même au menu, et aucune
+entrée ne peut plus pointer vers une page absente.
+
+- **La première expertise occupe une entrée de premier niveau, les suivantes le
+  déroulant** — même hiérarchie que la grille de l'accueil, où la première
+  prend la grande carte. Avec une seule expertise publiée, il n'y a pas de
+  déroulant, et la colonne « Expertises » du pied de page disparaîtrait s'il
+  n'y en avait aucune.
+- **Champ `nav_label`** sur le type `expertise` : le titre complet
+  (« Rénovation globale de maison & d'appartement ») est trop long pour une
+  barre de navigation. Facultatif — sans lui on retombe sur le titre, ce qui
+  est correct mais laid. À remplir sur chaque expertise.
+- L'ordre suit l'ancienneté de publication, comme le repli de la grille.
+  ⚠️ Si le client ordonne les expertises à la main dans la slice de l'accueil,
+  **le menu ne suit pas** : il n'a pas accès à cette sélection. À reprendre le
+  jour où l'ordre du menu doit être piloté, sans doute via le single `settings`.
+
+Les liens encore inertes (zones d'intervention, mentions légales) gardent `#`
+tant que leur page n'existe pas.
+
+⚠️ `Base.astro` interroge donc Prismic pour toute page non-`bare`. Le tunnel de
+devis y échappe (`bare`), et n'a pas besoin de l'API pour se rendre.
 
 ---
 

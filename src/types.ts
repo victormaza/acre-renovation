@@ -18,6 +18,17 @@ export interface CtaInput {
 	href: string;
 }
 
+export interface NavLink {
+	label: string;
+	href: string;
+}
+
+/** Entrée de navigation : soit un lien, soit un menu déroulant. */
+export interface NavItem extends Partial<NavLink> {
+	label: string;
+	children?: NavLink[];
+}
+
 /**
  * Ce que la page rendue transmet à ses slices, en plus de leur propre contenu.
  *

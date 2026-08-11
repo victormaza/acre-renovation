@@ -18,6 +18,13 @@
           "placeholder": "Rénovation globale de maison & d'appartement"
         }
       },
+      "nav_label": {
+        "type": "Text",
+        "config": {
+          "label": "Libellé de menu — court, sinon le titre complet est repris",
+          "placeholder": "Rénovation globale"
+        }
+      },
       "badge": {
         "type": "Text",
         "config": {

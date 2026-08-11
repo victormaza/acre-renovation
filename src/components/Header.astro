@@ -1,13 +1,5 @@
 ---
-interface NavLink {
-	label: string;
-	href: string;
-}
-
-export interface NavItem extends NavLink {
-	href?: string;
-	children?: NavLink[];
-}
+import type { NavItem, NavLink } from '../types';
 
 interface Props {
 	nav: NavItem[];
