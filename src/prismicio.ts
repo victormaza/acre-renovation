@@ -11,6 +11,7 @@ export const repositoryName = '3u0gsum3';
 // Les chemins restent à confirmer avec le plan de redirections 301.
 export const routes: NonNullable<prismic.ClientConfig['routes']> = [
 	{ type: 'homepage', path: '/' },
+	{ type: 'page_realisations', path: '/realisations' },
 	{ type: 'realisation', path: '/realisations/:uid' },
 	{ type: 'guide', path: '/guides/:uid' },
 	{ type: 'expertise', path: '/expertises/:uid' },

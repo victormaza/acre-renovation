@@ -1,7 +1,9 @@
 ---
-import Photo from './Photo.astro';
+// Section « Réalisations récentes » : en-tête de section + grille de chantiers.
+// La grille elle-même vit dans RealisationGrid, partagée avec /realisations.
+import RealisationGrid from './RealisationGrid.astro';
 import SectionHead from './SectionHead.astro';
-import type { PhotoInput } from '../types';
+import type { RealisationCard } from '../types';
 
 interface Props {
 	id?: string;
@@ -9,13 +11,7 @@ interface Props {
 	title: string;
 	linkLabel?: string;
 	linkHref?: string;
-	items: {
-		city: string;
-		title: string;
-		meta: string;
-		href: string;
-		image: PhotoInput;
-	}[];
+	items: RealisationCard[];
 }
 
 const { id, eyebrow, title, linkLabel, linkHref, items } = Astro.props;
@@ -23,68 +19,5 @@ const { id, eyebrow, title, linkLabel, linkHref, items } = Astro.props;
 
 <section class="container section" id={id}>
 	<SectionHead eyebrow={eyebrow} title={title} linkLabel={linkLabel} linkHref={linkHref} />
-
-	<ul class="grid">
-		{
-			items.map((item) => (
-				<li>
-					<a class="realisation" href={item.href}>
-						<div class="realisation__media">
-							<Photo {...item.image} ratio="3 / 4" radius="var(--radius-md)" />
-							<span class="realisation__city">{item.city}</span>
-						</div>
-						<h3 class="realisation__title">{item.title}</h3>
-						<p class="realisation__meta">{item.meta}</p>
-					</a>
-				</li>
-			))
-		}
-	</ul>
+	<RealisationGrid items={items} />
 </section>
-
-<style>
-	.grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-		gap: 20px;
-		margin: 0;
-		padding: 0;
-		list-style: none;
-	}
-
-	.realisation {
-		display: block;
-	}
-
-	.realisation__media {
-		position: relative;
-		margin-bottom: 16px;
-	}
-
-	.realisation__city {
-		position: absolute;
-		top: 14px;
-		left: 14px;
-		background: rgb(251 250 247 / 0.94);
-		color: var(--ink);
-		font-size: 12px;
-		font-weight: 600;
-		letter-spacing: 0.04em;
-		padding: 6px 11px;
-		border-radius: 3px;
-	}
-
-	.realisation__title {
-		font-family: var(--font-title);
-		font-weight: 600;
-		font-size: 18px;
-		line-height: 1.2;
-		margin: 0 0 4px;
-	}
-
-	.realisation__meta {
-		font-size: 14px;
-		color: var(--muted);
-		margin: 0;
-	}
-</style>

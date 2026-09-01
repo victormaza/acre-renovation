@@ -1,0 +1,105 @@
+---
+import type {
+	ContentRelationshipField,
+	ImageFieldImage,
+	KeyTextField,
+	PrismicDocument,
+	SliceZone as SliceZoneField,
+} from '@prismicio/client';
+import { createClient, hasType } from '../prismicio';
+import Base from '../layouts/Base.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import PageHeader from '../components/PageHeader.astro';
+import RealisationGrid from '../components/RealisationGrid.astro';
+import SliceZone from '../components/SliceZone.astro';
+
+type PageDocument = PrismicDocument<
+	{
+		eyebrow: KeyTextField;
+		title: KeyTextField;
+		lead: KeyTextField;
+		meta_title: KeyTextField;
+		meta_description: KeyTextField;
+		slices: SliceZoneField;
+	},
+	'page_realisations'
+>;
+
+type RealisationDocument = PrismicDocument<
+	{
+		title: KeyTextField;
+		city: KeyTextField;
+		meta: KeyTextField;
+		expertise: ContentRelationshipField;
+		image: ImageFieldImage;
+	},
+	'realisation'
+>;
+
+const client = await createClient();
+
+// Le document de réglage est facultatif, contrairement à `homepage` : c'est la
+// grille qui fait la page, pas son texte d'introduction. Tant qu'il n'est pas
+// publié, la page se rend avec ses libellés par défaut plutôt que d'échouer au
+// build — et le type n'étant alors pas annoncé par l'API, on ne l'interroge
+// même pas.
+const page = (await hasType('page_realisations'))
+	? await client.getSingle<PageDocument>('page_realisations')
+	: null;
+
+// Toutes les réalisations publiées, sans repli ni sélection : c'est ce qui
+// distingue cette page de la section de l'accueil, qui n'en montre que les
+// dernières. Même ordre qu'elle, du plus récent au plus ancien.
+const documents = (await hasType('realisation'))
+	? await client.getAllByType<RealisationDocument>('realisation', {
+			orderings: [{ field: 'document.first_publication_date', direction: 'desc' }],
+		})
+	: [];
+
+const items = documents.map((document) => ({
+	city: document.data.city ?? '',
+	title: document.data.title ?? '',
+	meta: document.data.meta ?? '',
+	href: document.url ?? '#',
+	image: { field: document.data.image, sizes: '(min-width: 900px) 300px, 50vw' },
+}));
+
+const title = page?.data.title || 'Nos réalisations';
+---
+
+<Base
+	title={page?.data.meta_title || `${title} — Acre Rénovation`}
+	description={page?.data.meta_description || undefined}
+>
+	<Breadcrumb items={[{ label: 'Accueil', href: '/' }, { label: 'Réalisations' }]} />
+
+	<PageHeader
+		eyebrow={page?.data.eyebrow || 'Réalisations'}
+		title={title}
+		lead={page?.data.lead || undefined}
+	/>
+
+	<div class="container">
+		{
+			items.length > 0 ? (
+				<RealisationGrid items={items} />
+			) : (
+				<p class="empty">Les premiers chantiers seront mis en ligne prochainement.</p>
+			)
+		}
+	</div>
+
+	<!-- Sections libres sous la grille : réassurance, avis, appel à l'action.
+	     La slice « Réalisations » n'est volontairement pas proposée sur ce
+	     type — elle ferait doublon avec la grille ci-dessus. -->
+	<SliceZone slices={page?.data.slices} />
+</Base>
+
+<style>
+	.empty {
+		font-size: 17px;
+		line-height: 1.6;
+		color: var(--muted);
+		margin: 0;
+	}
+</style>

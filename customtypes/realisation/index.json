@@ -48,10 +48,10 @@
       "image": {
         "type": "Image",
         "config": {
-          "label": "Photo de couverture (format portrait)",
+          "label": "Photo de couverture (format paysage)",
           "constraint": {
-            "width": 900,
-            "height": 1200
+            "width": 1200,
+            "height": 900
           },
           "thumbnails": []
         }

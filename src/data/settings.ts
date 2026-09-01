@@ -20,7 +20,7 @@ export const devisCta: NavLink = {
 
 /** Entrées de menu qui ne dépendent pas du contenu. */
 export const navRest: NavItem[] = [
-	{ label: 'Réalisations', href: '/#realisations' },
+	{ label: 'Réalisations', href: '/realisations' },
 	{ label: 'Guides', href: '/#guides' },
 	{ label: 'Entreprise', href: '/#entreprise' },
 ];
@@ -36,7 +36,7 @@ export const footer = {
 		{
 			title: 'Entreprise',
 			links: [
-				{ label: 'Réalisations', href: '/#realisations' },
+				{ label: 'Réalisations', href: '/realisations' },
 				{ label: 'Guides', href: '/#guides' },
 				{ label: 'Notre méthode', href: '/#entreprise' },
 				{ label: 'Demander un devis', href: '/devis' },

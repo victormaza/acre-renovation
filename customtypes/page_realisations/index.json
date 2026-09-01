@@ -1,0 +1,79 @@
+{
+  "id": "page_realisations",
+  "label": "Page Réalisations",
+  "repeatable": false,
+  "json": {
+    "Main": {
+      "eyebrow": {
+        "type": "Text",
+        "config": {
+          "label": "Surtitre",
+          "placeholder": "Réalisations"
+        }
+      },
+      "title": {
+        "type": "Text",
+        "config": {
+          "label": "Titre",
+          "placeholder": "Nos réalisations"
+        }
+      },
+      "lead": {
+        "type": "Text",
+        "config": {
+          "label": "Chapô — facultatif, une phrase sous le titre",
+          "placeholder": "Chaque chantier livré en Gironde, du studio à la maison reprise entièrement."
+        }
+      },
+      "slices": {
+        "type": "Slices",
+        "fieldset": "Sections ajoutées sous la grille",
+        "config": {
+          "choices": {
+            "reassurance": {
+              "type": "SharedSlice"
+            },
+            "zone_intervention": {
+              "type": "SharedSlice"
+            },
+            "avis": {
+              "type": "SharedSlice"
+            },
+            "cta_final": {
+              "type": "SharedSlice"
+            }
+          }
+        }
+      }
+    },
+    "SEO & Metadata": {
+      "meta_title": {
+        "type": "Text",
+        "config": {
+          "label": "Titre de la page",
+          "placeholder": "Affiché dans l'onglet du navigateur et sur Google"
+        }
+      },
+      "meta_description": {
+        "type": "Text",
+        "config": {
+          "label": "Description",
+          "placeholder": "Résumé affiché sous le titre dans les résultats de recherche"
+        }
+      },
+      "meta_image": {
+        "type": "Image",
+        "config": {
+          "label": "Image de partage",
+          "constraint": {
+            "width": 1200,
+            "height": 630
+          },
+          "thumbnails": []
+        }
+      }
+    }
+  },
+  "status": true,
+  "format": "page"
+}

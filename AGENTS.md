@@ -51,7 +51,10 @@ Domaine cible : `acre-renovation.fr`
 - [x] Menu et pied de page dérivés des expertises publiées — plus de lien mort possible
 - [ ] Saisir les sections des 5 documents `expertise` : la page est vide tant que sa slice zone l'est, et le menu ne cite que les expertises publiées
 - [ ] Renseigner `nav_label` sur chaque expertise — sans lui le menu reprend le titre complet, trop long
-- [ ] Gabarits de pages `/realisations/:uid` et `/guides/:uid` — les cartes de la home pointent déjà dessus
+- [x] Page listing `/realisations` — toutes les réalisations publiées, mêmes cartes que l'accueil
+- [ ] **`npm run types:push`** — le single `page_realisations` et le nouveau cadrage paysage de la photo de réalisation n'existent que dans le dépôt
+- [ ] Recadrer les photos des réalisations déjà saisies : leur recadrage enregistré est encore le portrait, rogné haut et bas à l'affichage
+- [ ] Gabarits de pages `/realisations/:uid` et `/guides/:uid` — les cartes de la home et de `/realisations` pointent déjà dessus
 - [ ] Type repeatable `page_ville`
 - [ ] Locale `en-us` à supprimer — bloquée par le document `homepage` en `en-us`
 - [ ] Plan de redirections 301
@@ -233,7 +236,7 @@ balisage d'avis auto-déclarés sur sa propre entité comme du contenu auto-prom
 et ne l'affiche pas en résultat enrichi ; le risque d'action manuelle est réel.
 
 **Types repeatable** — `realisation`, `guide`, `expertise` (créés), `page_ville` (à venir)
-**Types single** — `homepage`, `contact`, `settings` (coordonnées, nav, footer, valeurs SEO par défaut)
+**Types single** — `homepage`, `page_realisations` (créés), `contact`, `settings` (coordonnées, nav, footer, valeurs SEO par défaut)
 
 Points de structure :
 
@@ -369,6 +372,60 @@ tant que leur page n'existe pas.
 devis y échappe (`bare`), et n'a pas besoin de l'API pour se rendre.
 
 ---
+
+## Page Réalisations
+
+`/realisations` déroule **toutes** les réalisations publiées, là où la section
+de l'accueil n'en montre que les dernières. C'est la seule différence : la
+carte, la grille et son comportement responsive sont littéralement les mêmes
+objets.
+
+```
+src/pages/realisations.astro     ← fil d'ariane + en-tête + grille + slice zone
+src/components/
+  PageHeader.astro               ← surtitre + <h1> + chapô, pendant de SectionHead
+  RealisationGrid.astro          ← la grille de cartes, partagée
+  Realisations.astro             ← section d'accueil = SectionHead + RealisationGrid
+customtypes/page_realisations/   ← single de réglage, facultatif
+```
+
+- **La grille est dans le code de la page, pas dans une slice.** Une page de
+  listing dont le listing dépendrait d'une slice à poser serait vide au premier
+  chargement — c'est le défaut déjà constaté sur les pages expertise. La slice
+  zone du single ne sert qu'aux sections *ajoutées sous* la grille
+  (`reassurance`, `zone_intervention`, `avis`, `cta_final`). La slice
+  `realisations` n'y est volontairement pas proposée : elle ferait doublon.
+- **Le single `page_realisations` est facultatif**, contrairement à `homepage`
+  dont l'absence fait échouer le build à dessein. Tant qu'il n'est pas publié,
+  la page se rend avec ses libellés par défaut (« Réalisations » / « Nos
+  réalisations », sans chapô) — et le type n'étant alors pas annoncé par l'API,
+  on ne l'interroge même pas. Même garde `hasType()` que partout ailleurs.
+- **Aucun repli, aucune sélection manuelle** : pas de `resolvePicks()` ici. Un
+  choix manuel sur une page qui promet l'exhaustivité masquerait le reste du
+  catalogue sans que personne s'en aperçoive. L'ordre reste celui de la grille
+  de l'accueil, du plus récent au plus ancien.
+- **Le menu et le pied de page pointent désormais sur `/realisations`** et non
+  plus sur l'ancre `/#realisations`. La page existe indépendamment de Prismic,
+  donc le lien ne peut pas mourir — ce que l'ancre, elle, faisait dès que la
+  section de l'accueil se masquait faute de réalisation publiée. Le lien
+  « voir tout » de la slice de l'accueil, lui, est du contenu : c'est au client
+  de le saisir.
+- Sans aucune réalisation publiée, la page affiche une phrase d'attente plutôt
+  qu'une grille vide. C'est le seul texte en dur de la page, et il est
+  transitoire par nature.
+
+### Format des visuels de chantier
+
+La carte de réalisation est passée du portrait au **paysage (4/3)**, comme les
+cartes d'expertise. Deux conséquences qui ne sont pas dans le code :
+
+- la contrainte du champ image du type `realisation` suit (1200 × 900), donc
+  **`npm run types:push` est nécessaire** pour que Prismic propose le bon cadre
+  de recadrage ;
+- les photos déjà saisies gardent leur **recadrage portrait enregistré**
+  (paramètre `rect` de l'URL imgix), que `object-fit: cover` rogne ensuite haut
+  et bas. Elles sont à recadrer une par une dans Prismic ; le remplacement du
+  fichier n'est pas nécessaire, seul le cadre l'est.
 
 ## Formulaire de devis
 

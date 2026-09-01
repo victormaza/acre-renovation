@@ -1,0 +1,47 @@
+---
+// En-tête des pages de listing : surtitre, <h1>, chapô facultatif.
+// Pendant de SectionHead, qui porte le <h2> d'une section parmi d'autres.
+// L'écart avec l'en-tête du site est déjà porté par le fil d'ariane.
+interface Props {
+	eyebrow: string;
+	title: string;
+	lead?: string;
+}
+
+const { eyebrow, title, lead } = Astro.props;
+---
+
+<header class="container head">
+	<p class="eyebrow head__eyebrow">{eyebrow}</p>
+	<h1 class="head__title">{title}</h1>
+	{lead && <p class="head__lead">{lead}</p>}
+</header>
+
+<style>
+	.head {
+		margin-bottom: clamp(36px, 5vw, 56px);
+	}
+
+	.head__eyebrow {
+		margin: 0 0 20px;
+	}
+
+	.head__title {
+		font-family: var(--font-title);
+		font-weight: 600;
+		font-size: clamp(30px, 4.4vw, 50px);
+		line-height: 1.03;
+		letter-spacing: -0.02em;
+		margin: 0;
+		max-width: 18ch;
+		text-wrap: balance;
+	}
+
+	.head__lead {
+		font-size: clamp(17px, 2.2vw, 20px);
+		line-height: 1.55;
+		color: var(--text);
+		max-width: 620px;
+		margin: 22px 0 0;
+	}
+</style>

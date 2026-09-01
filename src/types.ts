@@ -41,3 +41,15 @@ export interface SliceContext {
 	/** ID du document `expertise` dont la page rend cette slice. */
 	expertiseId?: string;
 }
+
+/**
+ * Une carte de chantier, telle que l'affichent la section de l'accueil et la
+ * page Réalisations. Les deux passent par le même composant de grille.
+ */
+export interface RealisationCard {
+	city: string;
+	title: string;
+	meta: string;
+	href: string;
+	image: PhotoInput;
+}
