@@ -20,7 +20,7 @@ const { baseline, mentions, columns, zones, copyright, legal } = Astro.props;
 	<div class="container footer__inner">
 		<div class="footer__grid">
 			<div>
-				<p class="logo">ACRE<span class="logo__dot">.</span></p>
+				<img class="logo" src="/logo-acre.webp" alt="ACRE rénovation" width="560" height="272" />
 				<p class="footer__baseline">{baseline}</p>
 				<p class="footer__mentions">{mentions}</p>
 			</div>
@@ -90,15 +90,10 @@ const { baseline, mentions, columns, zones, copyright, legal } = Astro.props;
 	}
 
 	.logo {
-		font-family: var(--font-title);
-		font-weight: 700;
-		font-size: 26px;
-		letter-spacing: 0.12em;
+		display: block;
+		height: 52px;
+		width: auto;
 		margin: 0 0 18px;
-	}
-
-	.logo__dot {
-		color: var(--accent);
 	}
 
 	.footer__baseline {

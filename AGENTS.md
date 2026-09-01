@@ -153,8 +153,18 @@ Il n'y a **pas** de section témoignages dans le design livré, contrairement à
 - Le handoff mentionne « Astro + Sveltia CMS sur Cloudflare Pages » : c'est l'ancienne cible technique, à ignorer. Prismic + Workers font foi.
 - **Polices self-hostées** via `@fontsource-variable` plutôt que le `<link>` Google Fonts du prototype : évite la requête tierce (RGPD) et le retard de rendu.
 - **Barre CTA collante et dropdown** en CSS (media query, `aria-expanded`) plutôt qu'en JS `matchMedia` : pas de flash au chargement sur un site statique. Le JS restant ne sert qu'au burger et à l'état ARIA.
-- **Logo** conservé en logotype texte « ACRE. ». Le fichier fourni est un JPG WordPress ; à remplacer par un SVG le jour où on l'a.
+- **Logo** : `public/logo-acre.webp`, dans l'en-tête, le pied de page et le tunnel de
+  devis. Il vient du JPG WordPress de l'ancien site, dont le fond blanc a été détouré
+  (remplissage depuis les quatre coins, puis rognage) et réencodé en WebP sans perte —
+  24 Ko pour 560 × 272. Le logotype texte « ACRE. » qui tenait la place a disparu.
+  ⚠️ C'est un bitmap : « rénovation » n'est plus lisible en dessous de ~40 px de haut,
+  d'où les tailles retenues (48 px en-tête, 52 px pied de page, 44 px tunnel). À
+  remplacer par un SVG le jour où le client le fournit.
 - **Menu mobile** : le prototype n'en fournissait pas, le handoff demandait « un burger accessible ». Implémenté au plus sobre, avec les sous-liens expertises dépliables.
+- **Pas de carte dans « Zone d'intervention »** : le handoff y plaçait un schéma SVG
+  décoratif, dessiné à la main et sans rapport avec la liste de villes affichée à côté.
+  Retiré à la demande du client — la section est passée en une seule colonne, bornée à
+  720 px. Le SVG reste dans l'historique Git si l'on veut le reprendre.
 - Ponctuation française : espaces insécables avant `? :` et entre nombre et unité. Sans ça, « Un projet en tête ? » coupait avant le point d'interrogation.
 
 ---

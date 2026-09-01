@@ -6,7 +6,9 @@
 
 <header class="funnel-header">
 	<div class="funnel-header__inner">
-		<a class="logo" href="/">ACRE<span class="logo__dot">.</span></a>
+		<a class="logo" href="/">
+			<img src="/logo-acre.webp" alt="ACRE rénovation" width="560" height="272" />
+		</a>
 		<a class="funnel-header__back" href="/">
 			<span aria-hidden="true">←</span>Retour au site
 		</a>
@@ -33,21 +35,13 @@
 
 	.logo {
 		display: flex;
-		align-items: baseline;
-		gap: 2px;
-		font-family: var(--font-title);
-		font-weight: 700;
-		font-size: 24px;
-		letter-spacing: 0.12em;
-		color: var(--ink);
+		align-items: center;
+		flex: none;
 	}
 
-	.logo:hover {
-		color: var(--ink);
-	}
-
-	.logo__dot {
-		color: var(--accent);
+	.logo img {
+		height: 44px;
+		width: auto;
 	}
 
 	.funnel-header__back {

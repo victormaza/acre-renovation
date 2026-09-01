@@ -11,7 +11,9 @@ const { nav, cta } = Astro.props;
 
 <header class="header">
 	<div class="container header__inner">
-		<a class="logo" href="/">ACRE<span class="logo__dot">.</span></a>
+		<a class="logo" href="/">
+			<img src="/logo-acre.webp" alt="ACRE rénovation" width="560" height="272" />
+		</a>
 
 		<button
 			class="burger"
@@ -119,21 +121,15 @@ const { nav, cta } = Astro.props;
 
 	.logo {
 		display: flex;
-		align-items: baseline;
-		gap: 2px;
-		font-family: var(--font-title);
-		font-weight: 700;
-		font-size: 26px;
-		letter-spacing: 0.12em;
-		color: var(--ink);
+		align-items: center;
+		flex: none;
 	}
 
-	.logo:hover {
-		color: var(--ink);
-	}
-
-	.logo__dot {
-		color: var(--accent);
+	/* Le logo est fourni en bitmap : on le contraint par la hauteur, la largeur
+	   suit le ratio intrinsèque de l'image. */
+	.logo img {
+		height: 48px;
+		width: auto;
 	}
 
 	/* ---- Navigation ---- */
