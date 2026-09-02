@@ -6,7 +6,7 @@ import type {
 	PrismicDocument,
 	SliceZone as SliceZoneField,
 } from '@prismicio/client';
-import { createClient, hasType } from '../prismicio';
+import { createClient, getOptionalSingle, hasType } from '../prismicio';
 import Base from '../layouts/Base.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import PageHeader from '../components/PageHeader.astro';
@@ -41,11 +41,8 @@ const client = await createClient();
 // Le document de réglage est facultatif, contrairement à `homepage` : c'est la
 // grille qui fait la page, pas son texte d'introduction. Tant qu'il n'est pas
 // publié, la page se rend avec ses libellés par défaut plutôt que d'échouer au
-// build — et le type n'étant alors pas annoncé par l'API, on ne l'interroge
-// même pas.
-const page = (await hasType('page_realisations'))
-	? await client.getSingle<PageDocument>('page_realisations')
-	: null;
+// build — d'où `getOptionalSingle`, `getSingle` levant sur un single vide.
+const page = await getOptionalSingle<PageDocument>(client, 'page_realisations');
 
 // Toutes les réalisations publiées, sans repli ni sélection : c'est ce qui
 // distingue cette page de la section de l'accueil, qui n'en montre que les

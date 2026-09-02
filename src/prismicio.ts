@@ -19,12 +19,11 @@ export const routes: NonNullable<prismic.ClientConfig['routes']> = [
 	// { type: 'page_ville', path: '/renovation/:uid' },
 ];
 
-// L'API de contenu n'annonce un type qu'à partir de son premier document, et
-// rejette *toute* la table de routes si l'un des types cités lui est inconnu.
-// Déclarer `realisation` avant que la première réalisation soit publiée ferait
-// donc échouer jusqu'à la requête de la home. On n'envoie que les routes des
-// types réellement présents : chacune s'active d'elle-même quand le contenu
-// arrive, et le build ne dépend plus de l'ordre de saisie.
+// L'API de contenu rejette *toute* la table de routes si l'un des types cités
+// lui est inconnu. Citer `realisation` avant que le type existe côté Prismic
+// faisait donc échouer jusqu'à la requête de la home. On n'envoie que les
+// routes des types réellement annoncés : chacune s'active d'elle-même, et le
+// build ne dépend plus de l'ordre dans lequel on pousse les schémas.
 let advertisedTypes: Promise<Set<string>> | undefined;
 
 const getAdvertisedTypes = () => {
@@ -36,11 +35,37 @@ const getAdvertisedTypes = () => {
 };
 
 /**
- * Le type est-il connu de l'API de contenu ? Faux tant qu'aucun document du
- * type n'a été publié — l'interroger renverrait alors une erreur. À vérifier
- * avant tout `getAllByType`, y compris dans un `getStaticPaths()`.
+ * Le type est-il connu de l'API de contenu ? À vérifier avant toute requête
+ * qui le cite, y compris dans un `getStaticPaths()`.
+ *
+ * ⚠️ Répond à « le type existe-t-il ? », pas à « a-t-il du contenu ? ». L'API
+ * annonce un type dès qu'il est *défini* dans le dépôt — donc dès le
+ * `types:push` —, avant tout document publié. Un `true` ne garantit donc pas
+ * qu'une requête rendra quoi que ce soit : voir `getOptionalSingle`.
  */
 export const hasType = async (type: string) => (await getAdvertisedTypes()).has(type);
+
+/**
+ * Un single facultatif : `null` tant qu'aucun document n'est publié.
+ *
+ * `client.getSingle()` lève « No documents were returned » dans ce cas, et
+ * `hasType()` ne protège pas de ça — le type est annoncé dès son push, vide ou
+ * non. C'est ce qui a fait échouer le build de `/realisations` le jour où le
+ * single `page_realisations` est arrivé chez Prismic sans être rempli. On passe
+ * donc par une requête de liste, qui rend un tableau vide au lieu de lever.
+ *
+ * Réservé aux singles de réglage, dont l'absence doit rester sans conséquence.
+ * `homepage` n'en fait pas partie : son absence doit casser le build.
+ */
+export const getOptionalSingle = async <TDocument extends prismic.PrismicDocument>(
+	client: prismic.Client,
+	type: string,
+): Promise<TDocument | null> => {
+	if (!(await hasType(type))) return null;
+
+	const { results } = await client.getByType<TDocument>(type, { pageSize: 1 });
+	return results[0] ?? null;
+};
 
 export const createClient = async (config: prismic.ClientConfig = {}) => {
 	const types = await getAdvertisedTypes();

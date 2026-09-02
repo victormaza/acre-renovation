@@ -52,7 +52,7 @@ Domaine cible : `acre-renovation.fr`
 - [ ] Saisir les sections des 5 documents `expertise` : la page est vide tant que sa slice zone l'est, et le menu ne cite que les expertises publiées
 - [ ] Renseigner `nav_label` sur chaque expertise — sans lui le menu reprend le titre complet, trop long
 - [x] Page listing `/realisations` — toutes les réalisations publiées, mêmes cartes que l'accueil
-- [ ] **`npm run types:push`** — le single `page_realisations` et le nouveau cadrage paysage de la photo de réalisation n'existent que dans le dépôt
+- [x] **`npm run types:push`** — le single `page_realisations` et le cadrage paysage de la photo de réalisation sont en place chez Prismic
 - [ ] Recadrer les photos des réalisations déjà saisies : leur recadrage enregistré est encore le portrait, rogné haut et bas à l'affichage
 - [ ] Gabarits de pages `/realisations/:uid` et `/guides/:uid` — les cartes de la home et de `/realisations` pointent déjà dessus
 - [ ] Type repeatable `page_ville`
@@ -398,8 +398,17 @@ customtypes/page_realisations/   ← single de réglage, facultatif
 - **Le single `page_realisations` est facultatif**, contrairement à `homepage`
   dont l'absence fait échouer le build à dessein. Tant qu'il n'est pas publié,
   la page se rend avec ses libellés par défaut (« Réalisations » / « Nos
-  réalisations », sans chapô) — et le type n'étant alors pas annoncé par l'API,
-  on ne l'interroge même pas. Même garde `hasType()` que partout ailleurs.
+  réalisations », sans chapô), via `getOptionalSingle()`.
+
+  ⚠️ **`hasType()` ne protège pas d'un single vide.** L'API annonce un type dès
+  qu'il est *défini* dans le dépôt — donc dès le `types:push` —, et non à partir
+  de son premier document : la garde répond « le type existe ? », pas « il a du
+  contenu ? ». Pousser le schéma de `page_realisations` sans le remplir a donc
+  fait échouer le build de `/realisations` sur un `getSingle` qui lève
+  « No documents were returned ». D'où `getOptionalSingle()` dans
+  `src/prismicio.ts`, qui interroge par liste et rend `null` sur zéro résultat.
+  Tout single de réglage à venir (`settings`, `contact`) passe par là ;
+  `homepage` reste sur `getSingle`, son absence devant casser le build.
 - **Aucun repli, aucune sélection manuelle** : pas de `resolvePicks()` ici. Un
   choix manuel sur une page qui promet l'exhaustivité masquerait le reste du
   catalogue sans que personne s'en aperçoive. L'ordre reste celui de la grille
