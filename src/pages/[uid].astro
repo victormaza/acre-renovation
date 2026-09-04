@@ -1,0 +1,64 @@
+---
+// Page simple : entreprise, mentions légales, politique de confidentialité —
+// tout ce qui n'est qu'un titre et du texte. Le type `page` étant repeatable,
+// le client en crée une nouvelle sans qu'on touche au code.
+//
+// La route est à la racine (`/entreprise`) : les routes statiques du site
+// (`/devis`, `/realisations`…) l'emportent sur celle-ci, un UID qui les
+// reprendrait resterait donc sans effet.
+import { asHTML, asText } from '@prismicio/client';
+import type {
+	KeyTextField,
+	PrismicDocument,
+	RichTextField,
+	SliceZone as SliceZoneField,
+} from '@prismicio/client';
+import { createClient, hasType } from '../prismicio';
+import TextPage from '../layouts/TextPage.astro';
+
+type PageDocument = PrismicDocument<
+	{
+		eyebrow: KeyTextField;
+		title: KeyTextField;
+		subtitle: KeyTextField;
+		lead: RichTextField;
+		body: RichTextField;
+		meta_title: KeyTextField;
+		meta_description: KeyTextField;
+		slices: SliceZoneField;
+	},
+	'page'
+>;
+
+export async function getStaticPaths() {
+	if (!(await hasType('page'))) return [];
+
+	const client = await createClient();
+	const documents = await client.getAllByType<PageDocument>('page');
+
+	return documents.map((document) => ({
+		params: { uid: document.uid },
+		props: { document },
+	}));
+}
+
+interface Props {
+	document: PageDocument;
+}
+
+const { data } = Astro.props.document;
+const title = data.title ?? '';
+const lead = asText(data.lead);
+---
+
+<TextPage
+	metaTitle={data.meta_title || `${title} — Acre Rénovation`}
+	metaDescription={data.meta_description || lead || undefined}
+	breadcrumb={[{ label: 'Accueil', href: '/' }, { label: title }]}
+	eyebrow={data.eyebrow || undefined}
+	title={title}
+	subtitle={data.subtitle || undefined}
+	lead={lead || undefined}
+	html={asHTML(data.body)}
+	slices={data.slices}
+/>

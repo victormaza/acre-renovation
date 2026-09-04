@@ -1,6 +1,6 @@
 {
-  "id": "guide",
-  "label": "Guide",
+  "id": "page",
+  "label": "Page simple",
   "repeatable": true,
   "json": {
     "Main": {
@@ -8,14 +8,21 @@
         "type": "UID",
         "config": {
           "label": "Identifiant d'URL",
-          "placeholder": "combien-coute-une-renovation-globale"
+          "placeholder": "entreprise — donne l'adresse acre-renovation.fr/entreprise"
+        }
+      },
+      "eyebrow": {
+        "type": "Text",
+        "config": {
+          "label": "Surtitre",
+          "placeholder": "L'entreprise — court, affiché au-dessus du titre"
         }
       },
       "title": {
         "type": "Text",
         "config": {
           "label": "Titre",
-          "placeholder": "Combien coûte une rénovation globale ?"
+          "placeholder": "Une entreprise générale de rénovation en Gironde"
         }
       },
       "subtitle": {
@@ -25,18 +32,11 @@
           "placeholder": "Facultatif — prolonge le titre en une ligne"
         }
       },
-      "category": {
-        "type": "Text",
-        "config": {
-          "label": "Catégorie",
-          "placeholder": "Budget"
-        }
-      },
-      "excerpt": {
+      "lead": {
         "type": "StructuredText",
         "config": {
-          "label": "Chapô — repris comme extrait sur la page d'accueil",
-          "placeholder": "Une phrase de résumé : elle ouvre la page et sert de texte à la carte",
+          "label": "Chapô",
+          "placeholder": "Le paragraphe d'ouverture, en plus gros que le texte",
           "single": "paragraph"
         }
       },
@@ -44,7 +44,7 @@
         "type": "StructuredText",
         "config": {
           "label": "Texte",
-          "placeholder": "Le contenu du guide : paragraphes, sous-titres, listes",
+          "placeholder": "Le contenu de la page : paragraphes, sous-titres, listes",
           "multi": "paragraph,heading2,heading3,strong,em,hyperlink,list-item,o-list-item"
         }
       },
@@ -53,7 +53,10 @@
         "fieldset": "Sections ajoutées sous le texte",
         "config": {
           "choices": {
-            "faq": {
+            "methode": {
+              "type": "SharedSlice"
+            },
+            "expertises": {
               "type": "SharedSlice"
             },
             "realisations": {
@@ -62,7 +65,16 @@
             "guides": {
               "type": "SharedSlice"
             },
+            "faq": {
+              "type": "SharedSlice"
+            },
             "reassurance": {
+              "type": "SharedSlice"
+            },
+            "avis": {
+              "type": "SharedSlice"
+            },
+            "zone_intervention": {
               "type": "SharedSlice"
             },
             "cta_final": {

@@ -1,0 +1,102 @@
+---
+// Corps de texte long : le seul endroit du site où la mise en forme vient du
+// contenu et non du gabarit. Le HTML est produit par `asHTML()` à partir d'un
+// champ Rich Text, d'où le `set:html`.
+//
+// Les styles visent des balises que le client crée en écrivant : elles n'ont
+// donc pas l'attribut de portée d'Astro et passent toutes par `:global()`,
+// bornées au conteneur. Même contrainte que les puces du tunnel de devis.
+//
+// Le champ n'autorise que les titres de niveau 2 et 3 (voir les custom types) :
+// le `<h1>` appartient à l'en-tête de page, et rien dans l'éditeur ne doit
+// permettre d'en poser un second.
+interface Props {
+	html: string;
+}
+
+const { html } = Astro.props;
+---
+
+{
+	html && (
+		<div class="container">
+			<div class="prose" set:html={html} />
+		</div>
+	)
+}
+
+<style>
+	/* La largeur de lecture est portée par le texte, pas par le conteneur :
+	   avec `container--narrow`, le bloc se centrait et son bord gauche
+	   décrochait de celui du titre, qui s'aligne sur la grille de la page. */
+	.prose {
+		max-width: 62ch;
+		font-size: clamp(16.5px, 2vw, 18px);
+		line-height: 1.72;
+		color: var(--text);
+	}
+
+	.prose :global(> *:first-child) {
+		margin-top: 0;
+	}
+
+	.prose :global(> *:last-child) {
+		margin-bottom: 0;
+	}
+
+	.prose :global(p) {
+		margin: 0 0 1.25em;
+		text-wrap: pretty;
+	}
+
+	.prose :global(h2),
+	.prose :global(h3) {
+		font-family: var(--font-title);
+		font-weight: 600;
+		line-height: 1.18;
+		letter-spacing: -0.015em;
+		color: var(--ink);
+		text-wrap: balance;
+	}
+
+	.prose :global(h2) {
+		font-size: clamp(23px, 2.9vw, 30px);
+		margin: 1.9em 0 0.6em;
+	}
+
+	.prose :global(h3) {
+		font-size: clamp(19px, 2.2vw, 22px);
+		margin: 1.7em 0 0.5em;
+	}
+
+	.prose :global(ul),
+	.prose :global(ol) {
+		margin: 0 0 1.25em;
+		padding-left: 1.35em;
+	}
+
+	.prose :global(li) {
+		margin-bottom: 0.45em;
+	}
+
+	.prose :global(li::marker) {
+		color: var(--muted-soft);
+	}
+
+	.prose :global(strong) {
+		font-weight: 600;
+		color: var(--ink-soft);
+	}
+
+	.prose :global(a) {
+		color: var(--ink);
+		text-decoration: underline;
+		text-decoration-color: var(--line-stronger);
+		text-underline-offset: 3px;
+	}
+
+	.prose :global(a:hover) {
+		color: var(--accent-link-hover);
+		text-decoration-color: currentColor;
+	}
+</style>

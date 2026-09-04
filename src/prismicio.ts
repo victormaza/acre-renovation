@@ -12,9 +12,15 @@ export const repositoryName = '3u0gsum3';
 export const routes: NonNullable<prismic.ClientConfig['routes']> = [
 	{ type: 'homepage', path: '/' },
 	{ type: 'page_realisations', path: '/realisations' },
-	{ type: 'realisation', path: '/realisations/:uid' },
+	// Pas de route pour `realisation` : il n'y a pas de page par chantier, les
+	// cartes agrandissent leur photo (voir `Lightbox.astro`). Sans route, le
+	// `document.url` reste nul et aucun lien ne peut renaître vers un 404.
 	{ type: 'guide', path: '/guides/:uid' },
 	{ type: 'expertise', path: '/expertises/:uid' },
+	// Pages simples — entreprise, mentions légales — à la racine. Les routes
+	// statiques du site l'emportent sur `/[uid]` côté Astro : un UID qui
+	// reprendrait `devis` ou `realisations` resterait sans effet.
+	{ type: 'page', path: '/:uid' },
 	// À ajouter le jour où le type existe :
 	// { type: 'page_ville', path: '/renovation/:uid' },
 ];

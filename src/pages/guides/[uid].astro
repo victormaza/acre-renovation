@@ -1,0 +1,64 @@
+---
+// Page de guide. Tout le rendu vient de `TextPage`, partagé avec les pages
+// simples : ici on ne fait que dire d'où sortent les champs.
+import { asHTML, asText } from '@prismicio/client';
+import type {
+	KeyTextField,
+	PrismicDocument,
+	RichTextField,
+	SliceZone as SliceZoneField,
+} from '@prismicio/client';
+import { createClient, hasType } from '../../prismicio';
+import TextPage from '../../layouts/TextPage.astro';
+
+type GuideDocument = PrismicDocument<
+	{
+		title: KeyTextField;
+		subtitle: KeyTextField;
+		category: KeyTextField;
+		excerpt: RichTextField;
+		body: RichTextField;
+		meta_title: KeyTextField;
+		meta_description: KeyTextField;
+		slices: SliceZoneField;
+	},
+	'guide'
+>;
+
+export async function getStaticPaths() {
+	// Tant qu'aucun guide n'est publié, le type n'est pas annoncé par l'API et
+	// l'interroger échouerait : aucune page n'est alors générée.
+	if (!(await hasType('guide'))) return [];
+
+	const client = await createClient();
+	const documents = await client.getAllByType<GuideDocument>('guide');
+
+	return documents.map((document) => ({
+		params: { uid: document.uid },
+		props: { document },
+	}));
+}
+
+interface Props {
+	document: GuideDocument;
+}
+
+const { data } = Astro.props.document;
+const title = data.title ?? '';
+
+// Le chapô est l'extrait : c'est déjà le résumé du guide, et le client le
+// saisit une fois pour la carte de l'accueil comme pour la page.
+const lead = asText(data.excerpt);
+---
+
+<TextPage
+	metaTitle={data.meta_title || `${title} — Acre Rénovation`}
+	metaDescription={data.meta_description || lead || undefined}
+	breadcrumb={[{ label: 'Accueil', href: '/' }, { label: 'Guides', href: '/#guides' }, { label: title }]}
+	eyebrow={data.category || 'Guide'}
+	title={title}
+	subtitle={data.subtitle || undefined}
+	lead={lead || undefined}
+	html={asHTML(data.body)}
+	slices={data.slices}
+/>

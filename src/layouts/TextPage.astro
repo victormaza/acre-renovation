@@ -1,0 +1,43 @@
+---
+// Gabarit des pages de texte : fil d'ariane, en-tête (surtitre, titre,
+// sous-titre, chapô), corps de texte, puis les sections libres du bas.
+//
+// Un seul gabarit sert les guides et les pages simples — entreprise, mentions
+// légales, politique de confidentialité. Ce sont les mêmes pages : un titre,
+// un texte, et rien d'autre à inventer. Ce qui change d'un type à l'autre,
+// c'est la provenance des champs, donc le fichier de page ; pas la mise en
+// forme, qui vit ici.
+//
+// Le texte est rendu *dans* la page et non dans une slice : une page de texte
+// dont le texte dépendrait d'une slice à poser serait vide à la création. Même
+// raison que la grille de `/realisations`. Les slices ne servent qu'aux
+// sections ajoutées *sous* le texte.
+import Base from './Base.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Prose from '../components/Prose.astro';
+import SliceZone from '../components/SliceZone.astro';
+
+interface Props {
+	metaTitle: string;
+	metaDescription?: string;
+	breadcrumb: { label: string; href?: string }[];
+	eyebrow?: string;
+	title: string;
+	subtitle?: string;
+	lead?: string;
+	/** Corps de page, déjà converti en HTML par `asHTML()`. */
+	html?: string;
+	slices?: { slice_type: string; id?: string }[];
+}
+
+const { metaTitle, metaDescription, breadcrumb, eyebrow, title, subtitle, lead, html, slices } =
+	Astro.props;
+---
+
+<Base title={metaTitle} description={metaDescription}>
+	<Breadcrumb items={breadcrumb} />
+	<PageHeader eyebrow={eyebrow} title={title} subtitle={subtitle} lead={lead} />
+	<Prose html={html ?? ''} />
+	<SliceZone slices={slices} />
+</Base>

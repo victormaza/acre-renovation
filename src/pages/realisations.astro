@@ -57,7 +57,6 @@ const items = documents.map((document) => ({
 	city: document.data.city ?? '',
 	title: document.data.title ?? '',
 	meta: document.data.meta ?? '',
-	href: document.url ?? '#',
 	image: { field: document.data.image, sizes: '(min-width: 900px) 300px, 50vw' },
 }));
 

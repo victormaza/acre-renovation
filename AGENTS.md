@@ -54,7 +54,10 @@ Domaine cible : `acre-renovation.fr`
 - [x] Page listing `/realisations` — toutes les réalisations publiées, mêmes cartes que l'accueil
 - [x] **`npm run types:push`** — le single `page_realisations` et le cadrage paysage de la photo de réalisation sont en place chez Prismic
 - [ ] Recadrer les photos des réalisations déjà saisies : leur recadrage enregistré est encore le portrait, rogné haut et bas à l'affichage
-- [ ] Gabarits de pages `/realisations/:uid` et `/guides/:uid` — les cartes de la home et de `/realisations` pointent déjà dessus
+- [x] Visionneuse : la carte de réalisation agrandit sa photo au lieu de mener à une page par chantier
+- [x] Gabarit de page de texte — un seul, partagé par `/guides/:uid` et le type `page` (entreprise, mentions légales…)
+- [ ] Saisir le texte des guides : `Texte` est un champ neuf, les guides publiés n'ont pour l'instant que leur chapô
+- [ ] Créer la page `entreprise` dans Prismic, puis faire pointer le menu sur `/entreprise` au lieu de l'ancre `/#entreprise` (`src/data/settings.ts`)
 - [ ] Type repeatable `page_ville`
 - [ ] Locale `en-us` à supprimer — bloquée par le document `homepage` en `en-us`
 - [ ] Plan de redirections 301
@@ -235,7 +238,7 @@ est alors la bonne porte, pas la Places API.
 balisage d'avis auto-déclarés sur sa propre entité comme du contenu auto-promotionnel
 et ne l'affiche pas en résultat enrichi ; le risque d'action manuelle est réel.
 
-**Types repeatable** — `realisation`, `guide`, `expertise` (créés), `page_ville` (à venir)
+**Types repeatable** — `realisation`, `guide`, `expertise`, `page` (créés), `page_ville` (à venir)
 **Types single** — `homepage`, `page_realisations` (créés), `contact`, `settings` (coordonnées, nav, footer, valeurs SEO par défaut)
 
 Points de structure :
@@ -423,6 +426,37 @@ customtypes/page_realisations/   ← single de réglage, facultatif
   qu'une grille vide. C'est le seul texte en dur de la page, et il est
   transitoire par nature.
 
+### Pas de page par chantier — une visionneuse
+
+Les cartes menaient à `/realisations/:uid`, un gabarit jamais écrit : depuis
+l'accueil comme depuis la page listing, le clic tombait en 404. Plutôt que
+d'écrire la page, on a retiré la destination : **une réalisation, c'est une
+photo et deux lignes de légende**, pas un article. Le clic agrandit donc la
+photo dans `src/components/Lightbox.astro`.
+
+- **La route `realisation` a disparu de la table de `prismicio.ts`.** Sans
+  elle, `document.url` reste nul et aucun lien ne peut renaître vers une page
+  absente. `RealisationCard` n'a plus de `href` non plus.
+- **Le déclencheur reste un vrai lien**, vers le fichier image en pleine
+  taille : sans JavaScript le clic ouvre la photo, « ouvrir dans un nouvel
+  onglet » garde son sens, et le clic modifié (⌘, Ctrl, ⇧) n'est pas
+  intercepté. Même principe que le tunnel de devis, qui replie un formulaire
+  qui marche déjà.
+- Le `<dialog>` natif apporte Échap, le piège à focus et la restitution du
+  focus. Un seul exemplaire par page sert toutes les grilles ; la galerie
+  parcourue aux flèches est celle du conteneur `[data-lightbox-gallery]`
+  cliqué.
+- ⚠️ **L'événement `close` du `<dialog>` n'est pas fiable** — Chrome 152 ne
+  l'a pas émis lors de l'intégration, laissant le défilement de la page
+  bloqué. Le verrou se cale donc sur `dialog.open`, à la réception de `close`
+  *et* de `toggle`.
+- ⚠️ Fermer au clic sur le fond ne peut pas se réduire à `event.target ===
+  dialog` : la figure occupe toute la colonne centrale de la grille. C'est ce
+  qui se voit — photo, légende, boutons — qui ne ferme pas.
+
+Rien n'empêche d'écrire un jour une vraie page par chantier ; il faudra alors
+remettre la route et rendre son `href` à la carte.
+
 ### Format des visuels de chantier
 
 La carte de réalisation est passée du portrait au **paysage (4/3)**, comme les
@@ -435,6 +469,48 @@ cartes d'expertise. Deux conséquences qui ne sont pas dans le code :
   (paramètre `rect` de l'URL imgix), que `object-fit: cover` rogne ensuite haut
   et bas. Elles sont à recadrer une par une dans Prismic ; le remplacement du
   fichier n'est pas nécessaire, seul le cadre l'est.
+
+## Gabarit de page de texte
+
+Un seul gabarit sert **les guides et les pages simples** — entreprise, mentions
+légales, politique de confidentialité. Ce sont les mêmes pages : un titre, un
+texte, et rien d'autre à inventer. Ce qui change d'un type à l'autre, c'est la
+provenance des champs, donc le fichier de page ; pas la mise en forme.
+
+```
+src/layouts/TextPage.astro       ← fil d'ariane + en-tête + texte + slice zone
+src/components/
+  PageHeader.astro               ← surtitre, <h1>, sous-titre, chapô
+  Prose.astro                    ← le corps de texte, seul HTML venu du contenu
+src/pages/guides/[uid].astro     ← type `guide`
+src/pages/[uid].astro            ← type `page`, à la racine
+customtypes/page/                ← type repeatable des pages simples
+```
+
+- **Le texte est rendu dans la page, pas dans une slice.** Une page de texte
+  dont le texte dépendrait d'une slice à poser serait vide à la création —
+  le défaut déjà constaté sur les pages expertise. La slice zone ne sert
+  qu'aux sections ajoutées *sous* le texte.
+- **Le champ Texte n'autorise que les titres de niveau 2 et 3.** Le `<h1>`
+  appartient à l'en-tête de page ; rien dans l'éditeur ne doit permettre d'en
+  poser un second. C'est réglé au modèle (`multi:` du champ), pas par un
+  serializer : `asHTML()` reste celui de `@prismicio/client`, sans réglage.
+- **Les styles de `Prose` passent tous par `:global()`.** Le HTML injecté par
+  `set:html` n'a pas l'attribut de portée d'Astro — même contrainte que les
+  puces du récapitulatif du tunnel de devis.
+- **La largeur de lecture est portée par le texte, pas par le conteneur.**
+  Avec `container--narrow`, le bloc se centrait et son bord gauche décrochait
+  de celui du titre : deux blocs d'un même bloc éditorial doivent partager
+  leur bord. D'où un `.container` normal et un `max-width` en `ch`.
+- **Le chapô d'un guide est son extrait.** Le client saisit une phrase une
+  seule fois : elle ouvre la page et sert de texte à la carte de l'accueil.
+  Le type `page`, lui, a son propre champ `lead` — il n'a pas de carte.
+- La route Astro des pages simples est à la racine (`/entreprise`). Les routes
+  statiques du site l'emportent sur `/[uid]` : un UID qui reprendrait `devis`
+  ou `realisations` resterait sans effet.
+- ⚠️ **Le menu pointe encore sur l'ancre `/#entreprise`.** Le jour où la page
+  est publiée, c'est `src/data/settings.ts` qu'il faut reprendre — le menu ne
+  dérive de Prismic que pour les expertises.
 
 ## Formulaire de devis
 

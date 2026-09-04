@@ -4,6 +4,14 @@
 // Extraite de la section d'accueil parce que la page /realisations affiche
 // exactement les mêmes cartes — seul l'en-tête et le nombre d'éléments
 // changent. Le jour où la carte évolue, il n'y a qu'un fichier à reprendre.
+//
+// La carte n'ouvre pas de page dédiée : une réalisation, c'est une photo et
+// deux lignes de légende. Le clic agrandit donc la photo dans la visionneuse
+// (voir `Lightbox.astro`). Le lien pointe malgré tout vers le fichier image
+// en pleine taille : sans JavaScript, il ouvre la photo au lieu de ne rien
+// faire, et « ouvrir dans un nouvel onglet » garde du sens.
+import { asImageWidthSrcSet, isFilled } from '@prismicio/client';
+import Lightbox from './Lightbox.astro';
 import Photo from './Photo.astro';
 import type { RealisationCard } from '../types';
 
@@ -12,24 +20,61 @@ interface Props {
 }
 
 const { items } = Astro.props;
+
+// Largeurs de visionneuse, plus généreuses que celles de la carte : c'est le
+// même CDN qui sert les deux, seuls les paramètres imgix changent.
+const cards = items.map((item) => {
+	const field = item.image.field;
+	const full =
+		field && isFilled.image(field)
+			? asImageWidthSrcSet(field, {
+					widths: [960, 1280, 1600, 2000],
+					auto: ['format', 'compress'],
+				})
+			: null;
+
+	return {
+		...item,
+		// Une carte sans photo n'a rien à agrandir : elle reste inerte plutôt
+		// que d'ouvrir une visionneuse vide.
+		href: full?.src ?? item.image.src,
+		srcset: full?.srcset,
+		alt: field?.alt ?? item.image.alt ?? '',
+	};
+});
 ---
 
-<ul class="grid">
+<ul class="grid" data-lightbox-gallery>
 	{
-		items.map((item) => (
-			<li>
-				<a class="realisation" href={item.href}>
-					<div class="realisation__media">
-						<Photo {...item.image} ratio="4 / 3" radius="var(--radius-md)" />
-						<span class="realisation__city">{item.city}</span>
-					</div>
-					<h3 class="realisation__title">{item.title}</h3>
-					<p class="realisation__meta">{item.meta}</p>
-				</a>
-			</li>
-		))
+		cards.map((card) => {
+			const Tag = card.href ? 'a' : 'div';
+
+			return (
+				<li>
+					<Tag
+						class="realisation"
+						href={card.href}
+						data-lightbox={card.href ? true : undefined}
+						data-lightbox-srcset={card.srcset}
+						data-lightbox-alt={card.alt}
+						data-lightbox-title={card.title}
+						data-lightbox-meta={[card.city, card.meta].filter(Boolean).join(' — ')}
+						aria-haspopup={card.href ? 'dialog' : undefined}
+					>
+						<div class="realisation__media">
+							<Photo {...card.image} ratio="4 / 3" radius="var(--radius-md)" />
+							<span class="realisation__city">{card.city}</span>
+						</div>
+						<h3 class="realisation__title">{card.title}</h3>
+						<p class="realisation__meta">{card.meta}</p>
+					</Tag>
+				</li>
+			);
+		})
 	}
 </ul>
+
+<Lightbox />
 
 <style>
 	.grid {
@@ -43,6 +88,10 @@ const { items } = Astro.props;
 
 	.realisation {
 		display: block;
+	}
+
+	a.realisation {
+		cursor: zoom-in;
 	}
 
 	.realisation__media {

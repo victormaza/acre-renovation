@@ -1,19 +1,26 @@
 ---
-// En-tête des pages de listing : surtitre, <h1>, chapô facultatif.
+// En-tête de page : surtitre, <h1>, sous-titre et chapô, tous facultatifs
+// sauf le titre. Sert les pages de listing comme les pages de texte.
 // Pendant de SectionHead, qui porte le <h2> d'une section parmi d'autres.
 // L'écart avec l'en-tête du site est déjà porté par le fil d'ariane.
+//
+// Sous-titre et chapô se distinguent par la fonte autant que par la taille :
+// le premier prolonge le titre, le second ouvre le texte. Deux blocs gris de
+// corps voisin se seraient confondus.
 interface Props {
-	eyebrow: string;
+	eyebrow?: string;
 	title: string;
+	subtitle?: string;
 	lead?: string;
 }
 
-const { eyebrow, title, lead } = Astro.props;
+const { eyebrow, title, subtitle, lead } = Astro.props;
 ---
 
 <header class="container head">
-	<p class="eyebrow head__eyebrow">{eyebrow}</p>
+	{eyebrow && <p class="eyebrow head__eyebrow">{eyebrow}</p>}
 	<h1 class="head__title">{title}</h1>
+	{subtitle && <p class="head__subtitle">{subtitle}</p>}
 	{lead && <p class="head__lead">{lead}</p>}
 </header>
 
@@ -34,6 +41,18 @@ const { eyebrow, title, lead } = Astro.props;
 		letter-spacing: -0.02em;
 		margin: 0;
 		max-width: 18ch;
+		text-wrap: balance;
+	}
+
+	.head__subtitle {
+		font-family: var(--font-title);
+		font-weight: 400;
+		font-size: clamp(19px, 2.6vw, 25px);
+		line-height: 1.3;
+		letter-spacing: -0.01em;
+		color: var(--muted-strong);
+		max-width: 38ch;
+		margin: 16px 0 0;
 		text-wrap: balance;
 	}
 

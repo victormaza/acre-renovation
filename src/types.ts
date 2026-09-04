@@ -45,11 +45,13 @@ export interface SliceContext {
 /**
  * Une carte de chantier, telle que l'affichent la section de l'accueil et la
  * page Réalisations. Les deux passent par le même composant de grille.
+ *
+ * Pas de `href` : la carte ne mène à aucune page, elle agrandit sa photo. La
+ * cible du lien est dérivée de l'image par la grille elle-même.
  */
 export interface RealisationCard {
 	city: string;
 	title: string;
 	meta: string;
-	href: string;
 	image: PhotoInput;
 }
