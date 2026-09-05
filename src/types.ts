@@ -42,16 +42,25 @@ export interface SliceContext {
 	expertiseId?: string;
 }
 
+/** Une photo de chantier autre que la couverture, avec sa légende. */
+export interface RealisationPhoto {
+	field?: ImageFieldImage | null;
+	caption?: string;
+}
+
 /**
  * Une carte de chantier, telle que l'affichent la section de l'accueil et la
  * page Réalisations. Les deux passent par le même composant de grille.
  *
- * Pas de `href` : la carte ne mène à aucune page, elle agrandit sa photo. La
- * cible du lien est dérivée de l'image par la grille elle-même.
+ * Pas de `href` : la carte ne mène à aucune page, elle agrandit ses photos. La
+ * cible du lien est dérivée des images par la grille elle-même.
  */
 export interface RealisationCard {
 	city: string;
 	title: string;
 	meta: string;
+	/** La couverture : la seule photo que la carte montre. */
 	image: PhotoInput;
+	/** Les suivantes, visibles seulement dans la visionneuse. */
+	gallery?: RealisationPhoto[];
 }

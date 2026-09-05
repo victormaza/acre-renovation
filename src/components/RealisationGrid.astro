@@ -5,12 +5,20 @@
 // exactement les mêmes cartes — seul l'en-tête et le nombre d'éléments
 // changent. Le jour où la carte évolue, il n'y a qu'un fichier à reprendre.
 //
-// La carte n'ouvre pas de page dédiée : une réalisation, c'est une photo et
+// La carte n'ouvre pas de page dédiée : une réalisation, c'est des photos et
 // deux lignes de légende. Le clic agrandit donc la photo dans la visionneuse
 // (voir `Lightbox.astro`). Le lien pointe malgré tout vers le fichier image
 // en pleine taille : sans JavaScript, il ouvre la photo au lieu de ne rien
 // faire, et « ouvrir dans un nouvel onglet » garde du sens.
+//
+// Un chantier peut porter plusieurs photos. La carte n'en montre toujours
+// qu'une, la couverture ; les autres sont posées à côté d'elle en
+// déclencheurs masqués, dans l'ordre de saisie. La visionneuse balaie
+// simplement les déclencheurs de la grille : elle déroule donc les photos du
+// chantier ouvert, puis enchaîne sur le suivant, sans rien savoir de ce
+// découpage.
 import { asImageWidthSrcSet, isFilled } from '@prismicio/client';
+import type { ImageFieldImage } from '@prismicio/client';
 import Lightbox from './Lightbox.astro';
 import Photo from './Photo.astro';
 import type { RealisationCard } from '../types';
@@ -23,51 +31,87 @@ const { items } = Astro.props;
 
 // Largeurs de visionneuse, plus généreuses que celles de la carte : c'est le
 // même CDN qui sert les deux, seuls les paramètres imgix changent.
-const cards = items.map((item) => {
-	const field = item.image.field;
-	const full =
-		field && isFilled.image(field)
-			? asImageWidthSrcSet(field, {
-					widths: [960, 1280, 1600, 2000],
-					auto: ['format', 'compress'],
-				})
-			: null;
+const fullSize = (field?: ImageFieldImage | null) =>
+	field && isFilled.image(field)
+		? asImageWidthSrcSet(field, {
+				widths: [960, 1280, 1600, 2000],
+				auto: ['format', 'compress'],
+			})
+		: null;
 
-	return {
-		...item,
-		// Une carte sans photo n'a rien à agrandir : elle reste inerte plutôt
+const cards = items.map((item) => {
+	// La légende de repli d'une photo, quand elle n'en porte pas la sienne.
+	const caption = [item.city, item.meta].filter(Boolean).join(' — ');
+
+	const photos = [
+		{
+			image: fullSize(item.image.field),
+			// Une image statique (prototype, placeholder) n'a pas de champ Prismic.
+			fallback: item.image.src,
+			alt: item.image.field?.alt ?? item.image.alt ?? '',
+			caption,
+		},
+		...(item.gallery ?? []).map((photo) => ({
+			image: fullSize(photo.field),
+			fallback: undefined,
+			alt: photo.field?.alt ?? '',
+			caption: photo.caption || caption,
+		})),
+	]
+		.map((photo) => ({
+			href: photo.image?.src ?? photo.fallback,
+			srcset: photo.image?.srcset,
+			alt: photo.alt,
+			caption: photo.caption,
+		}))
+		// Une entrée sans fichier n'a rien à agrandir : elle est jetée plutôt
 		// que d'ouvrir une visionneuse vide.
-		href: full?.src ?? item.image.src,
-		srcset: full?.srcset,
-		alt: field?.alt ?? item.image.alt ?? '',
-	};
+		.filter((photo) => photo.href);
+
+	return { ...item, photos };
 });
 ---
 
 <ul class="grid" data-lightbox-gallery>
 	{
 		cards.map((card) => {
-			const Tag = card.href ? 'a' : 'div';
+			const [cover, ...others] = card.photos;
+			const Tag = cover ? 'a' : 'div';
 
 			return (
 				<li>
 					<Tag
 						class="realisation"
-						href={card.href}
-						data-lightbox={card.href ? true : undefined}
-						data-lightbox-srcset={card.srcset}
-						data-lightbox-alt={card.alt}
+						href={cover?.href}
+						data-lightbox={cover ? true : undefined}
+						data-lightbox-srcset={cover?.srcset}
+						data-lightbox-alt={cover?.alt}
 						data-lightbox-title={card.title}
-						data-lightbox-meta={[card.city, card.meta].filter(Boolean).join(' — ')}
-						aria-haspopup={card.href ? 'dialog' : undefined}
+						data-lightbox-meta={cover?.caption}
+						aria-haspopup={cover ? 'dialog' : undefined}
 					>
 						<div class="realisation__media">
 							<Photo {...card.image} ratio="4 / 3" radius="var(--radius-md)" />
 							<span class="realisation__city">{card.city}</span>
+							{card.photos.length > 1 && (
+								<span class="realisation__count">{card.photos.length} photos</span>
+							)}
 						</div>
 						<h3 class="realisation__title">{card.title}</h3>
 						<p class="realisation__meta">{card.meta}</p>
 					</Tag>
+
+					{others.map((photo) => (
+						<a
+							hidden
+							href={photo.href}
+							data-lightbox
+							data-lightbox-srcset={photo.srcset}
+							data-lightbox-alt={photo.alt}
+							data-lightbox-title={card.title}
+							data-lightbox-meta={photo.caption}
+						/>
+					))}
 				</li>
 			);
 		})
@@ -110,6 +154,20 @@ const cards = items.map((item) => {
 		letter-spacing: 0.04em;
 		padding: 6px 11px;
 		border-radius: 3px;
+	}
+
+	/* Le seul indice qu'il y a plus d'une photo derrière la couverture. */
+	.realisation__count {
+		position: absolute;
+		right: 14px;
+		bottom: 14px;
+		background: rgb(21 18 14 / 0.72);
+		color: var(--on-ink);
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.02em;
+		padding: 5px 10px;
+		border-radius: 999px;
 	}
 
 	.realisation__title {

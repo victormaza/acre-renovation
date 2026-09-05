@@ -20,6 +20,7 @@ type RealisationDocument = PrismicDocument<
 		meta: KeyTextField;
 		expertise: ContentRelationshipField;
 		image: ImageFieldImage;
+		gallery: { image: ImageFieldImage; caption: KeyTextField }[];
 	},
 	'realisation'
 >;
@@ -72,6 +73,12 @@ const items = documents.map((document) => ({
 	title: document.data.title ?? '',
 	meta: document.data.meta ?? '',
 	image: { field: document.data.image, sizes: '(min-width: 900px) 300px, 50vw' },
+	// La couverture reste seule sur la carte ; les autres photos ne servent
+	// qu'à la visionneuse.
+	gallery: (document.data.gallery ?? []).map((photo) => ({
+		field: photo.image,
+		caption: photo.caption ?? undefined,
+	})),
 }));
 ---
 

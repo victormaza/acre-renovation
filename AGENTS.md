@@ -55,9 +55,12 @@ Domaine cible : `acre-renovation.fr`
 - [x] **`npm run types:push`** — le single `page_realisations` et le cadrage paysage de la photo de réalisation sont en place chez Prismic
 - [ ] Recadrer les photos des réalisations déjà saisies : leur recadrage enregistré est encore le portrait, rogné haut et bas à l'affichage
 - [x] Visionneuse : la carte de réalisation agrandit sa photo au lieu de mener à une page par chantier
+- [x] Plusieurs photos par réalisation — champ `gallery`, poussé chez Prismic ; la visionneuse les déroule à la suite de la couverture
 - [x] Gabarit de page de texte — un seul, partagé par `/guides/:uid` et le type `page` (entreprise, mentions légales…)
 - [ ] Saisir le texte des guides : `Texte` est un champ neuf, les guides publiés n'ont pour l'instant que leur chapô
-- [ ] Créer la page `entreprise` dans Prismic, puis faire pointer le menu sur `/entreprise` au lieu de l'ancre `/#entreprise` (`src/data/settings.ts`)
+- [x] Page entreprise importée depuis `acre-renovation.fr/a-propos/` et publiée — menu câblé dessus par UID
+- [ ] Publier dans Prismic le changement d'UID `entreprise-provisoire` → `entreprise` : tant qu'il est en brouillon, le menu retombe sur l'ancre `/#entreprise`
+- [ ] Redirection 301 `/a-propos/` → `/entreprise` à noter dans le plan de migration
 - [ ] Type repeatable `page_ville`
 - [ ] Locale `en-us` à supprimer — bloquée par le document `homepage` en `en-us`
 - [ ] Plan de redirections 301
@@ -239,6 +242,30 @@ balisage d'avis auto-déclarés sur sa propre entité comme du contenu auto-prom
 et ne l'affiche pas en résultat enrichi ; le risque d'action manuelle est réel.
 
 **Types repeatable** — `realisation`, `guide`, `expertise`, `page` (créés), `page_ville` (à venir)
+
+### Écrire du contenu par l'API — pièges de la Migration API
+
+`@prismicio/client` sait créer des documents (`createWriteClient`, `createMigration`),
+avec le `PRISMIC_WRITE_TOKEN` du `.env`. C'est ce qui a servi à importer la page
+« À propos » de l'ancien site. Quatre choses à savoir avant de s'en resservir :
+
+- **La création se fait en deux temps** : un POST crée le document *vide* et rend
+  son id, un PUT le remplit. Un champ refusé au PUT laisse donc un document vide
+  derrière lui — et c'est arrivé, sur un gras dans un champ qui n'autorise que du
+  texte simple.
+- **L'API n'expose que POST et PUT.** Pas de GET, pas de DELETE : un document
+  créé dont on a perdu l'id est irrécupérable par l'API. Il n'apparaît pas non
+  plus dans les refs du dépôt, donc l'API de contenu ne le voit pas davantage.
+  **Toujours logger l'id rendu par le POST.**
+- **Un UID perdu reste pris.** Le document fantôme ci-dessus occupe `entreprise`
+  sans être visible dans l'interface : l'API refuse aussi bien de recréer cet
+  UID que de le donner à un autre document. Seul le support Prismic peut nettoyer.
+- **Le service est instable** (bêta) : 504 et 500 en rafale pendant l'import, puis
+  retour à la normale. Un timeout sur le POST peut avoir créé le document quand
+  même — d'où des UID pris par des documents qu'on n'a jamais vus.
+
+⚠️ Conséquence pratique : valider le contenu sur un document jetable avant de
+viser l'UID définitif, ou saisir à la main dans l'interface pour une page unique.
 **Types single** — `homepage`, `page_realisations` (créés), `contact`, `settings` (coordonnées, nav, footer, valeurs SEO par défaut)
 
 Points de structure :
@@ -368,8 +395,21 @@ entrée ne peut plus pointer vers une page absente.
   **le menu ne suit pas** : il n'a pas accès à cette sélection. À reprendre le
   jour où l'ordre du menu doit être piloté, sans doute via le single `settings`.
 
+**Les entrées qui visent une page simple le font par UID, pas par chemin.**
+`navRest` porte un champ `page` — l'UID d'un document `page` — et
+`resolvePages()` y substitue l'URL du document publié. Le chemin dépend de
+l'UID, que le client peut changer dans Prismic ; une entrée figée pointerait
+alors vers une page absente. Tant que la page n'est pas publiée, l'entrée
+garde son `href` de repli, une ancre de l'accueil.
+
+C'est ce qui a servi à câbler « Entreprise » : la page a d'abord été publiée
+sous un UID provisoire, et le menu s'aligne tout seul dès que l'UID définitif
+est publié — sans retoucher au code.
+
 Les liens encore inertes (zones d'intervention, mentions légales) gardent `#`
-tant que leur page n'existe pas.
+tant que leur page n'existe pas. ⚠️ Le pied de page, lui, n'est pas encore
+passé par `resolvePages()` : sa colonne « Entreprise » cite toujours l'ancre
+`/#entreprise` sous le libellé « Notre méthode ».
 
 ⚠️ `Base.astro` interroge donc Prismic pour toute page non-`bare`. Le tunnel de
 devis y échappe (`bare`), et n'a pas besoin de l'API pour se rendre.
@@ -430,9 +470,9 @@ customtypes/page_realisations/   ← single de réglage, facultatif
 
 Les cartes menaient à `/realisations/:uid`, un gabarit jamais écrit : depuis
 l'accueil comme depuis la page listing, le clic tombait en 404. Plutôt que
-d'écrire la page, on a retiré la destination : **une réalisation, c'est une
-photo et deux lignes de légende**, pas un article. Le clic agrandit donc la
-photo dans `src/components/Lightbox.astro`.
+d'écrire la page, on a retiré la destination : **une réalisation, c'est des
+photos et deux lignes de légende**, pas un article. Le clic les agrandit donc
+dans `src/components/Lightbox.astro`.
 
 - **La route `realisation` a disparu de la table de `prismicio.ts`.** Sans
   elle, `document.url` reste nul et aucun lien ne peut renaître vers une page
@@ -456,6 +496,27 @@ photo dans `src/components/Lightbox.astro`.
 
 Rien n'empêche d'écrire un jour une vraie page par chantier ; il faudra alors
 remettre la route et rendre son `href` à la carte.
+
+### Plusieurs photos par chantier
+
+Le champ Group **`gallery`** du type `realisation` (photo + légende) porte les
+vues qui viennent après la couverture. La carte n'en montre toujours qu'une —
+la couverture, seule cadrée en 4/3 ; les autres n'existent que dans la
+visionneuse, et un badge « N photos » signale qu'elles sont là.
+
+- **Les photos supplémentaires sont posées en `<a hidden>` à côté de la carte**,
+  dans l'ordre de saisie. La visionneuse balaie les déclencheurs de la grille
+  sans rien savoir de ce découpage : elle déroule donc les photos du chantier
+  ouvert, puis enchaîne sur le chantier suivant. Aucune ligne de
+  `Lightbox.astro` n'a bougé pour ça.
+- **Le champ image de `gallery` est sans contrainte**, contrairement à la
+  couverture : une photo n'est jamais rognée dans la visionneuse
+  (`object-fit: contain`), donc rien n'oblige au paysage. Un chantier peut
+  ainsi porter des verticales.
+- **La légende d'une photo est facultative** : sans elle, la ligne reprend
+  « ville — précision », comme la couverture.
+- Une ligne de groupe sans fichier est jetée au rendu — elle ouvrirait une
+  visionneuse vide.
 
 ### Format des visuels de chantier
 

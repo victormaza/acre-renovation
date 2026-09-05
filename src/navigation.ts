@@ -12,12 +12,15 @@
 import type { KeyTextField, PrismicDocument } from '@prismicio/client';
 import { createClient, hasType } from './prismicio';
 import { devisCta, expertisesMenuLabel, footer, navRest } from './data/settings';
+import type { NavEntry } from './data/settings';
 import type { NavItem, NavLink } from './types';
 
 type ExpertiseNavDocument = PrismicDocument<
 	{ title: KeyTextField; nav_label: KeyTextField },
 	'expertise'
 >;
+
+type PageNavDocument = PrismicDocument<{ title: KeyTextField }, 'page'>;
 
 /**
  * Les expertises publiées, dans l'ordre d'ancienneté — le même repli que la
@@ -47,18 +50,52 @@ async function getExpertises(): Promise<NavLink[]> {
 }
 
 /**
+ * Les pages simples publiées, indexées par UID.
+ *
+ * Le menu vise ces pages par UID plutôt que par chemin : le chemin dépend de
+ * l'UID, que le client peut changer, et une entrée figée pointerait alors vers
+ * une page absente. Même raison que pour les expertises, un cran plus loin —
+ * ici c'est l'adresse qui bouge, pas l'existence de la page.
+ */
+async function getPages(): Promise<Map<string, string>> {
+	if (!(await hasType('page'))) return new Map();
+
+	const client = await createClient();
+	const documents = await client.getAllByType<PageNavDocument>('page');
+
+	return new Map(
+		documents
+			.filter((document) => document.uid && document.url)
+			.map((document) => [document.uid!, document.url!]),
+	);
+}
+
+/**
+ * Remplace le `href` des entrées qui visent un document `page` par l'URL de ce
+ * document. Une page non publiée laisse l'entrée sur son `href` de repli — une
+ * ancre de l'accueil — plutôt que de promettre une page qui n'existe pas.
+ */
+function resolvePages(entries: NavEntry[], pages: Map<string, string>): NavItem[] {
+	return entries.map(({ page, ...item }) => ({
+		...item,
+		href: (page && pages.get(page)) || item.href,
+	}));
+}
+
+/**
  * La première expertise occupe une entrée de premier niveau, les suivantes le
  * menu déroulant — même hiérarchie que la grille de l'accueil, où la première
  * prend la grande carte. Avec une seule expertise publiée, il n'y a donc pas
  * de déroulant du tout.
  */
 export async function getNav(): Promise<NavItem[]> {
-	const [featured, ...rest] = await getExpertises();
+	const [expertises, pages] = await Promise.all([getExpertises(), getPages()]);
+	const [featured, ...rest] = expertises;
 
 	return [
 		...(featured ? [featured] : []),
 		...(rest.length > 0 ? [{ label: expertisesMenuLabel, children: rest }] : []),
-		...navRest,
+		...resolvePages(navRest, pages),
 	];
 }
 

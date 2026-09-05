@@ -55,6 +55,29 @@
           },
           "thumbnails": []
         }
+      },
+      "gallery": {
+        "type": "Group",
+        "config": {
+          "label": "Autres photos — affichées à la suite de la couverture dans la visionneuse",
+          "fields": {
+            "image": {
+              "type": "Image",
+              "config": {
+                "label": "Photo",
+                "constraint": {},
+                "thumbnails": []
+              }
+            },
+            "caption": {
+              "type": "Text",
+              "config": {
+                "label": "Légende",
+                "placeholder": "Cuisine ouverte après travaux"
+              }
+            }
+          }
+        }
       }
     },
     "SEO & Metadata": {

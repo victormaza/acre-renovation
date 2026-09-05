@@ -13,16 +13,29 @@
 
 import type { NavItem, NavLink } from '../types';
 
+/**
+ * Une entrée de menu qui peut viser un document `page`.
+ *
+ * `page` porte l'UID du document ; s'il est publié, son URL remplace `href`.
+ * Sinon l'entrée garde `href`, qui reste donc le repli — jamais un lien mort.
+ */
+export interface NavEntry extends NavItem {
+	page?: string;
+}
+
 export const devisCta: NavLink = {
 	label: 'Demander un devis',
 	href: '/devis',
 };
 
-/** Entrées de menu qui ne dépendent pas du contenu. */
-export const navRest: NavItem[] = [
+/** Entrées de menu qui ne dépendent pas des expertises publiées. */
+export const navRest: NavEntry[] = [
 	{ label: 'Réalisations', href: '/realisations' },
 	{ label: 'Guides', href: '/#guides' },
-	{ label: 'Entreprise', href: '/#entreprise' },
+	// La page entreprise est un document `page` : le menu la vise par son UID,
+	// pas par son chemin. Tant qu'elle n'est pas publiée, l'ancre de l'accueil
+	// tient lieu de repli.
+	{ label: 'Entreprise', href: '/#entreprise', page: 'entreprise' },
 ];
 
 export const expertisesMenuLabel = 'Nos expertises';
