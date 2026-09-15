@@ -28,6 +28,16 @@ export const devisCta: NavLink = {
 	href: '/devis',
 };
 
+/**
+ * Second appel à l'action, à côté du devis. Le numéro n'est pas affiché en
+ * clair, à la demande du client : il ne vit que dans `href`, avec l'indicatif
+ * international, que tout téléphone compose, y compris depuis l'étranger.
+ */
+export const phoneCta: NavLink = {
+	label: 'Nous appeler',
+	href: 'tel:+33603100894',
+};
+
 /** Entrées de menu qui ne dépendent pas des expertises publiées. */
 export const navRest: NavEntry[] = [
 	{ label: 'Réalisations', href: '/realisations' },

@@ -3,7 +3,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import StickyCta from '../components/StickyCta.astro';
-import { getNav, getFooter, devisCta } from '../navigation';
+import { getNav, getFooter, devisCta, phoneCta } from '../navigation';
 
 interface Props {
 	title: string;
@@ -45,7 +45,7 @@ const [nav, footer] = bare ? [[], null] : await Promise.all([getNav(), getFooter
 	<body class={bare ? 'is-bare' : undefined}>
 		{bare || !footer ? <slot /> : (
 			<>
-				<Header nav={nav} cta={devisCta} />
+				<Header nav={nav} cta={devisCta} phone={phoneCta} />
 				<main>
 					<slot />
 				</main>

@@ -174,6 +174,17 @@ Il n'y a **pas** de section témoignages dans le design livré, contrairement à
   décoratif, dessiné à la main et sans rapport avec la liste de villes affichée à côté.
   Retiré à la demande du client — la section est passée en une seule colonne, bornée à
   720 px. Le SVG reste dans l'historique Git si l'on veut le reprendre.
+- **Téléphone dans l'en-tête** (`phoneCta` de `settings.ts`), ajouté à la demande
+  du client, absent du design : un lien `tel:` « Nous appeler » avec icône, pas un
+  second bouton plein — le devis reste l'action principale. **Le numéro n'est pas
+  affiché en clair**, à la demande du client : il ne vit que dans le `href`. Revers
+  assumé : sur un ordinateur sans application d'appel, le clic ne mène à rien et le
+  visiteur ne peut pas lire le numéro. Sur mobile, le lien remplace le bouton devis
+  (reporté dans la barre collante) à côté du burger. Là où la barre manque de place
+  — 861 à 959 px, où le menu occupe encore la ligne, et sous 320 px — il ne montre
+  que l'icône, le libellé restant lisible par les lecteurs d'écran. ⚠️ Le menu
+  s'allonge à chaque expertise publiée : revérifier le débordement vers 900 px
+  quand le déroulant « Nos expertises » apparaîtra.
 - Ponctuation française : espaces insécables avant `? :` et entre nombre et unité. Sans ça, « Un projet en tête ? » coupait avant le point d'interrogation.
 
 ---

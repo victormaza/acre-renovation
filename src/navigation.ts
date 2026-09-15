@@ -11,7 +11,7 @@
 
 import type { KeyTextField, PrismicDocument } from '@prismicio/client';
 import { createClient, hasType } from './prismicio';
-import { devisCta, expertisesMenuLabel, footer, navRest } from './data/settings';
+import { devisCta, expertisesMenuLabel, footer, navRest, phoneCta } from './data/settings';
 import type { NavEntry } from './data/settings';
 import type { NavItem, NavLink } from './types';
 
@@ -116,4 +116,4 @@ export async function getFooter() {
 	};
 }
 
-export { devisCta };
+export { devisCta, phoneCta };
