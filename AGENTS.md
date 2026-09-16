@@ -595,7 +595,7 @@ page, ni barre CTA — d'où le drapeau `bare` de `Base.astro` et le composant
 ```
 src/
   pages/devis.astro           ← coquille 680px + FunnelHeader
-  pages/devis/merci.astro     ← confirmation pour le parcours sans JS
+  pages/devis/merci.astro     ← confirmation, URL de conversion Google Ads
   pages/api/devis.ts          ← seule route `prerender = false`, envoi Brevo
   components/DevisForm.astro  ← markup, styles et logique des 5 étapes
   components/FunnelHeader.astro
@@ -647,6 +647,13 @@ il invite à envoyer quand même. La zone est décrite dans `data/devis.ts`
 
 `src/pages/api/devis.ts` répond selon le canal : JSON pour le `fetch` du
 configurateur, redirection 303 vers `/devis/merci` pour l'envoi natif.
+
+**Les deux canaux finissent sur `/devis/merci`** : le configurateur y navigue
+dès que le `fetch` répond 200. C'est l'URL de conversion de Google Ads — il n'y a
+plus d'écran de confirmation affiché en place, qui laissait l'URL sur `/devis`.
+Le prénom n'est pas passé en paramètre : pas de donnée personnelle dans une URL
+lue par gtag. ⚠️ Pot de miel et délai minimal répondent aussi 200, donc mènent
+aussi à `/devis/merci` — un robot qui exécute le JS compterait une conversion.
 
 - Les listes de `data/devis.ts` servent de **référentiel** : une valeur de choix
   qui n'en vient pas est jetée, pas relayée dans la boîte du client.

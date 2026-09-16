@@ -3,10 +3,10 @@ import Base from '../../layouts/Base.astro';
 import FunnelHeader from '../../components/FunnelHeader.astro';
 import { confirmation } from '../../data/devis';
 
-// Destination de la redirection 303 renvoyée par `/api/devis` quand le
-// formulaire est posté nativement, c'est-à-dire sans JavaScript. Avec JS, la
-// confirmation s'affiche en place et cette page n'est jamais atteinte —
-// elle donne aussi une URL propre à suivre en conversion.
+// Seul écran de confirmation du devis, quel que soit le parcours : le
+// configurateur y navigue après un envoi réussi, et `/api/devis` y redirige
+// (303) l'envoi natif sans JavaScript. C'est l'URL suivie en conversion par
+// Google Ads — ne pas la renommer sans reprendre l'objectif côté Ads.
 ---
 
 <Base bare title="Demande envoyée — Acre Rénovation" noindex>
@@ -16,7 +16,7 @@ import { confirmation } from '../../data/devis';
 			<p class="done__mark" aria-hidden="true">✓</p>
 			<h1 class="done__title">Demande envoyée, merci !</h1>
 			<p class="done__text">
-				Nous avons bien reçu votre projet. Un interlocuteur unique vous recontacte <strong
+				Nous avons bien reçu votre projet. Un chargé de projet vous recontacte <strong
 					>sous {confirmation.delai}</strong
 				> pour organiser la suite.
 			</p>

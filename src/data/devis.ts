@@ -104,7 +104,6 @@ export const confirmation = {
 	delai: '48 h ouvrées',
 	links: [
 		{ label: 'Voir nos réalisations', href: '/realisations', primary: true },
-		{ label: 'Lire nos guides', href: '/guides', primary: false },
 	],
 };
 
