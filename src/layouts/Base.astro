@@ -41,6 +41,15 @@ const [nav, footer] = bare ? [[], null] : await Promise.all([getNav(), getFooter
 		{description && <meta property="og:description" content={description} />}
 		<meta property="og:url" content={canonical} />
 		<meta name="generator" content={Astro.generator} />
+		<!-- Google tag (gtag.js) — `is:inline` : Astro ne doit ni regrouper ni déplacer ces scripts. -->
+		<script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-510PHSG6RD"></script>
+		<script is:inline>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+
+			gtag('config', 'G-510PHSG6RD');
+		</script>
 	</head>
 	<body class={bare ? 'is-bare' : undefined}>
 		{bare || !footer ? <slot /> : (
