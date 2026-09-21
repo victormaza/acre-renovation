@@ -60,10 +60,10 @@ Domaine cible : `acre-renovation.fr`
 - [ ] Saisir le texte des guides : `Texte` est un champ neuf, les guides publiés n'ont pour l'instant que leur chapô
 - [x] Page entreprise importée depuis `acre-renovation.fr/a-propos/` et publiée — menu câblé dessus par UID
 - [ ] Publier dans Prismic le changement d'UID `entreprise-provisoire` → `entreprise` : tant qu'il est en brouillon, le menu retombe sur l'ancre `/#entreprise`
-- [ ] Redirection 301 `/a-propos/` → `/entreprise` à noter dans le plan de migration
+- [x] Redirections 301 des pages de l'ancien site encore visitées (`/nos-realisations/`, `/a-propos/`, `/contact/`, `/nos-services/`…) dans `public/_redirects`
 - [ ] Type repeatable `page_ville`
 - [ ] Locale `en-us` à supprimer — bloquée par le document `homepage` en `en-us`
-- [ ] Plan de redirections 301
+- [ ] Plan de redirections 301 — restent `/faq/` et les pages de démo du thème WordPress, en 404 pour l'instant
 
 ### Configuration Cloudflare
 
@@ -116,7 +116,7 @@ Cloudflare provisionne des ressources dont le site ne se sert pas :
 assets Cloudflare. Les deux doivent rester d'accord : c'est la forme que produit
 déjà la table de routes Prismic, et celle que viseront les redirections 301.
 
-**Le domaine n'est pas encore branché** — l'ancien site doit rester en ligne jusqu'à la bascule. Le déploiement vit sur l'URL `.workers.dev` en attendant.
+**Le domaine est branché** : `acre-renovation.fr` sert le Worker (constaté le 21 septembre 2026). Les anciennes URL WordPress arrivent donc chez nous — d'où les 301 de `public/_redirects`.
 
 ---
 
@@ -175,16 +175,26 @@ Il n'y a **pas** de section témoignages dans le design livré, contrairement à
   Retiré à la demande du client — la section est passée en une seule colonne, bornée à
   720 px. Le SVG reste dans l'historique Git si l'on veut le reprendre.
 - **Téléphone dans l'en-tête** (`phoneCta` de `settings.ts`), ajouté à la demande
-  du client, absent du design : un lien `tel:` « Nous appeler » avec icône, pas un
-  second bouton plein — le devis reste l'action principale. **Le numéro n'est pas
-  affiché en clair**, à la demande du client : il ne vit que dans le `href`. Revers
-  assumé : sur un ordinateur sans application d'appel, le clic ne mène à rien et le
-  visiteur ne peut pas lire le numéro. Sur mobile, le lien remplace le bouton devis
-  (reporté dans la barre collante) à côté du burger. Là où la barre manque de place
-  — 861 à 959 px, où le menu occupe encore la ligne, et sous 320 px — il ne montre
-  que l'icône, le libellé restant lisible par les lecteurs d'écran. ⚠️ Le menu
-  s'allonge à chaque expertise publiée : revérifier le débordement vers 900 px
-  quand le déroulant « Nos expertises » apparaîtra.
+  du client, absent du design : le numéro en clair précédé d'une icône, dans un
+  lien `tel:`, pas un second bouton plein — le devis reste l'action principale.
+  D'abord caché derrière « Nous appeler », il est affiché depuis septembre 2026 à
+  la demande du client : sur ordinateur, le lien `tel:` ne mène souvent à rien et
+  le visiteur doit pouvoir lire le numéro. Sur mobile, le lien remplace le bouton
+  devis (reporté dans la barre collante) à côté du burger. Là où la barre manque
+  de place — 861 à 959 px, où le menu occupe encore la ligne, et sous 360 px, où
+  le numéro pousserait le burger hors de l'écran — il ne montre que l'icône, le
+  numéro restant lisible par les lecteurs d'écran. ⚠️ Le menu s'allonge à chaque
+  expertise publiée : revérifier le débordement vers 960 px quand le déroulant
+  « Nos expertises » apparaîtra.
+- **Clics sur le téléphone suivis** : un écouteur délégué dans `Base.astro`, à la
+  suite de gtag, envoie l'événement `clic_telephone` pour tout lien `tel:` du site.
+  Pour le compter comme conversion, le marquer « événement clé » dans GA4 puis
+  l'importer dans Google Ads — rien à faire côté code.
+- **Ligne de réassurance** sous les boutons des bandeaux d'ouverture (`hero` et
+  `expertise_hero`, donc accueil et toutes les pages expertise) : étoiles, note
+  Google, décennale, ancienneté. Elle vit dans `heroProof` de `settings.ts`, pas
+  dans Prismic ; **le nombre d'avis est à mettre à jour à la main**. Texte simple,
+  sans `AggregateRating` (voir la section avis).
 - Ponctuation française : espaces insécables avant `? :` et entre nombre et unité. Sans ça, « Un projet en tête ? » coupait avant le point d'interrogation.
 
 ---
@@ -766,6 +776,8 @@ http://web.archive.org/cdx/search/cdx?url=acre-renovation.fr*&output=text&fl=ori
 Le mapping `ancienne_url ; nouvelle_url` alimente `public/_redirects`.
 
 **Créer `public/_redirects` dès le premier commit, même vide**, pour qu'il ne soit pas oublié au moment de la bascule. Workers Static Assets lit `_redirects` et `_headers` depuis `dist/` avec les mêmes règles que Cloudflare Pages, code `301` inclus.
+
+Chaque règle y figure **avec et sans slash final** : l'ancien site servait `/a-propos/`, et sans la variante sans slash le visiteur ferait un saut 308 vers `/a-propos` avant de tomber en 404. Les deux formes redirigent en un seul saut, vérifié sous `wrangler dev`.
 
 ---
 

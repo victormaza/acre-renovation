@@ -2,3 +2,21 @@
 # Format : /ancienne-url  /nouvelle-url  301
 # Une règle par ligne, la première qui correspond gagne.
 # Rempli à partir du mapping issu du crawl avant la bascule DNS.
+
+# Anciennes pages WordPress encore envoyées par Google. Chaque règle existe
+# avec et sans slash final : l'ancien site les servait avec, le nouveau sans.
+/nos-realisations/                          /realisations                       301
+/nos-realisations                           /realisations                       301
+/renovation-complete-dune-maison-a-pessac/  /realisations                       301
+/renovation-complete-dune-maison-a-pessac   /realisations                       301
+/a-propos/                                  /entreprise                         301
+/a-propos                                   /entreprise                         301
+/a-propos-de-nous/                          /entreprise                         301
+/a-propos-de-nous                           /entreprise                         301
+# Pas de page contact : le formulaire de devis en tient lieu.
+/contact/                                   /devis                              301
+/contact                                    /devis                              301
+# Pas de page listing des expertises : la rénovation globale porte
+# l'activité principale. À revoir si une page « Nos expertises » voit le jour.
+/nos-services/                              /expertises/renovation-globale      301
+/nos-services                               /expertises/renovation-globale      301

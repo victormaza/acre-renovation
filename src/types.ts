@@ -18,6 +18,12 @@ export interface CtaInput {
 	href: string;
 }
 
+/** Ligne de réassurance d'un bandeau d'ouverture — voir `heroProof`. */
+export interface ProofInput {
+	stars: number;
+	items: string[];
+}
+
 export interface NavLink {
 	label: string;
 	href: string;

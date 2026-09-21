@@ -7,6 +7,7 @@
 import { asText, asLink } from '@prismicio/client';
 import type { ImageFieldImage, KeyTextField, RichTextField } from '@prismicio/client';
 import Hero from '../../components/Hero.astro';
+import { heroProof } from '../../data/settings';
 
 /** Lien répétable avec texte et variante — `allowText` + `repeat` + `variants`. */
 interface ButtonLink {
@@ -53,4 +54,5 @@ interface Props {
 		field: primary.image,
 		sizes: '(min-width: 1320px) 1240px, calc(100vw - 80px)',
 	}}
+	proof={heroProof}
 />

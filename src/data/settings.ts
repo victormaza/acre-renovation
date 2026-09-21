@@ -29,13 +29,28 @@ export const devisCta: NavLink = {
 };
 
 /**
- * Second appel à l'action, à côté du devis. Le numéro n'est pas affiché en
- * clair, à la demande du client : il ne vit que dans `href`, avec l'indicatif
- * international, que tout téléphone compose, y compris depuis l'étranger.
+ * Second appel à l'action, à côté du devis. Le numéro est affiché en clair :
+ * sur ordinateur, le lien `tel:` ne mène souvent à rien, le visiteur doit
+ * pouvoir le lire. `href` porte l'indicatif international, que tout téléphone
+ * compose, y compris depuis l'étranger. Espaces insécables : le numéro ne se
+ * coupe jamais en deux lignes.
  */
 export const phoneCta: NavLink = {
-	label: 'Nous appeler',
+	label: '06\u00a003\u00a010\u00a008\u00a094',
 	href: 'tel:+33603100894',
+};
+
+/**
+ * Ligne de réassurance sous le bouton devis des bandeaux d'ouverture (accueil
+ * et pages expertise). Texte simple, sans balisage `AggregateRating` : Google
+ * sanctionne les avis auto-déclarés sur sa propre entité.
+ *
+ * ⚠️ Le nombre d'avis est recopié à la main : à mettre à jour avec la fiche
+ * Google, comme les avis de la slice `avis`.
+ */
+export const heroProof = {
+	stars: 5,
+	items: ['5/5 sur 8\u00a0avis Google', 'Garantie décennale', 'Depuis 2018'],
 };
 
 /** Entrées de menu qui ne dépendent pas des expertises publiées. */

@@ -49,6 +49,16 @@ const [nav, footer] = bare ? [[], null] : await Promise.all([getNav(), getFooter
 			gtag('js', new Date());
 
 			gtag('config', 'G-510PHSG6RD');
+
+			// Clics sur les numéros de téléphone, pour mesurer les appels dans
+			// Analytics et Google Ads. Délégué au document : couvre tout lien
+			// `tel:` du site, présent ou à venir.
+			document.addEventListener('click', function (e) {
+				var a = e.target.closest && e.target.closest('a[href^="tel:"]');
+				if (a && typeof gtag === 'function') {
+					gtag('event', 'clic_telephone', { link_url: a.href });
+				}
+			});
 		</script>
 	</head>
 	<body class={bare ? 'is-bare' : undefined}>

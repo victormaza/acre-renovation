@@ -3,7 +3,8 @@
 // Distinct du Hero de l'accueil, qui déroule sa photo en pleine largeur sous
 // le titre. Les deux portent un <h1> ; une page ne rend jamais les deux.
 import Photo from './Photo.astro';
-import type { CtaInput, PhotoInput } from '../types';
+import HeroProof from './HeroProof.astro';
+import type { CtaInput, PhotoInput, ProofInput } from '../types';
 
 interface Props {
 	eyebrow: string;
@@ -12,6 +13,8 @@ interface Props {
 	primaryCta: CtaInput;
 	secondaryCta?: CtaInput;
 	image: PhotoInput;
+	/** Ligne de réassurance sous les boutons, facultative. */
+	proof?: ProofInput;
 	/**
 	 * « ample » élargit le titre et la photo, pour l'expertise qui porte
 	 * l'activité principale. Le markup ne change pas, seuls les réglages.
@@ -19,7 +22,7 @@ interface Props {
 	scale?: 'standard' | 'ample';
 }
 
-const { eyebrow, title, text, primaryCta, secondaryCta, image, scale = 'standard' } = Astro.props;
+const { eyebrow, title, text, primaryCta, secondaryCta, image, proof, scale = 'standard' } = Astro.props;
 const isAmple = scale === 'ample';
 ---
 
@@ -41,6 +44,7 @@ const isAmple = scale === 'ample';
 					)
 				}
 			</div>
+			{proof && <HeroProof {...proof} />}
 		</div>
 		<div class="hero__media">
 			<Photo

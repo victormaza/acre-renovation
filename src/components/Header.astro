@@ -263,11 +263,12 @@ const { nav, cta, phone } = Astro.props;
 	}
 
 	/* Là où la barre manque de place — desktop étroit, où le menu occupe
-	   encore la ligne, et très petits écrans — le libellé s'efface derrière
-	   son icône. Il reste dans le lien, lu par les lecteurs d'écran. Le seuil
-	   desktop garde une marge : le libellé tient dès ~900 px, mais le menu
+	   encore la ligne, et petits téléphones — le numéro s'efface derrière son
+	   icône. Il reste dans le lien, lu par les lecteurs d'écran. Le numéro tient
+	   dès ~1000 px sur desktop et ~350 px sur mobile ; en dessous, il pousse le
+	   burger hors de l'écran. Le seuil desktop garde une marge : le menu
 	   s'allonge à chaque expertise publiée. */
-	@media (min-width: 861px) and (max-width: 959px), (max-width: 319px) {
+	@media (min-width: 861px) and (max-width: 959px), (max-width: 359px) {
 		.header__phone {
 			justify-content: center;
 			min-width: 44px;

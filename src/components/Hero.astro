@@ -1,6 +1,7 @@
 ---
 import Photo from './Photo.astro';
-import type { CtaInput, PhotoInput } from '../types';
+import HeroProof from './HeroProof.astro';
+import type { CtaInput, PhotoInput, ProofInput } from '../types';
 
 interface Props {
 	eyebrow: string;
@@ -9,9 +10,11 @@ interface Props {
 	primaryCta: CtaInput;
 	secondaryCta: CtaInput;
 	image: PhotoInput;
+	/** Ligne de réassurance sous les boutons, facultative. */
+	proof?: ProofInput;
 }
 
-const { eyebrow, title, text, primaryCta, secondaryCta, image } = Astro.props;
+const { eyebrow, title, text, primaryCta, secondaryCta, image, proof } = Astro.props;
 ---
 
 <section class="hero">
@@ -28,6 +31,7 @@ const { eyebrow, title, text, primaryCta, secondaryCta, image } = Astro.props;
 					{secondaryCta.label} <span class="arrow">→</span>
 				</a>
 			</div>
+			{proof && <HeroProof {...proof} />}
 		</div>
 	</div>
 	<div class="container hero__media">

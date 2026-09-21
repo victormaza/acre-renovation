@@ -1,0 +1,53 @@
+---
+// Ligne de réassurance sous les boutons d'un bandeau d'ouverture : étoiles,
+// puis quelques arguments séparés par des points médians. Chaque argument est
+// insécable, la ligne ne se coupe qu'entre deux arguments.
+import type { ProofInput } from '../types';
+
+type Props = ProofInput;
+
+const { stars, items } = Astro.props;
+---
+
+<p class="proof">
+	<span class="proof__stars" aria-hidden="true">{'★'.repeat(stars)}</span>
+	{
+		items.map((item, i) => (
+			<>
+				{i > 0 && (
+					<span class="proof__sep" aria-hidden="true">
+						·
+					</span>
+				)}
+				<span class="proof__item">{item}</span>
+			</>
+		))
+	}
+</p>
+
+<style>
+	.proof {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		column-gap: 8px;
+		row-gap: 4px;
+		margin: 18px 0 0;
+		font-size: 14px;
+		font-weight: 500;
+		color: var(--text);
+	}
+
+	.proof__stars {
+		color: var(--accent);
+		letter-spacing: 1px;
+	}
+
+	.proof__item {
+		white-space: nowrap;
+	}
+
+	.proof__sep {
+		color: var(--muted-soft);
+	}
+</style>

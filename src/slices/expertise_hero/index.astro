@@ -2,6 +2,7 @@
 import { asText, asLink } from '@prismicio/client';
 import type { ImageFieldImage, KeyTextField, RichTextField } from '@prismicio/client';
 import ExpertiseHero from '../../components/ExpertiseHero.astro';
+import { heroProof } from '../../data/settings';
 
 /** Lien répétable avec texte et variante — `allowText` + `repeat` + `variants`. */
 interface ButtonLink {
@@ -55,4 +56,5 @@ const primaryCta = toCta(filled) ?? { label: 'Demander un devis', href: '/devis'
 		field: primary.image,
 		sizes: '(min-width: 860px) 620px, calc(100vw - 80px)',
 	}}
+	proof={heroProof}
 />
