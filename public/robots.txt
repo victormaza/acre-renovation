@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://acre-renovation.fr/sitemap-index.xml

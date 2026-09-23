@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig, envField, sessionDrivers } from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
+import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
@@ -9,6 +10,9 @@ export default defineConfig({
 	// Une seule forme d'URL, sans slash final, pour que le lien canonique, les
 	// liens internes et le `html_handling` de wrangler.jsonc disent la même chose.
 	trailingSlash: 'never',
+
+	// Les pages en noindex (404, confirmation de devis) restent hors du sitemap.
+	integrations: [sitemap({ filter: (page) => !/\/(404|devis\/merci)$/.test(page) })],
 
 	// Le site reste statique : `output` vaut toujours 'static' et toutes les
 	// pages sont prérendues. L'adapter n'est là que pour la seule route qui
