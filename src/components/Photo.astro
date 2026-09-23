@@ -66,7 +66,11 @@ const prismicImage =
 		background: var(--bg-photo);
 	}
 
+	/* En absolu : un height: 100% ne se résout pas de façon fiable contre une
+	   hauteur issue d'aspect-ratio, et l'image laissait une bande vide en bas. */
 	.photo img {
+		position: absolute;
+		inset: 0;
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
