@@ -190,6 +190,14 @@ Il n'y a **pas** de section témoignages dans le design livré, contrairement à
   suite de gtag, envoie l'événement `clic_telephone` pour tout lien `tel:` du site.
   Pour le compter comme conversion, le marquer « événement clé » dans GA4 puis
   l'importer dans Google Ads — rien à faire côté code.
+- **Entonnoir du devis suivi** : `DevisForm.astro` envoie `devis_etape_1` à
+  `devis_etape_5` (paramètre `etape`) quand chaque étape s'affiche, une seule fois
+  par session (`sessionStorage`) — le Retour ne recompte pas. **Envoyés depuis
+  `acre-renovation.fr` seulement** : rien en local ni sur les previews. Indépendant
+  de la conversion portée par l'URL `/devis/merci`. Ordre des étapes depuis
+  octobre 2026 : projet, bien, localisation, **coordonnées, puis budget** — les
+  coordonnées passent avant pour garder le contact de qui renonce au budget, et
+  budget comme échéance sont facultatifs pour la même raison.
 - **Ligne de réassurance** sous les boutons des bandeaux d'ouverture (`hero` et
   `expertise_hero`, donc accueil et toutes les pages expertise) : étoiles, note
   Google, décennale, ancienneté. Elle vit dans `heroProof` de `settings.ts`, pas

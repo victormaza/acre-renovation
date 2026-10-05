@@ -15,8 +15,6 @@ interface Props {
 }
 
 const { privacyHref } = Astro.props;
-
-const STEPS = 5;
 ---
 
 {/*
@@ -41,9 +39,6 @@ const STEPS = 5;
 				<span aria-hidden="true">←</span>Retour
 			</button>
 			<span class="devis__kicker">Demande de devis</span>
-			<p class="devis__counter" aria-live="polite">
-				Étape <span data-current>1</span> sur {STEPS}
-			</p>
 		</div>
 		<div class="devis__bar">
 			<div class="devis__bar-fill"></div>
@@ -150,10 +145,88 @@ const STEPS = 5;
 		<button class="devis__next" type="button" data-next hidden>Continuer <span aria-hidden="true">→</span></button>
 	</section>
 
-	{/* ---------- Étape 4 — budget & échéance ---------- */}
+	{/*
+		Coordonnées avant budget : le visiteur qui renonce devant la question du
+		budget a déjà laissé de quoi être recontacté s'il revient.
+	*/}
+
+	{/* ---------- Étape 4 — coordonnées ---------- */}
 	<section class="devis__step" data-step="4">
+		<h2 class="devis__title" tabindex="-1">Vos coordonnées</h2>
+		<p class="devis__lead">
+			Un email <em>ou</em> un téléphone suffit pour vous recontacter.
+		</p>
+
+		{/* Rempli par le script à partir des étapes précédentes : sans JS il n'a rien à résumer. */}
+		<div class="devis__recap" hidden>
+			<p class="devis__recap-title">Votre projet</p>
+			<div class="devis__recap-chips" data-recap></div>
+		</div>
+
+		<div class="devis__grid devis__grid--two devis__grid--fields">
+			<div class="devis__field">
+				<label class="devis__label" for="devis-firstname">Prénom</label>
+				<input
+					class="devis__input"
+					id="devis-firstname"
+					type="text"
+					name="firstName"
+					autocomplete="given-name"
+				/>
+			</div>
+			<div class="devis__field">
+				<label class="devis__label" for="devis-lastname">Nom</label>
+				<input
+					class="devis__input"
+					id="devis-lastname"
+					type="text"
+					name="lastName"
+					autocomplete="family-name"
+				/>
+			</div>
+		</div>
+
+		<div class="devis__field">
+			<label class="devis__label" for="devis-email">
+				Email <span class="devis__optional">(l'un des deux suffit)</span>
+			</label>
+			<input
+				class="devis__input"
+				id="devis-email"
+				type="email"
+				name="email"
+				placeholder="vous@exemple.fr"
+				autocomplete="email"
+				aria-describedby="devis-email-error"
+			/>
+			<p class="devis__error" id="devis-email-error" aria-live="polite" hidden></p>
+		</div>
+
+		<div class="devis__field">
+			<label class="devis__label" for="devis-phone">
+				Téléphone <span class="devis__optional">(l'un des deux suffit)</span>
+			</label>
+			<input
+				class="devis__input"
+				id="devis-phone"
+				type="tel"
+				name="phone"
+				placeholder="06 12 34 56 78"
+				autocomplete="tel"
+				aria-describedby="devis-phone-error"
+			/>
+			<p class="devis__error" id="devis-phone-error" aria-live="polite" hidden></p>
+		</div>
+
+		<p class="devis__alert" data-contact-error aria-live="polite" hidden></p>
+
+		<button class="devis__next" type="button" data-next hidden>Continuer <span aria-hidden="true">→</span></button>
+	</section>
+
+	{/* ---------- Étape 5 — budget & échéance ---------- */}
+	<section class="devis__step" data-step="5">
 		<h2 class="devis__title" tabindex="-1">Budget &amp; échéance</h2>
-		<p class="devis__lead">Une estimation suffit — elle nous aide à calibrer notre proposition.</p>
+		<p class="devis__lead">Dernière étape. Une estimation suffit — elle nous aide à calibrer notre proposition.</p>
 
 		<fieldset class="devis__fieldset">
 			<legend class="devis__legend">Budget envisagé</legend>
@@ -187,76 +260,7 @@ const STEPS = 5;
 			</div>
 		</fieldset>
 
-		<button class="devis__next" type="button" data-next hidden>Continuer <span aria-hidden="true">→</span></button>
-	</section>
-
-	{/* ---------- Étape 5 — coordonnées ---------- */}
-	<section class="devis__step" data-step="5">
-		<h2 class="devis__title" tabindex="-1">Vos coordonnées</h2>
-		<p class="devis__lead">
-			Dernière étape. Un email <em>ou</em> un téléphone suffit pour vous recontacter.
-		</p>
-
-		{/* Rempli par le script à partir des étapes précédentes : sans JS il n'a rien à résumer. */}
-		<div class="devis__recap" hidden>
-			<p class="devis__recap-title">Votre projet</p>
-			<div class="devis__recap-chips" data-recap></div>
-		</div>
-
-		<div class="devis__grid devis__grid--two devis__grid--fields">
-			<div class="devis__field">
-				<label class="devis__label" for="devis-firstname">Prénom</label>
-				<input
-					class="devis__input"
-					id="devis-firstname"
-					type="text"
-					name="firstName"
-					autocomplete="given-name"
-				/>
-			</div>
-			<div class="devis__field">
-				<label class="devis__label" for="devis-lastname">Nom</label>
-				<input
-					class="devis__input"
-					id="devis-lastname"
-					type="text"
-					name="lastName"
-					autocomplete="family-name"
-				/>
-			</div>
-		</div>
-
-		<div class="devis__field">
-			<label class="devis__label" for="devis-email">Email</label>
-			<input
-				class="devis__input"
-				id="devis-email"
-				type="email"
-				name="email"
-				placeholder="vous@exemple.fr"
-				autocomplete="email"
-				aria-describedby="devis-email-error"
-			/>
-			<p class="devis__error" id="devis-email-error" aria-live="polite" hidden></p>
-		</div>
-
-		<div class="devis__field">
-			<label class="devis__label" for="devis-phone">Téléphone</label>
-			<input
-				class="devis__input"
-				id="devis-phone"
-				type="tel"
-				name="phone"
-				placeholder="06 12 34 56 78"
-				autocomplete="tel"
-				aria-describedby="devis-phone-error"
-			/>
-			<p class="devis__error" id="devis-phone-error" aria-live="polite" hidden></p>
-		</div>
-
-		<p class="devis__alert" data-contact-error aria-live="polite" hidden></p>
-
-		<div class="devis__field">
+		<div class="devis__field devis__field--after-options">
 			<label class="devis__label" for="devis-description">
 				Décrivez votre projet <span class="devis__optional">— facultatif</span>
 			</label>
@@ -315,7 +319,6 @@ const STEPS = 5;
 	const progress = form.querySelector<HTMLElement>('.devis__progress')!;
 	const backButton = form.querySelector<HTMLButtonElement>('.devis__back')!;
 	const kicker = form.querySelector<HTMLElement>('.devis__kicker')!;
-	const counter = form.querySelector<HTMLElement>('[data-current]')!;
 	const barFill = form.querySelector<HTMLElement>('.devis__bar-fill')!;
 	const recap = form.querySelector<HTMLElement>('.devis__recap')!;
 	const recapChips = form.querySelector<HTMLElement>('[data-recap]')!;
@@ -366,11 +369,40 @@ const STEPS = 5;
 		progress.hidden = false;
 		backButton.hidden = step === 1;
 		kicker.hidden = step !== 1;
-		counter.textContent = String(step);
 		barFill.style.width = `${(step / STEPS) * 100}%`;
 
-		if (step === 5) renderRecap();
+		if (step === 4) renderRecap();
 		updateNextButtons();
+		trackStep(step);
+	}
+
+	/* ---------- Suivi des étapes ---------- */
+
+	// Une étape est comptée quand elle s'affiche, une seule fois par session :
+	// revenir en arrière ou recharger la page ne gonfle pas les chiffres, et
+	// l'écart entre deux étapes dit où les visiteurs abandonnent.
+	declare const gtag: ((...args: unknown[]) => void) | undefined;
+	const TRACKED_KEY = 'devis_etapes_vues';
+
+	// La mémoire de session peut être refusée (navigation privée, stockage
+	// bloqué) : l'ensemble en mémoire garantit au moins l'unicité dans la page.
+	const trackedSteps = new Set<number>();
+	try {
+		JSON.parse(sessionStorage.getItem(TRACKED_KEY) ?? '[]').forEach((n: number) => trackedSteps.add(n));
+	} catch {}
+
+	// Production seulement : les volumes sont trop faibles pour supporter le
+	// bruit des tests en local ou sur les previews.
+	const isProduction = window.location.hostname === 'acre-renovation.fr';
+
+	function trackStep(which: number) {
+		if (!isProduction || trackedSteps.has(which) || typeof gtag !== 'function') return;
+
+		gtag('event', `devis_etape_${which}`, { etape: which });
+		trackedSteps.add(which);
+		try {
+			sessionStorage.setItem(TRACKED_KEY, JSON.stringify([...trackedSteps]));
+		} catch {}
 	}
 
 	function goTo(next: number) {
@@ -394,20 +426,23 @@ const STEPS = 5;
 		if (which === 1) return Boolean(checked('projectType'));
 		if (which === 2) return Boolean(checked('propertyType') && checked('surface'));
 		if (which === 3) return locationInput.value.trim().length >= 2;
-		if (which === 4) return Boolean(checked('budget') && checked('timing'));
-		return contactIsValid();
+		if (which === 4) return contactIsValid();
+		// Budget et échéance restent facultatifs : bloquer l'envoi dessus ferait
+		// perdre un contact déjà saisi. Une radio non cochée n'est pas envoyée.
+		return consent.checked;
 	}
 
 	function contactIsValid() {
 		const hasContact =
 			(email.value.trim() && isEmail(email.value)) || (phone.value.trim() && isPhone(phone.value));
-		return Boolean(firstName.value.trim() && hasContact && consent.checked);
+		return Boolean(firstName.value.trim() && hasContact);
 	}
 
 	function updateNextButtons() {
 		const next = steps[step - 1]?.querySelector<HTMLButtonElement>('[data-next]');
 		if (next) next.disabled = !stepIsComplete(step);
-		submitButton.disabled = !contactIsValid() || submitButton.dataset.sending === 'true';
+		submitButton.disabled =
+			!(contactIsValid() && stepIsComplete(5)) || submitButton.dataset.sending === 'true';
 	}
 
 	/* ---------- Étape 1 : le choix vaut validation ---------- */
@@ -435,7 +470,7 @@ const STEPS = 5;
 		zoneNote.hidden = knownCity || knownPostal || !(isPostal || value.length >= 4);
 	}
 
-	/* ---------- Étape 5 : récapitulatif et validation ---------- */
+	/* ---------- Étape 4 : récapitulatif et validation ---------- */
 
 	function renderRecap() {
 		const entries = [
@@ -498,11 +533,15 @@ const STEPS = 5;
 		event.preventDefault();
 		if (submitButton.dataset.sending === 'true') return;
 
+		// Les coordonnées sont saisies à l'étape d'avant : c'est là qu'on renvoie
+		// le visiteur si elles ne tiennent pas.
 		if (!contactIsValid()) {
+			goTo(4);
 			contactError.textContent = 'Indiquez au moins un email ou un téléphone valide.';
 			contactError.hidden = false;
 			return;
 		}
+		if (!stepIsComplete(5)) return;
 
 		setSending(true);
 		sendError.hidden = true;
@@ -624,14 +663,6 @@ const STEPS = 5;
 		letter-spacing: 0.14em;
 		text-transform: uppercase;
 		color: var(--muted-strong);
-	}
-
-	.devis__counter {
-		margin: 0;
-		font-size: 13.5px;
-		font-weight: 600;
-		color: var(--muted-strong);
-		white-space: nowrap;
 	}
 
 	.devis__bar {
@@ -883,6 +914,12 @@ const STEPS = 5;
 
 	.devis__field {
 		margin-bottom: 16px;
+	}
+
+	/* Le dernier groupe d'options perd sa marge basse (`:last-of-type`) : le
+	   champ qui le suit la reprend à son compte. */
+	.devis__field--after-options {
+		margin-top: 30px;
 	}
 
 	.devis__grid--fields {
