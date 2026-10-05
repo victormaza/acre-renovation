@@ -229,7 +229,7 @@ const { privacyHref } = Astro.props;
 		<p class="devis__lead">Dernière étape. Une estimation suffit — elle nous aide à calibrer notre proposition.</p>
 
 		<fieldset class="devis__fieldset">
-			<legend class="devis__legend">Budget envisagé</legend>
+			<legend class="devis__legend">Budget envisagé <span class="devis__optional">— facultatif</span></legend>
 			<div class="devis__grid devis__grid--wide">
 				{
 					budgets.map((opt) => (
@@ -243,7 +243,7 @@ const { privacyHref } = Astro.props;
 		</fieldset>
 
 		<fieldset class="devis__fieldset">
-			<legend class="devis__legend">Échéance souhaitée</legend>
+			<legend class="devis__legend">Échéance souhaitée <span class="devis__optional">— facultatif</span></legend>
 			<div class="devis__rows">
 				{
 					timings.map((opt) => (
@@ -949,6 +949,13 @@ const { privacyHref } = Astro.props;
 	.devis__optional {
 		color: var(--muted-soft);
 		font-weight: 400;
+	}
+
+	/* Dans un intitulé en capitales, la mention garde la casse du champ de
+	   description pour se lire comme une précision, pas comme un titre. */
+	.devis__legend .devis__optional {
+		letter-spacing: normal;
+		text-transform: none;
 	}
 
 	.devis__input {
