@@ -50,7 +50,7 @@ export const phoneCta: NavLink = {
  */
 export const heroProof = {
 	stars: 5,
-	items: ['5/5 sur 8\u00a0avis Google', 'Garantie décennale', 'Depuis 2018'],
+	items: ['5/5 sur 9\u00a0avis Google', 'Garantie décennale', 'Depuis 2018'],
 };
 
 /** Entrées de menu qui ne dépendent pas des expertises publiées. */
