@@ -4,6 +4,12 @@ Refonte du site d'une entreprise de rénovation en Gironde.
 Dépôt : `victormaza/acre-renovation` (compte perso, **pas** l'organisation Artishoc).
 Domaine cible : `acre-renovation.fr`
 
+**Qui intervient** : depuis octobre 2026, Victor (développeur d'origine) ne travaille
+plus sur le site. Thomas, gérant d'Acre, le fait évoluer seul avec Claude Code. Il
+n'est pas développeur : il valide les faits métier (prestations, prix, partenaires),
+le code et Prismic restent à la charge de l'assistant. Ce fichier est donc la seule
+mémoire technique du projet — le tenir à jour à chaque évolution.
+
 ---
 
 ## Stack
@@ -51,6 +57,10 @@ Domaine cible : `acre-renovation.fr`
 - [x] Menu et pied de page dérivés des expertises publiées — plus de lien mort possible
 - [ ] Saisir les sections des 5 documents `expertise` : la page est vide tant que sa slice zone l'est, et le menu ne cite que les expertises publiées
 - [ ] Renseigner `nav_label` sur chaque expertise — sans lui le menu reprend le titre complet, trop long
+- [x] Expertise **Extension & surélévation** écrite par `scripts/maj-extension-surelevation.mjs`, créée en brouillon le 6 octobre 2026 (id `asUM_REAACkAXndS`, UID `extension-surelevation`)
+- [ ] Publier la Migration Release de l'extension, après ajout des deux photos (carte et hero) et relecture — puis demander l'indexation dans la Search Console
+- [ ] Rédiger `meta_title` et `meta_description` de la rénovation globale : vides, alors que c'est la page de destination des annonces Google Ads
+- [ ] Données structurées (entreprise + fil d'ariane) : aucune pour l'instant. **Sans adresse postale**, voir « Contraintes de contenu »
 - [x] Page listing `/realisations` — toutes les réalisations publiées, mêmes cartes que l'accueil
 - [x] **`npm run types:push`** — le single `page_realisations` et le cadrage paysage de la photo de réalisation sont en place chez Prismic
 - [ ] Recadrer les photos des réalisations déjà saisies : leur recadrage enregistré est encore le portrait, rogné haut et bas à l'affichage
@@ -207,6 +217,58 @@ Il n'y a **pas** de section témoignages dans le design livré, contrairement à
 
 ---
 
+## Contraintes de contenu
+
+Faits métier validés par le gérant. Ils s'imposent à tout texte rédigé : pages
+expertise, guides, annonces, données structurées.
+
+- **Acre n'est pas certifiée RGE.** Pas d'éligibilité à MaPrimeRénov', à l'éco-PTZ,
+  aux CEE ni à la TVA à 5,5 %. Ne jamais laisser entendre le contraire ; si le sujet
+  est abordé, le présenter comme une information neutre en précisant que ces
+  dispositifs exigent une entreprise RGE.
+- **TVA** : l'argument est la TVA à 10 % (logement achevé depuis plus de 2 ans) — mais
+  **pas pour l'extension ni la surélévation** : des travaux qui augmentent la surface
+  de plancher de plus de 10 % sont taxés à 20 %, comme du neuf. La page extension
+  n'en parle volontairement pas.
+- **L'adresse du 16 place des Quinconces est une domiciliation** : aucun client n'y
+  est reçu. Elle ne doit apparaître ni sur le site ni dans les données structurées,
+  qui ne déclarent que la zone d'intervention. Côté fiche Google, l'adresse est à
+  masquer (fiche de zone desservie).
+- **Architectes partenaires** : Acre monte les dossiers de déclaration préalable et de
+  permis de construire, avec des architectes partenaires au-delà de 150 m². Ne jamais
+  les nommer.
+- **Extension et surélévation** : en maçonnerie traditionnelle ou en ossature bois,
+  les deux. Fourchette de prix assumée : 1 800 à 3 500 € le m² (HT ou TTC non précisé
+  par le gérant — à demander avant de l'écrire ailleurs).
+- **Avis Google** : 5/5 sur 9 avis au 6 octobre 2026 (`heroProof` de `settings.ts`).
+
+## SEO — volumes de recherche et choix de pages
+
+Relevés dans le Planificateur de mots clés Google Ads, ciblage **Gironde**, le
+6 octobre 2026 (recherches par mois) :
+
+| Requête | Gironde | France |
+|---|---|---|
+| extension maison | 1 900 | 33 100 |
+| agrandissement maison | 170 | 3 600 |
+| surélévation maison | 140 | 1 600 |
+| extension maison bordeaux · extension ossature bois | 30 | 70 · 1 300 |
+| surélévation maison bordeaux · rehausse maison · extension maison prix m2 · surélévation échoppe bordeaux | 20 | — |
+| extension maison + Pessac, Mérignac, Talence, Andernos, Lanton, Arcachon | ~10 | — |
+
+**Décision : pas de page par ville**, pour l'extension comme pour la rénovation (même
+constat sur 16 communes côté Ads). Le volume local est porté par les requêtes
+génériques, que Google localise de lui-même ; les villes sont citées dans le texte des
+pages expertise. À rouvrir si la Search Console fait remonter des requêtes « + ville »
+avec des impressions réelles.
+
+Les leviers prioritaires sont la page expertise, la fiche Google (catégories, services,
+zone desservie) puis des guides sur les questions à volume national (prix au m²,
+ossature bois, permis).
+
+La **Search Console** existe (propriété de domaine `acre-renovation.fr`), avec des
+données depuis le 15 septembre 2026 seulement.
+
 ## Modèle de contenu
 
 ### Slice Machine ne supporte pas Astro
@@ -295,6 +357,14 @@ avec le `PRISMIC_WRITE_TOKEN` du `.env`. C'est ce qui a servi à importer la pag
 
 ⚠️ Conséquence pratique : valider le contenu sur un document jetable avant de
 viser l'UID définitif, ou saisir à la main dans l'interface pour une page unique.
+
+Deux scripts de contenu existent, un par expertise : `maj-renovation-globale.mjs`
+(mise à jour seule) et `maj-extension-surelevation.mjs`, qui crée le document s'il
+n'est pas publié et le met à jour sinon. Ce dernier reprend la slice `reassurance`
+de la rénovation globale telle quelle, conserve les photos déjà saisies dans
+Prismic, et logge les événements de la migration (l'id créé y figure). ⚠️ Une fois
+le texte retouché dans l'interface, ne plus relancer le script : il écraserait les
+corrections.
 **Types single** — `homepage`, `page_realisations` (créés), `contact`, `settings` (coordonnées, nav, footer, valeurs SEO par défaut)
 
 Points de structure :
@@ -773,7 +843,7 @@ Le contenu sort de Git — c'est le prix payé pour Prismic. À compenser par un
 
 ## Migration et redirections
 
-Il n'y a **pas de Search Console** sur l'ancien site, d'où le crawl préalable.
+Il n'y avait **pas de Search Console** sur l'ancien site, d'où le crawl préalable. Elle existe depuis septembre 2026 pour le nouveau.
 
 Sources d'URLs consolidées : crawl direct, `/sitemap.xml` s'il existe, et l'API CDX de Wayback Machine pour récupérer les URLs historiquement indexées mais plus liées depuis la navigation :
 
