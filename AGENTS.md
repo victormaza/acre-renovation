@@ -57,9 +57,9 @@ mémoire technique du projet — le tenir à jour à chaque évolution.
 - [x] Menu et pied de page dérivés des expertises publiées — plus de lien mort possible
 - [ ] Saisir les sections des 5 documents `expertise` : la page est vide tant que sa slice zone l'est, et le menu ne cite que les expertises publiées
 - [ ] Renseigner `nav_label` sur chaque expertise — sans lui le menu reprend le titre complet, trop long
-- [x] Expertise **Extension & surélévation** écrite par `scripts/maj-extension-surelevation.mjs`, créée en brouillon le 6 octobre 2026 (id `asUM_REAACkAXndS`, UID `extension-surelevation`)
-- [ ] Publier la Migration Release de l'extension, après ajout des deux photos (carte et hero) et relecture — puis demander l'indexation dans la Search Console
-- [ ] Rédiger `meta_title` et `meta_description` de la rénovation globale : vides, alors que c'est la page de destination des annonces Google Ads
+- [x] Expertise **Extension & surélévation** écrite par `scripts/maj-extension-surelevation.mjs`, créée le 6 octobre 2026 (id `asUM_REAACkAXndS`, UID `extension-surelevation`), publiée avec ses photos ; deux réalisations rattachées (échoppe à Talence, véranda à Andernos)
+- [x] `meta_title` / `meta_description` de la rénovation globale et textes alternatifs des photos de l'extension et de ses deux réalisations : écrits en brouillon le 8 octobre 2026 par la Migration API
+- [ ] **Publier la Migration Release** du 8 octobre (rénovation globale, extension, réalisations Talence et Andernos)
 - [ ] Données structurées (entreprise + fil d'ariane) : aucune pour l'instant. **Sans adresse postale**, voir « Contraintes de contenu »
 - [x] Page listing `/realisations` — toutes les réalisations publiées, mêmes cartes que l'accueil
 - [x] **`npm run types:push`** — le single `page_realisations` et le cadrage paysage de la photo de réalisation sont en place chez Prismic
